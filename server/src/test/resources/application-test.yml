@@ -1,0 +1,9 @@
+spring:
+  config:
+    activate:
+      on-profile: test
+  datasource:
+    url: jdbc:tc:mysql:8.0.40:///test_db
+  jpa:
+    hibernate:
+      ddl-auto: create

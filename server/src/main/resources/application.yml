@@ -1,0 +1,30 @@
+spring:
+  profiles:
+    active: local
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+
+  sql:
+    init:
+      data-locations: classpath:db/data.sql
+      schema-locations: classpath:db/schema.sql
+
+  security:
+    oauth2:
+      google:
+
+# Jasypt
+jasypt:
+  encryptor:
+    password: ${JASYPT_KEY}
+
+jwt:
+  secret: ENC(NjIWxjCj+OYhKxPp5rdLnA5m3XGrhU/iN9x198OteRtHPuhVLgNoHn/3qsSVcFu4JgYmJ4/b43m5lGNgIRHPrvpl318zik0D5RQv236Ni8Fe8Ue10YagCHWUo5mWrgkZdKRQ/2Tbs62UftkKfklM07EOZPI1LuPxPiWRxC1CT4sf5+7wJY5i4piDWWlPhyjs)
+  access-token-validity-in-milli-seconds: 3600000
+  refresh-token-validity-in-milli-seconds: 86400000
