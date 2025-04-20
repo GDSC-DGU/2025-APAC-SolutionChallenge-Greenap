@@ -4,7 +4,7 @@ import com.app.server.common.exception.NotFoundException
 import com.app.server.common.security.info.CustomUserDetails.Companion.create
 import com.app.server.user.application.repository.UserRepository
 import com.app.server.user.exception.UserExceptionCode
-import com.app.server.user.model.User
+import com.app.server.user.domain.model.User
 import lombok.RequiredArgsConstructor
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService

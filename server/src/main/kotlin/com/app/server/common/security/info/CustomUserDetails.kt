@@ -1,11 +1,7 @@
 package com.app.server.common.security.info
 
 import com.app.server.common.constant.Constants
-import com.app.server.user.model.User
-import lombok.AccessLevel
-import lombok.Builder
-import lombok.Getter
-import lombok.RequiredArgsConstructor
+import com.app.server.user.domain.model.User
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
