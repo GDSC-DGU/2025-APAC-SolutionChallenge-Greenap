@@ -13,6 +13,8 @@ class Challenge(
     @Column(name = "challenge_id")
     val id: Long,
     val title: String,
+    @Column(name = "pre_description")
+    val preDescription: String,
     val description: String,
 
     @Column(name = "certification_method_description")
