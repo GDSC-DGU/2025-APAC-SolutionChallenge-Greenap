@@ -2,9 +2,15 @@ package com.app.server.config
 
 import com.app.server.IntegrationTestContainer
 import org.assertj.core.api.Assertions.assertThat
+import org.jasypt.encryption.StringEncryptor
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.boot.test.context.SpringBootTest
 
+@SpringBootTest
 class JasyptConfigTest : IntegrationTestContainer() {
 
     @Test

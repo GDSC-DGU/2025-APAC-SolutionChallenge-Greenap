@@ -3,7 +3,12 @@ spring:
     activate:
       on-profile: test
   datasource:
-    url: jdbc:tc:mysql:8.0.40:///test_db
-  jpa:
-    hibernate:
-      ddl-auto: create
+    url: jdbc:tc:mysql:8.0.40:///test_db?useSSL=false
+    hikari:
+      maximum-pool-size: 4
+      minimum-idle: 1
+      connection-timeout: 10000
+      idle-timeout: 10000
+      max-lifetime: 30000
+    username: test
+    password: test

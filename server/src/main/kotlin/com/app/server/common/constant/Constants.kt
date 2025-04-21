@@ -44,7 +44,7 @@ object Constants {
     val BYPASS_URLS: List<String> = listOf( //
         "/hello",  // 모니터링
         "/actuator/**",  // 피드백 데이터 조회
-        "/api/feedbacks"
+        "/api/v1/**", //TODO: Auth 구현 후 제거
     )
 
     const val CONTENT_TYPE: String = "Content-Type"

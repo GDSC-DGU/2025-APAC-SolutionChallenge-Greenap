@@ -20,7 +20,7 @@ class CustomSignOutProcessHandler(
         processSignOut(userDetails.getId())
     }
 
-    protected fun processSignOut(userId: Long) {
+    protected fun processSignOut(userId: Long?) {
         userService.updateRefreshToken(userId, null) // RefreshToken 삭제
     }
 }

@@ -7,7 +7,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
 class CustomUserDetails (
-    private val id: Long,
+    private val id: Long? = null,
     private val email: String,
     private val authorities: Collection<GrantedAuthority>
 
@@ -41,7 +41,7 @@ class CustomUserDetails (
         return true
     }
 
-    fun getId(): Long {
+    fun getId(): Long? {
         return id
     }
 

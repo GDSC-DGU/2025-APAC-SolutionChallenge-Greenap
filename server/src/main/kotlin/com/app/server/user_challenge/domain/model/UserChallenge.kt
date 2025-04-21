@@ -15,7 +15,7 @@ class UserChallenge(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_challenge_id")
-    val id: Long,
+    val id: Long? = null,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -30,7 +30,7 @@ class UserChallenge(
     val participantDays: Int,
     @Column(name = "ice_count")
     val iceCount: Int = 0,
-    @Column(name = "now_max_consecutive_participation_day_count", nullable = false)
+    @Column(name = "now_consecutive_participation_day_count", nullable = false)
     val nowConsecutiveParticipationDayCount: Long = 0L,
     @Column(name = "max_consecutive_participation_day_count", nullable = false)
     val maxConsecutiveParticipationDayCount: Long = 0L,

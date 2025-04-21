@@ -68,6 +68,11 @@ kotlin {
     }
 }
 
+tasks.test{
+    systemProperty("junit.jupiter.execution.parallel.enabled", false)
+}
+
 tasks.withType<Test> {
     useJUnitPlatform()
+    systemProperty("spring.profiles.active", "test")
 }

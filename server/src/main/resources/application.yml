@@ -1,6 +1,4 @@
 spring:
-  profiles:
-    active: local
 
   jpa:
     hibernate:
@@ -14,6 +12,7 @@ spring:
     init:
       data-locations: classpath:db/data.sql
       schema-locations: classpath:db/schema.sql
+      mode: always
 
   security:
     oauth2:

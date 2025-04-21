@@ -1,6 +1,5 @@
 package com.app.server.challenge.domain.model
 
-import com.app.server.challenge.domain.enums.EChallengeStatus
 import com.app.server.common.model.BaseEntity
 import jakarta.persistence.*
 
@@ -11,17 +10,15 @@ class Challenge(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "challenge_id")
-    val id: Long,
+    val id: Long? = null,
     val title: String,
     @Column(name = "pre_description")
     val preDescription: String,
+    @Column(name = "description", length = 1000)
     val description: String,
 
     @Column(name = "certification_method_description")
     val certificationMethodDescription: String,
-
-    @Enumerated(EnumType.STRING)
-    val status: EChallengeStatus = EChallengeStatus.RUNNING,
 
     @Column(name = "main_image_url")
     val mainImageUrl: String?,
@@ -33,6 +30,5 @@ class Challenge(
     var challengeCategory: ChallengeCategory
 
 ) : BaseEntity() {
-
 
 }

@@ -10,15 +10,18 @@ class ChallengeCategory(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "challenge_category_id")
-    val id: Long,
+    val id: Long? = null,
+
     val title: String,
+    @Column(name = "description", length = 1000)
     val description: String,
 
-    @Column(name = "category_image_url")
+    @Column(name = "image_url")
     val categoryImageUrl: String?,
 
     @OneToMany(mappedBy = "challengeCategory", fetch = FetchType.LAZY)
     val challenges: List<Challenge> = listOf()
 
 ) : BaseEntity() {
+
 }
