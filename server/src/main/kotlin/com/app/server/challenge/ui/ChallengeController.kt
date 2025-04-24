@@ -14,18 +14,19 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
+@RequestMapping("/api/v1")
 class ChallengeController(
     private val getChallengeUseCase: GetChallengeUseCase,
     private val getListChallengesUseCase: GetListChallengesUseCase,
 ) {
 
-    @GetMapping("/api/v1/challenges")
+    @GetMapping("challenges")
     fun getChallenges() : ApiResponse<GetAllChallengesResponseDto> {
         val challenges : List<CategoryDto> = getListChallengesUseCase.execute()
         return ApiResponse.success(GetAllChallengesResponseDto.of(challenges))
     }
 
-    @GetMapping("/api/v1/challenges/{id}")
+    @GetMapping("challenges/{id}")
     fun getChallenge(@Valid @PathVariable id: Long) : ApiResponse<GetChallengeResponseDto> {
         val challenge : ChallengeDetailResponseDto = getChallengeUseCase.execute(id)
         return ApiResponse.success(GetChallengeResponseDto.of(challenge))

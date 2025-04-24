@@ -5,6 +5,7 @@ import com.app.server.challenge.application.service.ChallengeService
 import com.app.server.challenge.domain.model.Challenge
 import com.app.server.user.application.repository.UserRepository
 import com.app.server.user.domain.model.User
+import com.app.server.user_challenge.application.dto.CreateUserChallengeDto
 import com.app.server.user_challenge.application.repository.UserChallengeRepository
 import com.app.server.user_challenge.domain.enums.EUserChallengeStatus
 import com.app.server.user_challenge.domain.model.UserChallenge
@@ -51,34 +52,26 @@ class UserChallengeQueryServiceTest : IntegrationTestContainer() {
                 nowMaxConsecutiveParticipationDayCount = 0L,
                 refreshToken = null
             )
-        userRepository.save(completedUser)
-        userRepository.save(notCompletedUser)
-        userChallengeRepository.saveAll(
-            listOf(
-                UserChallenge(
-                    user = completedUser,
-                    challenge = challenge,
-                    status = EUserChallengeStatus.COMPLETED,
-                    participantDays = 7,
-                    iceCount = 0,
-                    nowConsecutiveParticipationDayCount = 0,
-                    maxConsecutiveParticipationDayCount = 0,
-                    totalParticipationDayCount = 0,
-                    reportMessage = null
-                ),
-                UserChallenge(
-                    user = notCompletedUser,
-                    challenge = challenge,
-                    status = EUserChallengeStatus.RUNNING,
-                    participantDays = 7,
-                    iceCount = 0,
-                    nowConsecutiveParticipationDayCount = 0,
-                    maxConsecutiveParticipationDayCount = 0,
-                    totalParticipationDayCount = 0,
-                    reportMessage = null
-                )
+        val saveCompletedUser: User = userRepository.save(completedUser)
+        val saveUnCompletedUser: User = userRepository.save(notCompletedUser)
+
+        val completedUserChallenge: UserChallenge = UserChallenge.createEntity(
+            CreateUserChallengeDto(
+                userId = saveCompletedUser.id!!,
+                challenge = challenge,
+                participantsDate = 7,
+                status = EUserChallengeStatus.COMPLETED
             )
         )
+        val unCompletedUserChallenge: UserChallenge = UserChallenge.createEntity(
+            CreateUserChallengeDto(
+                userId = saveUnCompletedUser.id!!,
+                challenge = challenge,
+                participantsDate = 7,
+                status = EUserChallengeStatus.RUNNING
+            )
+        )
+        userChallengeRepository.saveAll(listOf(completedUserChallenge, unCompletedUserChallenge))
         // when
         val completedUserPercent : Double = userChallengeQueryService.getChallengeCompletedUserPercent(challengeId)
         // then

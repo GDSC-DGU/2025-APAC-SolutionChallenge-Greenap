@@ -1,7 +1,6 @@
 package com.app.server
 
 import org.jasypt.encryption.StringEncryptor
-import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -32,6 +31,8 @@ abstract class IntegrationTestContainer {
 
     protected val userId: Long = 1L
     protected val challengeId: Long = 1L
+    protected val userChallengeId: Long = 1L
+    protected val participationDays: Int = 7
 
     companion object {
         @Container

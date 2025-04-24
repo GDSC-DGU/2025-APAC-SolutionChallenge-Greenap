@@ -9,17 +9,23 @@ import org.springframework.stereotype.Repository
 @Repository
 interface UserChallengeRepository : JpaRepository<UserChallenge, Long> {
 
-    @Query("SELECT COUNT(DISTINCT uc.user.id) " +
+    @Query("SELECT COUNT(DISTINCT uc.userId) " +
             "FROM UserChallenge uc " +
             "WHERE uc.challenge.id = :challengeId " +
             "AND uc.status = :status " +
             "AND uc.deletedAt IS NULL")
     fun countByChallengeIdAndStatusIsCompleted(challengeId: Long, status: EUserChallengeStatus): Long
 
-    @Query("SELECT COUNT(DISTINCT uc.user.id) " +
+    @Query("SELECT COUNT(DISTINCT uc.userId) " +
             "FROM UserChallenge uc " +
             "WHERE uc.challenge.id = :challengeId " +
             "AND uc.deletedAt IS NULL")
     fun countByChallengeId(challengeId: Long): Long
+
+    @Query("SELECT uc FROM UserChallenge uc " +
+            "WHERE uc.userId = :userId " +
+            "AND uc.challenge.id = :challengeId " +
+            "AND uc.deletedAt IS NULL")
+    fun findByUserIdAndChallengeId(userId: Long, challengeId: Long) : UserChallenge?
 
 }

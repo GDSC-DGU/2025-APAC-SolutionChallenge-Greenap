@@ -58,8 +58,21 @@ CREATE TABLE IF NOT EXISTS user_challenges (
                                                deleted_at TIMESTAMP NULL,
 
                                                PRIMARY KEY (user_challenge_id, user_id),
-                                               FOREIGN KEY (user_id) REFERENCES users (user_id),
                                                FOREIGN KEY (challenge_id) REFERENCES challenges (challenge_id)
+);
+
+CREATE TABLE IF NOT EXISTS user_challenge_histories (
+                                                        history_id	BIGINT	NOT NULL AUTO_INCREMENT,
+                                                        user_challenge_id	BIGINT	NOT NULL,
+                                                        date	DATE	NOT NULL,
+                                                        status	VARCHAR(50)	NOT NULL	DEFAULT 'fail',
+                                                        certificated_image_url	TEXT	NULL,
+                                                        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                                        updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                                                        deleted_at TIMESTAMP NULL,
+
+                                                        PRIMARY KEY (history_id),
+                                                        FOREIGN KEY (user_challenge_id) REFERENCES user_challenges (user_challenge_id)
 );
 
 CREATE TABLE IF NOT EXISTS feeds (
@@ -115,18 +128,4 @@ CREATE TABLE IF NOT EXISTS notification_settings (
 
     PRIMARY KEY (user_id),
     FOREIGN KEY (user_id) REFERENCES users (user_id)
-);
-
-CREATE TABLE IF NOT EXISTS user_challenge_histories (
-                                            history_id	BIGINT	NOT NULL AUTO_INCREMENT,
-                                            user_challenge_id	BIGINT	NOT NULL,
-                                            date	DATE	NOT NULL,
-                                            status	VARCHAR(50)	NOT NULL	DEFAULT 'fail',
-                                            certificated_image_url	TEXT	NULL,
-                                            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                                            updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                                            deleted_at TIMESTAMP NULL,
-
-    PRIMARY KEY (history_id),
-    FOREIGN KEY (user_challenge_id) REFERENCES user_challenges (user_challenge_id)
 );
