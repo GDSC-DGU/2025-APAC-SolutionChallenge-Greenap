@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.annotation.Rollback
 
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
 @Transactional
@@ -18,7 +19,8 @@ class ChallengeQueryServiceTest : IntegrationTestContainer() {
     private lateinit var challengeQueryService: ChallengeQueryService
 
     @Test
-    fun `카테고리 리스트와 챌린지 리스트를 정상적으로 조회한다`() {
+    @DisplayName("카테고리 리스트와 챌린지 리스트를 정상적으로 조회한다")
+    fun getTotalChallenges() {
         // when
         val categories = challengeQueryService.execute()
 
@@ -36,7 +38,8 @@ class ChallengeQueryServiceTest : IntegrationTestContainer() {
     }
 
     @Test
-    fun `챌린지 상세 정보를 정상적으로 조회한다`() {
+    @DisplayName("챌린지 상세 정보를 정상적으로 조회한다")
+    fun getChallengeDetailList() {
         // given
         val allCategories = challengeQueryService.execute()
         val anyChallengeId = allCategories

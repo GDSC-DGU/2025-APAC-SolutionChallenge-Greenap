@@ -30,10 +30,11 @@ class JwtUtil(
         Keys.hmacShaKeyFor(keyBytes)
     }
 
-    fun createToken(id: Long, email: String, expirationPeriod: Long?): String {
+    fun createToken(id: Long, email: String, role: String, expirationPeriod: Long?): String {
         val claims = Jwts.claims()
         claims[Constants.USER_ID_CLAIM_NAME] = id
         claims[Constants.USER_EMAIL_CLAIM_NAME] = email
+        claims[Constants.USER_ROLE_CLAIM_NAME] = role
 
         val now = Date()
         val tokenValidity = Date(now.time + expirationPeriod!!) // 토큰의 만료시간 설정
@@ -46,10 +47,10 @@ class JwtUtil(
             .compact()
     }
 
-    fun generateToken(id: Long, email: String): JwtTokenDto {
+    fun generateToken(id: Long, email: String, role: String): JwtTokenDto {
         return JwtTokenDto(
-            createToken(id, email, accessTokenExpirationPeriod),
-            createToken(id, email, refreshTokenExpirationPeriod)
+            createToken(id, email, role, accessTokenExpirationPeriod),
+            createToken(id, email, role, refreshTokenExpirationPeriod)
         )
     }
 

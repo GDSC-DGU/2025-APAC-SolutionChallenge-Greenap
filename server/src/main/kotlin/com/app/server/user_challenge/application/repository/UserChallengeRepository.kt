@@ -5,6 +5,7 @@ import com.app.server.user_challenge.domain.model.UserChallenge
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository
+import java.util.Optional
 
 @Repository
 interface UserChallengeRepository : JpaRepository<UserChallenge, Long> {
@@ -27,5 +28,10 @@ interface UserChallengeRepository : JpaRepository<UserChallenge, Long> {
             "AND uc.challenge.id = :challengeId " +
             "AND uc.deletedAt IS NULL")
     fun findByUserIdAndChallengeId(userId: Long, challengeId: Long) : UserChallenge?
+
+    @Query("SELECT uc FROM UserChallenge uc " +
+            "WHERE uc.id = :userChallengeId " +
+            "AND uc.deletedAt IS NULL")
+    override fun findById(userChallengeId: Long): Optional<UserChallenge>
 
 }

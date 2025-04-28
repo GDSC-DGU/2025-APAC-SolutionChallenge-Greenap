@@ -26,7 +26,7 @@ class UserChallengeCommandService (
     ) : UserChallenge {
         validateUserCanParticipateInChallenge(challengeParticipantDto)
         val userChallenge = createUserChallenge(challengeParticipantDto)
-        saveUserChallengeWithHistory(userChallenge, challengeParticipantDto.participantsDate)
+        saveUserChallengeWithHistory(userChallenge, challengeParticipantDto.participantsTotalDays)
         return userChallenge
     }
 
@@ -47,7 +47,7 @@ class UserChallengeCommandService (
             CreateUserChallengeDto(
                 userId = challengeParticipantDto.userId,
                 challenge = challenge,
-                participantsDate = challengeParticipantDto.participantsDate,
+                participantsDate = challengeParticipantDto.participantsTotalDays,
                 status =challengeParticipantDto.status
             )
         )

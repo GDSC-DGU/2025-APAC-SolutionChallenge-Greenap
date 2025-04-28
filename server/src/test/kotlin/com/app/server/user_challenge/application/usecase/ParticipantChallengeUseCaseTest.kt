@@ -34,8 +34,9 @@ class ParticipantChallengeUseCaseTest : IntegrationTestContainer() {
         challengeParticipantDto = ChallengeParticipantDto(
             userId = userId,
             challengeId = challengeId,
-            participantsDate = participationDays,
-            status = EUserChallengeStatus.RUNNING
+            participantsTotalDays = participationDays,
+            status = EUserChallengeStatus.RUNNING,
+            participantsStartDate = participantsStartDate
         )
     }
 

@@ -6,10 +6,12 @@ import com.app.server.common.exception.BusinessException
 import com.app.server.common.exception.InternalServerErrorException
 import com.app.server.common.model.BaseEntity
 import com.app.server.user_challenge.application.dto.CreateUserChallengeDto
+import com.app.server.user_challenge.domain.enums.EUserChallengeCertificationStatus
 import com.app.server.user_challenge.domain.enums.EUserChallengeStatus
 import com.app.server.user_challenge.domain.exception.UserChallengeException
 import jakarta.persistence.*
 import org.hibernate.annotations.DynamicUpdate
+import java.time.LocalDate
 
 @Entity
 @Table(name = "user_challenges")
@@ -32,19 +34,19 @@ class UserChallenge(
     val challenge: Challenge,
 
     @Enumerated(EnumType.STRING)
-    val status: EUserChallengeStatus = EUserChallengeStatus.RUNNING,
+    var status: EUserChallengeStatus = EUserChallengeStatus.RUNNING,
     @Column(name = "participant_days", nullable = false)
     val participantDays: Int,
     @Column(name = "ice_count")
-    val iceCount: Int = 0,
+    var iceCount: Int = 0,
     @Column(name = "now_consecutive_participation_day_count", nullable = false)
-    val nowConsecutiveParticipationDayCount: Long = 0L,
+    var nowConsecutiveParticipationDayCount: Long = 0L,
     @Column(name = "max_consecutive_participation_day_count", nullable = false)
-    val maxConsecutiveParticipationDayCount: Long = 0L,
+    var maxConsecutiveParticipationDayCount: Long = 0L,
     @Column(name = "total_participation_day_count", nullable = false)
-    val totalParticipationDayCount: Long,
+    var totalParticipationDayCount: Long = 0L,
     @Column(name = "report_message")
-    val reportMessage: String?
+    var reportMessage: String?
 
 ) : BaseEntity() {
 
@@ -75,22 +77,84 @@ class UserChallenge(
 
     fun validateCanParticipants() {
 
-        when(this.status){
+        when (this.status) {
             EUserChallengeStatus.COMPLETED -> {}
             EUserChallengeStatus.RUNNING -> throw BadRequestException(UserChallengeException.ALREADY_PARTICIPATED_AND_STATUS_IS_RUNNING)
             EUserChallengeStatus.PENDING -> throw BadRequestException(UserChallengeException.CHALLENGE_WAITED_AND_STATUS_IS_PENDING)
             EUserChallengeStatus.WAITING -> throw BusinessException(UserChallengeException.CONTINUE_CHALLENGE_AND_STATUS_IS_WAITING)
             EUserChallengeStatus.DEAD -> throw InternalServerErrorException(UserChallengeException.REPORT_NOT_FOUND_AND_STATUS_IS_DEAD)
-            else -> throw InternalServerErrorException(UserChallengeException.CANNOT_PARTICIPATE)
         }
     }
-    
-    fun getUserChallengeHistories() : List<UserChallengeHistory> {
+
+    fun getUserChallengeHistories(): List<UserChallengeHistory> {
         return this.userChallengeHistories
     }
-    
+
     fun addUserChallengeHistories(userChallengeHistories: List<UserChallengeHistory>) {
         this.userChallengeHistories.addAll(userChallengeHistories)
+    }
+
+    fun updateCertificationStateIsSuccess(certificationDate: LocalDate, certificatedImageUrl: String) {
+        val userChallengeHistory: UserChallengeHistory? = getUserChallengeHistoryWhen(certificationDate)
+
+        userChallengeHistory!!.updateStatus(status = EUserChallengeCertificationStatus.SUCCESS)
+        userChallengeHistory.updateCertificatedImageUrl(certificatedImageUrl = certificatedImageUrl)
+    }
+
+    fun increaseTotalParticipatedDays(certificationDate: LocalDate) {
+        val userChallengeHistory: UserChallengeHistory? = getUserChallengeHistoryWhen(certificationDate)
+
+        validateUpdateTotalParticipatedDaysAndUpdate(userChallengeHistory!!)
+    }
+
+    private fun validateUpdateTotalParticipatedDaysAndUpdate(userChallengeHistory: UserChallengeHistory) {
+        // 얼리기는 전체 참여 일수에 포함되지 않음
+        if (userChallengeHistory.status == EUserChallengeCertificationStatus.SUCCESS) {
+            this.totalParticipationDayCount += 1
+        } else {
+            throw BadRequestException(UserChallengeException.ALREADY_CERTIFICATED)
+        }
+    }
+
+    fun getUserChallengeHistoryWhen(certificationDate: LocalDate): UserChallengeHistory? {
+        val userChallengeHistory: UserChallengeHistory =
+            this.userChallengeHistories.find { it.date.isEqual(certificationDate) }
+                ?: return null
+        return userChallengeHistory
+    }
+
+    fun validateCanIceAndUse(): Boolean {
+        if (this.iceCount > 0) {
+            this.iceCount.minus(1)
+            return true
+        }
+        throw BadRequestException(UserChallengeException.CANNOT_USE_ICE)
+    }
+
+    fun validateIncreaseIceCount() : Int {
+        // 얼리기 조건 확인 후 얼리기 가능 여부 판단
+        if (this.totalParticipationDayCount > (this.participantDays.floorDiv(2))) {
+            this.iceCount += 1
+        }
+        return this.iceCount
+    }
+
+    fun updateCertificationStateIsIce(certificationDate: LocalDate) {
+        val userChallengeHistory: UserChallengeHistory? = getUserChallengeHistoryWhen(certificationDate)
+
+        userChallengeHistory!!.updateStatus(status = EUserChallengeCertificationStatus.ICE)
+    }
+
+    fun updateReportMessage(reportMessage: String) {
+        this.reportMessage = reportMessage
+    }
+
+    fun updateNowConsecutiveParticipationDayCount(day: Long) {
+        this.nowConsecutiveParticipationDayCount = day
+    }
+
+    fun updateMaxConsecutiveParticipationDayCount(day: Long) {
+        this.maxConsecutiveParticipationDayCount = day
     }
 
 }

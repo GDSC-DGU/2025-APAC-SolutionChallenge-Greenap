@@ -1,5 +1,8 @@
 package com.app.server
 
+import com.app.server.challenge.domain.model.Challenge
+import com.app.server.challenge.domain.model.ChallengeCategory
+import com.app.server.common.security.util.JwtUtil
 import org.jasypt.encryption.StringEncryptor
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
@@ -14,6 +17,7 @@ import org.testcontainers.containers.MySQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 import org.testcontainers.utility.DockerImageName
+import java.time.LocalDate
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -29,10 +33,19 @@ abstract class IntegrationTestContainer {
     @Autowired
     lateinit var mockMvc: MockMvc
 
+    @Autowired
+    private lateinit var jwtUtil: JwtUtil
+
     protected val userId: Long = 1L
     protected val challengeId: Long = 1L
     protected val userChallengeId: Long = 1L
     protected val participationDays: Int = 7
+    protected val participantsStartDate: LocalDate = LocalDate.now()
+    protected val testEmail = "testEmail@email.com"
+    protected val accessTokenValidationTime = 360000L
+    protected val token : String by lazy {
+        jwtUtil.createToken(userId, testEmail, "USER", accessTokenValidationTime)
+    }
 
     companion object {
         @Container

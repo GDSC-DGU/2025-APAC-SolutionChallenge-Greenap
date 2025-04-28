@@ -31,7 +31,6 @@ CREATE TABLE IF NOT EXISTS challenges (
                                           pre_description	TEXT	NOT NULL,
                                           description	TEXT	NOT NULL,
                                           certification_method_description	TEXT	NOT NULL,
-                                          status	VARCHAR(50)	NOT NULL	DEFAULT 'running',
                                           main_image_url	TEXT	NULL,
                                           certification_example_image_url	TEXT	NULL,
                                           created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -62,7 +61,7 @@ CREATE TABLE IF NOT EXISTS user_challenges (
 );
 
 CREATE TABLE IF NOT EXISTS user_challenge_histories (
-                                                        history_id	BIGINT	NOT NULL AUTO_INCREMENT,
+                                                        user_challenge_history_id	BIGINT	NOT NULL AUTO_INCREMENT,
                                                         user_challenge_id	BIGINT	NOT NULL,
                                                         date	DATE	NOT NULL,
                                                         status	VARCHAR(50)	NOT NULL	DEFAULT 'fail',
@@ -71,7 +70,7 @@ CREATE TABLE IF NOT EXISTS user_challenge_histories (
                                                         updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                                                         deleted_at TIMESTAMP NULL,
 
-                                                        PRIMARY KEY (history_id),
+                                                        PRIMARY KEY (user_challenge_history_id),
                                                         FOREIGN KEY (user_challenge_id) REFERENCES user_challenges (user_challenge_id)
 );
 

@@ -1,39 +1,38 @@
 package com.app.server.user_challenge.application.service
 
 import com.app.server.IntegrationTestContainer
-import com.app.server.challenge.application.usecase.dto.request.ChallengeParticipantDto
+import com.app.server.challenge.application.service.ChallengeService
+import com.app.server.challenge_certification.infra.CertificationInfraService
+import com.app.server.challenge_certification.ui.dto.CertificationRequestDto
+import com.app.server.challenge_certification.ui.dto.SendToCertificationServerRequestDto
+import com.app.server.challenge_certification.usecase.CertificationUseCase
 import com.app.server.common.exception.BadRequestException
-import com.app.server.common.exception.BusinessException
-import com.app.server.common.exception.InternalServerErrorException
-import com.app.server.user_challenge.application.usecase.ParticipantChallengeUseCase
+import com.app.server.user_challenge.application.dto.CreateUserChallengeDto
 import com.app.server.user_challenge.domain.enums.EUserChallengeCertificationStatus
 import com.app.server.user_challenge.domain.enums.EUserChallengeStatus
 import com.app.server.user_challenge.domain.exception.UserChallengeException
 import com.app.server.user_challenge.domain.model.UserChallenge
+import com.app.server.user_challenge.domain.model.UserChallengeHistory
 import jakarta.transaction.Transactional
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.*
+import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.ArgumentMatchers.any
+import org.mockito.BDDMockito.given
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.annotation.Rollback
+import org.springframework.test.context.bean.override.mockito.MockitoBean
+import org.springframework.test.context.junit.jupiter.SpringExtension
+import java.time.LocalDate
 import kotlin.test.Test
 
 @SpringBootTest
 @Transactional
 @Rollback
+@ExtendWith(SpringExtension::class)
 class UserChallengeCommandServiceTest : IntegrationTestContainer() {
 
-    @Test
-    @Disabled
-    @DisplayName("챌린지 인증에 성공하면 해당 날짜의 인증 상태를 변경할 수 있다.")
-    fun completeChallenge() {
-        // given
-        // when
-        // then
-    }
 
     @Test
     @Disabled
@@ -66,33 +65,6 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
     @Disabled
     @DisplayName("얼리기는 전체 참여기간의 50% 이상 성공했을 때 챌린지에서 딱 1번 사용할 수 있다.")
     fun skipChallengeWithLimit() {
-        // given
-        // when
-        // then
-    }
-
-    @Test
-    @Disabled
-    @DisplayName("챌린지 인증에 성공하면 전체 참여 일수가 증가한다.")
-    fun completeChallengeWithIncreasingParticipationDays() {
-        // given
-        // when
-        // then
-    }
-
-    @Test
-    @Disabled
-    @DisplayName("챌린지 인증에 성공했을 때 연속 참여 조건을 만족한다면 연속 참여 일수가 증가한다.")
-    fun completeChallengeWithIncreasingConsecutiveParticipationDays() {
-        // given
-        // when
-        // then
-    }
-
-    @Test
-    @Disabled
-    @DisplayName("챌린지 인증에 성공했을 때 연속 참여 조건을 만족하지 않는다면 연속 참여 일수가 초기화된다.")
-    fun completeChallengeWithResettingConsecutiveParticipationDays() {
         // given
         // when
         // then

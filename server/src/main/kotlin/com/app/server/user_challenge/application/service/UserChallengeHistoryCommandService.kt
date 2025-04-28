@@ -11,6 +11,7 @@ import java.time.LocalDate
 @Transactional
 class UserChallengeHistoryCommandService (
 ) {
+
     fun createUserChallengeHistory(userChallenge: UserChallenge, participantsDate: Int) {
         val userChallengeHistoryList = mutableListOf<UserChallengeHistory>()
 

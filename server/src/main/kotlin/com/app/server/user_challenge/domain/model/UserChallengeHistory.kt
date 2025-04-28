@@ -1,7 +1,9 @@
 package com.app.server.user_challenge.domain.model
 
+import com.app.server.common.exception.BadRequestException
 import com.app.server.common.model.BaseEntity
 import com.app.server.user_challenge.domain.enums.EUserChallengeCertificationStatus
+import com.app.server.user_challenge.domain.exception.UserChallengeException
 import jakarta.persistence.*
 import java.time.LocalDate
 
@@ -21,27 +23,21 @@ class UserChallengeHistory(
     val date: LocalDate,
 
     @Enumerated(EnumType.STRING)
-    val status: EUserChallengeCertificationStatus = EUserChallengeCertificationStatus.FAILED,
+    var status: EUserChallengeCertificationStatus = EUserChallengeCertificationStatus.FAILED,
 
     @Column(name = "certificated_image_url")
-    val certificatedImageUrl: String?
+    var certificatedImageUrl: String?
 
 ) : BaseEntity() {
     
-    companion object {
-        fun createForUserChallenge(
-            userChallenge: UserChallenge,
-            date: LocalDate,
-            status: EUserChallengeCertificationStatus = EUserChallengeCertificationStatus.FAILED,
-            certificatedImageUrl: String? = null
-        ): UserChallengeHistory {
-            return UserChallengeHistory(
-                id = null,
-                userChallenge = userChallenge,
-                date = date,
-                status = status,
-                certificatedImageUrl = certificatedImageUrl
-            )
+    fun updateStatus(status: EUserChallengeCertificationStatus) {
+        if (this.status == status) {
+            throw BadRequestException(UserChallengeException.ALREADY_CERTIFICATED)
         }
+        this.status = status
+    }
+
+    fun updateCertificatedImageUrl(certificatedImageUrl: String) {
+        this.certificatedImageUrl = certificatedImageUrl
     }
 }
