@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service
 class CertificationInfraService {
 
     fun certificate(sendToCertificationServerRequestDto: SendToCertificationServerRequestDto?) : Boolean {
+        // TODO: AI 서버와의 통신 로직 구현
         return true
     }
 }
