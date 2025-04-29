@@ -21,7 +21,7 @@ class CertificationFacadeService(
     private val certificationService: CertificationService,
     private val certificationInfraService: CertificationInfraService,
     private val userChallengeService: UserChallengeService
-) : CertificationUseCase, UsingIceUseCase {
+) : CertificationUseCase {
 
     override fun certificateChallengeWithDate(
         certificationRequestDto: CertificationRequestDto,
@@ -49,14 +49,6 @@ class CertificationFacadeService(
                 certificationDate = certificationDate
             )
         return certificationService.processAfterCertificateSuccess(userChallenge, certificationFacadeToServiceDto)
-    }
-
-    override fun execute(
-        userChallengeIceRequestDto: UserChallengeIceRequestDto,
-        certificationDate: LocalDate
-    ): UserChallenge {
-
-       return certificationService.processAfterUserChallengeIce(userChallengeIceRequestDto, certificationDate)
     }
 
 }

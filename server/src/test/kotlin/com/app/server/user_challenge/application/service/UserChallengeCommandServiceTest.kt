@@ -33,43 +33,6 @@ import kotlin.test.Test
 @ExtendWith(SpringExtension::class)
 class UserChallengeCommandServiceTest : IntegrationTestContainer() {
 
-
-    @Test
-    @Disabled
-    @DisplayName("챌린지 인증 대신 얼리기를 사용하여 인증을 건너뛸 수 있다.")
-    fun skipChallenge() {
-        // given
-        // when
-        // then
-    }
-
-    @Test
-    @Disabled
-    @DisplayName("얼리기를 사용하면 전체 참여일은 올라가지 않는다.")
-    fun skipChallengeWithoutIncreasingParticipationDays() {
-        // given
-        // when
-        // then
-    }
-
-    @Test
-    @Disabled
-    @DisplayName("얼리기를 사용하면 연속 참여 일수는 똑같이 올라간다.")
-    fun skipChallengeWithIncreasingConsecutiveParticipationDays() {
-        // given
-        // when
-        // then
-    }
-
-    @Test
-    @Disabled
-    @DisplayName("얼리기는 전체 참여기간의 50% 이상 성공했을 때 챌린지에서 딱 1번 사용할 수 있다.")
-    fun skipChallengeWithLimit() {
-        // given
-        // when
-        // then
-    }
-
     @Test
     @Disabled
     @DisplayName("해당 챌린지에서 가장 오래 연속으로 참여한 일수를 확인할 수 있다.")

@@ -49,30 +49,25 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
     @MockitoBean
     private lateinit var certificationInfraService: CertificationInfraService
 
-    val imageUrl = "testImageUrl"
-    val challengeTitle = "유휴 전원 / 대기 전력 OFF"
-    val challengeDescription = "사용하지 않는 전자기기의 전원을 끄거나, 플러그를 뽑는 챌린지입니다. TV, 컴퓨터 등의 대기 전력을 차단함으로써 불필요한 전기 낭비를 줄이고 온실가스 배출을 저감할 수 있습니다."
     var certificationRequestDto = CertificationRequestDto(
         userChallengeId = userChallengeId,
         imageUrl = imageUrl,
     )
-    var pastCertificationRequestDto = CertificationRequestDto(
-        userChallengeId = userChallengeId - 1,
-        imageUrl = imageUrl
-    )
+
     var sendToCertificationServerRequestDto = SendToCertificationServerRequestDto(
         imageUrl = imageUrl,
         challengeId = challengeId,
         challengeName = challengeTitle,
         challengeDescription = challengeDescription
     )
+    var savedUserChallenge: UserChallenge? = null
 
     @BeforeEach
-    fun setUpChallengeFixture() {
-        val savedUserChallenge = makeUserChallengeAndHistory(participantsStartDate)
+    fun setUp() {
+        savedUserChallenge = makeUserChallengeAndHistory(participantsStartDate)
 
         certificationRequestDto = CertificationRequestDto(
-            userChallengeId = savedUserChallenge.id!!,
+            userChallengeId = savedUserChallenge!!.id!!,
             imageUrl = imageUrl,
         )
         val challenge = challengeService.findById(challengeId)
@@ -193,15 +188,16 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
         given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
             EUserCertificatedResultCode.SUCCESS_CERTIFICATED
         )
-        val pastUserChallenge : UserChallenge? = makeUserChallengeAndHistory(participantsStartDate.minusDays(1))
+        val pastUserChallengeNowConsecutiveParticipationDayCount = savedUserChallenge!!.nowConsecutiveParticipationDayCount
+        val pastUserChallengeMaxConsecutiveParticipationDayCount = savedUserChallenge!!.maxConsecutiveParticipationDayCount
 
         // when
         val todayUserChallenge : UserChallenge =
             certificationUseCase.certificateChallengeWithDate(certificationRequestDto, participantsStartDate)
         // then
-        assertThat(todayUserChallenge.nowConsecutiveParticipationDayCount).isGreaterThan(pastUserChallenge!!.nowConsecutiveParticipationDayCount)
-        assertThat(todayUserChallenge.nowConsecutiveParticipationDayCount - pastUserChallenge.nowConsecutiveParticipationDayCount).isOne
-        assertThat(todayUserChallenge.maxConsecutiveParticipationDayCount).isEqualTo(todayUserChallenge.nowConsecutiveParticipationDayCount)
+        assertThat(todayUserChallenge.nowConsecutiveParticipationDayCount).isGreaterThan(pastUserChallengeNowConsecutiveParticipationDayCount)
+        assertThat(todayUserChallenge.nowConsecutiveParticipationDayCount - pastUserChallengeNowConsecutiveParticipationDayCount).isOne
+        assertThat(todayUserChallenge.maxConsecutiveParticipationDayCount).isEqualTo(pastUserChallengeMaxConsecutiveParticipationDayCount)
     }
 
     @Test

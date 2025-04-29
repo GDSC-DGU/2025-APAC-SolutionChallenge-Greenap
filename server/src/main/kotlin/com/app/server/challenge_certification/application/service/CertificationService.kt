@@ -2,8 +2,8 @@ package com.app.server.challenge_certification.application.service
 
 import com.app.server.challenge_certification.application.dto.CertificationFacadeToServiceDto
 import com.app.server.challenge_certification.application.service.constant.EConsecutiveState
-import com.app.server.challenge_certification.ui.dto.CertificationRequestDto
 import com.app.server.challenge_certification.ui.dto.UserChallengeIceRequestDto
+import com.app.server.challenge_certification.usecase.UsingIceUseCase
 import com.app.server.common.exception.InternalServerErrorException
 import com.app.server.user_challenge.application.service.UserChallengeService
 import com.app.server.user_challenge.domain.enums.EUserChallengeCertificationStatus
@@ -15,8 +15,8 @@ import java.time.LocalDate
 
 @Service
 class CertificationService(
-    private val userChallengeService: UserChallengeService
-) {
+    private val userChallengeService: UserChallengeService,
+) : UsingIceUseCase {
 
     fun processAfterCertificateSuccess(
        userChallenge: UserChallenge, certificationDto: CertificationFacadeToServiceDto
@@ -35,6 +35,22 @@ class CertificationService(
 
         // 얼리기 조건 확인 후 업데이트
         userChallenge.validateIncreaseIceCount()
+
+        return userChallenge
+    }
+
+    override fun processAfterCertificateIce(
+        iceDto: UserChallengeIceRequestDto,
+        certificationDate: LocalDate
+    ): UserChallenge {
+        val userChallenge = userChallengeService.findById(userChallengeId = iceDto.userChallengeId)
+
+        // 얼리기 가능 여부 판단
+        userChallenge.validateCanIceAndUse()
+        // 날짜 인증 상태 Ice로 변경
+        userChallenge.updateCertificationStateIsIce(certificationDate)
+        // 연속 참여 일수 증가
+        readyForValidateCanIncreaseConsecutiveParticipantDays(userChallenge, certificationDate)
 
         return userChallenge
     }
@@ -119,18 +135,4 @@ class CertificationService(
         }
     }
 
-    fun processAfterUserChallengeIce(
-        userChallengeIceRequestDto: UserChallengeIceRequestDto, certificationDate: LocalDate
-    ): UserChallenge {
-        val userChallenge = userChallengeService.findById(userChallengeId = userChallengeIceRequestDto.userChallengeId)
-
-        // 얼리기 가능 여부 판단
-        userChallenge.validateCanIceAndUse()
-        // 날짜 인증 상태 Ice로 변경
-        userChallenge.updateCertificationStateIsIce(certificationDate)
-        // 연속 참여 일수 증가
-        readyForValidateCanIncreaseConsecutiveParticipantDays(userChallenge, certificationDate)
-
-        return userChallenge
-    }
 }

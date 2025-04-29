@@ -125,7 +125,7 @@ class UserChallenge(
 
     fun validateCanIceAndUse(): Boolean {
         if (this.iceCount > 0) {
-            this.iceCount.minus(1)
+            this.iceCount -= 1
             return true
         }
         throw BadRequestException(UserChallengeException.CANNOT_USE_ICE)
