@@ -12,7 +12,7 @@ import 'package:greenap/bindings/challenge_binding.dart' as challenge;
 import 'package:greenap/bindings/mypage_binding.dart' as mypage;
 import 'package:greenap/bindings/verification_binding.dart' as verification;
 import 'package:greenap/bindings/root_binding.dart' as root;
-import 'appRoutes.dart';
+import 'app_routes.dart';
 
 abstract class AppPages {
   static final List<GetPage> data = [

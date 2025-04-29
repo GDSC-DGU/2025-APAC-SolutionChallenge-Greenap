@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:greenap/config/color_system.dart';
 import 'package:greenap/views/challenge/challenge_screen.dart' as challenge;
 import 'package:greenap/views/feed/feed_screen.dart' as feed;
 import 'package:greenap/views/home/home_screen.dart' as home;
@@ -33,11 +34,14 @@ class _RootScreenState extends State<RootScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: IndexedStack(index: _selectedIndex, children: _pages),
-      bottomNavigationBar: CustomBottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onTap,
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: ColorSystem.white,
+        body: IndexedStack(index: _selectedIndex, children: _pages),
+        bottomNavigationBar: CustomBottomNavigationBar(
+          currentIndex: _selectedIndex,
+          onTap: _onTap,
+        ),
       ),
     );
   }

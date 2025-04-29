@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:greenap/config/colorSystem.dart';
-import 'package:greenap/config/appRoutes.dart';
-import 'package:greenap/config/appPages.dart';
+import 'package:greenap/config/color_system.dart';
+import 'package:greenap/config/app_routes.dart';
+import 'package:greenap/config/app_pages.dart';
 
 void main() {
   runApp(const MyApp());
