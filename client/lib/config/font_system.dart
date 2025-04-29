@@ -80,4 +80,9 @@ abstract class FontSystem {
     fontWeight: FontWeight.w500,
     height: 1.5,
   );
+  static const TextStyle NavigationLabel = TextStyle(
+    fontSize: 12,
+    fontWeight: FontWeight.w500,
+    height: 1.8,
+  );
 }

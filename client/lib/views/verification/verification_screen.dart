@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:greenap/config/color_system.dart';
+import 'package:get/get.dart';
+import 'package:greenap/views_model/verification_view_model.dart';
 
-class VerificationScreen extends StatelessWidget {
+class VerificationScreen extends GetView<VerificationViewModel> {
   const VerificationScreen({super.key});
 
   @override

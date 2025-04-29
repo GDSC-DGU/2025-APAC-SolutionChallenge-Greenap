@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:greenap/config/color_system.dart';
+import 'package:greenap/config/font_system.dart';
 import 'package:greenap/config/app_routes.dart';
 
 class CustomBottomNavigationBar extends StatelessWidget {
@@ -21,14 +22,14 @@ class CustomBottomNavigationBar extends StatelessWidget {
 
     return BottomNavigationBar(
       backgroundColor: ColorSystem.white,
-      elevation: 0,
       type: BottomNavigationBarType.fixed,
       currentIndex: currentIndex,
       onTap: onTap,
       selectedItemColor: selectedColor,
       unselectedItemColor: unselectedColor,
       showUnselectedLabels: true,
-
+      selectedLabelStyle: FontSystem.NavigationLabel,
+      unselectedLabelStyle: FontSystem.NavigationLabel,
       items: [
         BottomNavigationBarItem(
           icon: SvgPicture.asset(
@@ -40,7 +41,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
             width: 24,
             height: 24,
           ),
-          label: "챌린지",
+          label: '챌린지',
         ),
         BottomNavigationBarItem(
           icon: SvgPicture.asset(

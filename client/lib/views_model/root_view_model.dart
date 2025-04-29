@@ -1,11 +1,9 @@
 import 'package:get/get.dart';
 
 class RootViewModel extends GetxController {
-  final RxInt _selectedIndex = 0.obs;
-
-  int get selectedIndex => _selectedIndex.value;
+  final RxInt selectedIndex = 2.obs;
 
   void changeIndex(int index) {
-    _selectedIndex.value = index;
+    selectedIndex.value = index;
   }
 }

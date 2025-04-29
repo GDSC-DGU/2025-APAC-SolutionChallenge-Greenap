@@ -7,40 +7,35 @@ import 'package:greenap/views/mypage/mypage_screen.dart' as mypage;
 import 'package:greenap/views/verification/verification_screen.dart'
     as verification;
 import 'package:greenap/widgets/app_bar/custom_bottom_navigation_bar.dart';
+import 'package:get/get.dart';
+import 'package:greenap/views_model/root_view_model.dart';
 
-class RootScreen extends StatefulWidget {
+class RootScreen extends GetView<RootViewModel> {
   const RootScreen({super.key});
-
-  @override
-  State<RootScreen> createState() => _RootScreenState();
-}
-
-class _RootScreenState extends State<RootScreen> {
-  int _selectedIndex = 2; // 기본값: 홈
-
-  final List<Widget> _pages = [
-    challenge.ChallengeScreen(),
-    feed.FeedScreen(),
-    home.HomeScreen(),
-    verification.VerificationScreen(),
-    mypage.MypageScreen(),
-  ];
-
-  void _onTap(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    final List<Widget> pages = [
+      challenge.ChallengeScreen(),
+      feed.FeedScreen(),
+      home.HomeScreen(),
+      verification.VerificationScreen(),
+      mypage.MypageScreen(),
+    ];
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: ColorSystem.white,
-        body: IndexedStack(index: _selectedIndex, children: _pages),
-        bottomNavigationBar: CustomBottomNavigationBar(
-          currentIndex: _selectedIndex,
-          onTap: _onTap,
+        body: Obx(
+          () => IndexedStack(
+            index: controller.selectedIndex.value,
+            children: pages,
+          ),
+        ),
+        bottomNavigationBar: Obx(
+          () => CustomBottomNavigationBar(
+            currentIndex: controller.selectedIndex.value,
+            onTap: controller.changeIndex,
+          ),
         ),
       ),
     );

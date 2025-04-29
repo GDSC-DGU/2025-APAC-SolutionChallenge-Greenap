@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:greenap/config/color_system.dart';
+import 'package:get/get.dart';
+import 'package:greenap/views_model/mypage_view_model.dart';
 
-class MypageScreen extends StatelessWidget {
+class MypageScreen extends GetView<MypageViewModel> {
   const MypageScreen({super.key});
 
   @override
