@@ -17,6 +17,7 @@ enum class UserChallengeException(
     FAILED_CERTIFICATION("UCH008", "인증에 실패했습니다."),
     CANNOT_USE_ICE("UCH009", "얼리기 기회가 없어 사용이 불가합니다."),
     CANNOT_UPDATE_CONSECUTIVE_PARTICIPATION_DAY_COUNT("UCH010", "연속 참여일 수를 업데이트할 수 없습니다."),
+    ERROR_IN_CERTIFICATED_SERVER("UCH011", "챌린지 인증 서버 오류입니다."),
     ;
 
 }

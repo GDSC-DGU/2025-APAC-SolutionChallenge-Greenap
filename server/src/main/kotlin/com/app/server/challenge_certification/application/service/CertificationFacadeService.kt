@@ -1,6 +1,7 @@
 package com.app.server.challenge_certification.application.service
 
 import com.app.server.challenge_certification.application.dto.CertificationFacadeToServiceDto
+import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
 import com.app.server.challenge_certification.infra.CertificationInfraService
 import com.app.server.challenge_certification.ui.dto.CertificationRequestDto
 import com.app.server.challenge_certification.ui.dto.UserChallengeIceRequestDto
@@ -29,13 +30,17 @@ class CertificationFacadeService(
 
         val userChallenge = userChallengeService.findById(certificationRequestDto.userChallengeId)
 
-        if (!certificationInfraService.certificate(
-                sendToCertificationServerRequestDto = certificationRequestDto.toSendToCertificationServerRequestDto(
-                    userChallenge.challenge
-                )
+        val certificateResult : EUserCertificatedResultCode = certificationInfraService.certificate(
+            sendToCertificationServerRequestDto = certificationRequestDto.toSendToCertificationServerRequestDto(
+                userChallenge.challenge
             )
-        ) {
-            throw BadRequestException(UserChallengeException.FAILED_CERTIFICATION)
+        )
+
+        when (certificateResult)
+         {
+            EUserCertificatedResultCode.CERTIFICATED_FAILED -> throw BadRequestException(UserChallengeException.FAILED_CERTIFICATION)
+            EUserCertificatedResultCode.SUCCESS_CERTIFICATED -> {}
+            else -> throw BadRequestException(UserChallengeException.ERROR_IN_CERTIFICATED_SERVER)
         }
 
         val certificationFacadeToServiceDto =

@@ -2,6 +2,7 @@ package com.app.server.challenge_certification.application.usecase
 
 import com.app.server.IntegrationTestContainer
 import com.app.server.challenge.application.service.ChallengeService
+import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
 import com.app.server.challenge_certification.infra.CertificationInfraService
 import com.app.server.challenge_certification.ui.dto.CertificationRequestDto
 import com.app.server.challenge_certification.ui.dto.SendToCertificationServerRequestDto
@@ -21,7 +22,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.given
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -83,7 +83,9 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
             challengeDescription = challenge.description
         )
 
-        given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(true)
+        given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
+            EUserCertificatedResultCode.SUCCESS_CERTIFICATED
+        )
     }
 
     @AfterEach
@@ -155,7 +157,9 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
     @DisplayName("챌린지 인증에 성공하면 해당 날짜의 인증 상태를 변경할 수 있다.")
     fun completeChallenge() {
         // given
-        given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(true)
+        given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
+            EUserCertificatedResultCode.SUCCESS_CERTIFICATED
+        )
 
         // when
         val todayUserChallenge : UserChallenge =
@@ -168,7 +172,9 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
     @DisplayName("챌린지 인증에 성공하면 전체 참여 일수가 증가한다.")
     fun completeChallengeWithIncreasingParticipationDays() {
         // given
-        given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(true)
+        given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
+            EUserCertificatedResultCode.SUCCESS_CERTIFICATED
+        )
         val pastUserChallenge : UserChallenge = makeUserChallengeAndHistory(participantsStartDate.minusDays(1))
 
         // when
@@ -184,7 +190,9 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
     @DisplayName("챌린지에 처음 인증에 성공했다면, 연속 참여 일수가 증가한다.")
     fun completeChallengeFirstTryWithIncreasingConsecutiveParticipationDays()  {
         // given
-        given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(true)
+        given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
+            EUserCertificatedResultCode.SUCCESS_CERTIFICATED
+        )
         val pastUserChallenge : UserChallenge? = makeUserChallengeAndHistory(participantsStartDate.minusDays(1))
 
         // when
@@ -200,8 +208,9 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
     @DisplayName("챌린지 인증에 성공했을 때 연속 참여 조건을 만족한다면 연속 참여 일수가 증가한다.")
     fun completeChallengeWithIncreasingConsecutiveParticipationDays() {
         // given
-        given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(true)
-
+        given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
+            EUserCertificatedResultCode.SUCCESS_CERTIFICATED
+        )
         val certificationDate: LocalDate = LocalDate.now()
         val afterCertificationDate: LocalDate = LocalDate.now().plusDays(1)
         val todayUserChallenge : UserChallenge =
@@ -221,7 +230,9 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
     @DisplayName("챌린지 인증에 성공했을 때 연속 참여 조건을 만족하지 않는다면 연속 참여 일수가 초기화된다.")
     fun completeChallengeWithResettingConsecutiveParticipationDays() {
         // given
-        given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(true)
+        given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
+            EUserCertificatedResultCode.SUCCESS_CERTIFICATED
+        )
         val certificationDate: LocalDate = LocalDate.now()
         val afterCertificationDate: LocalDate = LocalDate.now().plusDays(2)
         val todayUserChallenge : UserChallenge =
@@ -238,9 +249,9 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
     @DisplayName("챌린지 인증에 실패하면 인증 실패임을 알린다.")
     fun failCertificated() {
         //given
-        given(certificationInfraService.certificate(any())).willReturn(false)
-
-
+        given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
+            EUserCertificatedResultCode.CERTIFICATED_FAILED
+        )
         // when & then
         val exception = assertThrows<BadRequestException>{
             certificationUseCase.certificateChallengeWithDate(
@@ -249,5 +260,27 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
             )
         }
         assertThat(exception.message).isEqualTo(UserChallengeException.FAILED_CERTIFICATION.message)
+    }
+
+    @Test
+    @DisplayName("오늘 인증한 챌린지에 대해 인증을 시도하면 예외가 발생한다.")
+    fun alreadyCertificatedToday() {
+        // given
+        given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
+            EUserCertificatedResultCode.SUCCESS_CERTIFICATED
+        )
+        certificationUseCase.certificateChallengeWithDate(
+            certificationRequestDto = certificationRequestDto,
+            certificationDate = participantsStartDate
+        )
+
+        // when & then
+        val exception = assertThrows<BadRequestException> {
+            certificationUseCase.certificateChallengeWithDate(
+                certificationRequestDto = certificationRequestDto,
+                certificationDate = participantsStartDate
+            )
+        }
+        assertThat(exception.message).isEqualTo(UserChallengeException.ALREADY_CERTIFICATED.message)
     }
 }
