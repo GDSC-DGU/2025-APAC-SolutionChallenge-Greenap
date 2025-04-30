@@ -1,30 +1,12 @@
 package com.app.server.user_challenge.application.service
 
 import com.app.server.IntegrationTestContainer
-import com.app.server.challenge.application.service.ChallengeService
-import com.app.server.challenge_certification.infra.CertificationInfraService
-import com.app.server.challenge_certification.ui.dto.CertificationRequestDto
-import com.app.server.challenge_certification.ui.dto.SendToCertificationServerRequestDto
-import com.app.server.challenge_certification.usecase.CertificationUseCase
-import com.app.server.common.exception.BadRequestException
-import com.app.server.user_challenge.application.dto.CreateUserChallengeDto
-import com.app.server.user_challenge.domain.enums.EUserChallengeCertificationStatus
-import com.app.server.user_challenge.domain.enums.EUserChallengeStatus
-import com.app.server.user_challenge.domain.exception.UserChallengeException
-import com.app.server.user_challenge.domain.model.UserChallenge
-import com.app.server.user_challenge.domain.model.UserChallengeHistory
 import jakarta.transaction.Transactional
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.ArgumentMatchers.any
-import org.mockito.BDDMockito.given
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.annotation.Rollback
-import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import java.time.LocalDate
 import kotlin.test.Test
 
 @SpringBootTest
@@ -44,7 +26,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
 
     @Test
     @Disabled
-    @DisplayName("찰린지 종료 일자보다 오늘 일자가 더 크다면, 챌린지 상태를 Pending으로 변경한다.")
+    @DisplayName("챌린지 종료 일자보다 오늘 일자가 더 크다면, 챌린지 상태를 Pending으로 변경한다.")
     fun finishChallengeWithOverdue() {
         // given
         // when
@@ -172,150 +154,6 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
     @Disabled
     @DisplayName("챌린지의 상태가 Dead인 챌린지들을 모아 다시 리포트 메시지를 요청할 수 있다. 이 요청은 주기적으로 이루어지거나, Dead 상태의 챌린지들의 개수가 10개 이상 일 때 이루어진다.")
     fun getReportMessageWithDead() {
-        // given
-        // when
-        // then
-    }
-
-    @Test
-    @Disabled
-    @DisplayName("인증에 성공한 챌린지는 피드로 작성할 수 있다.")
-    fun createFeed() {
-        // given
-        // when
-        // then
-    }
-
-    @Test
-    @Disabled
-    @DisplayName("피드로 작성하는 챌린지는 사용자의 인증 사진을 피드에 올리게 된다.")
-    fun createFeedWithImage() {
-        // given
-        // when
-        // then
-    }
-
-    @Test
-    @Disabled
-    @DisplayName("피드의 내용은 1000자 이하로 작성할 수 있다.")
-    fun createFeedWithContent() {
-        // given
-        // when
-        // then
-    }
-
-    @Test
-    @Disabled
-    @DisplayName("피드의 내용은 1000자 이상으로 작성할 수 없다.")
-    fun createFeedWithContentOverLimit() {
-        // given
-        // when
-        // then
-    }
-
-    @Test
-    @Disabled
-    @DisplayName("피드가 작성되어 피드 저장 완료 이벤트가 게시되면, 피드 조회 전용 테이블에 피드가 복사되어 저장된다.")
-    fun createFeedWithCopy() {
-        // given
-        // when
-        // then
-    }
-
-    @Test
-    @Disabled
-    @DisplayName("피드 조회는 피드 조회 전용 테이블에서 가져온다.")
-    fun getFeed() {
-        // given
-        // when
-        // then
-    }
-
-    @Test
-    @Disabled
-    @DisplayName("카테고리별로 피드를 필터링하여 조회할 수 있다.")
-    fun getFeedWithCategory() {
-        // given
-        // when
-        // then
-    }
-
-    @Test
-    @Disabled
-    @DisplayName("피드를 출력할 시에는 가장 최신순으로 정렬되어 제공된다.")
-    fun getFeedWithSort() {
-        // given
-        // when
-        // then
-    }
-
-    @Test
-    @Disabled
-    @DisplayName("피드 조회 시, 사용자가 원하는 page와 size로 조회할 수 있다.")
-    fun getFeedWithPage() {
-        // given
-        // when
-        // then
-    }
-
-    @Test
-    @Disabled
-    @DisplayName("특정 사용자가 작성한 피드들만 조회할 수 있다.")
-    fun getFeedWithUser() {
-        // given
-        // when
-        // then
-    }
-
-    @Test
-    @Disabled
-    @DisplayName("특정 사용자의 특정 챌린지들에서 작성한 피드들만 조회할 수 있다.")
-    fun getFeedWithUserAndChallenge() {
-        // given
-        // when
-        // then
-    }
-
-    @Test
-    @Disabled
-    @DisplayName("특정 사용자의 특정 카테고리 내에서 참여했던 모든 챌린지들에 대한 피드들만 조회할 수 있다.")
-    fun getFeedWithUserAndCategory() {
-        // given
-        // when
-        // then
-    }
-
-    @Test
-    @Disabled
-    @DisplayName("피드 수정 시, 피드의 내용을 1000자 이하로 수정할 수 있다.")
-    fun updateFeedWithContent() {
-        // given
-        // when
-        // then
-    }
-
-    @Test
-    @Disabled
-    @DisplayName("피드 수정 시, 피드의 내용을 1000자 이상으로 수정할 수 없다.")
-    fun updateFeedWithContentOverLimit() {
-        // given
-        // when
-        // then
-    }
-
-    @Test
-    @Disabled
-    @DisplayName("피드를 삭제할 수 있다.")
-    fun deleteFeed() {
-        // given
-        // when
-        // then
-    }
-
-    @Test
-    @Disabled
-    @DisplayName("피드를 삭제하면 피드 조회 전용 테이블에서도 삭제된다.")
-    fun deleteFeedWithCopy() {
         // given
         // when
         // then

@@ -1,6 +1,6 @@
 package com.app.server.challenge.ui.dto.response
 
-import com.app.server.challenge.application.usecase.dto.response.CategoryDto
+import com.app.server.challenge.ui.usecase.dto.response.CategoryDto
 
 data class GetAllChallengesResponseDto(
     val categories: List<CategoryResponseDto>,

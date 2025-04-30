@@ -6,7 +6,7 @@ import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
 import com.app.server.challenge_certification.infra.CertificationInfraService
 import com.app.server.challenge_certification.ui.dto.CertificationRequestDto
 import com.app.server.challenge_certification.ui.dto.SendToCertificationServerRequestDto
-import com.app.server.challenge_certification.usecase.CertificationUseCase
+import com.app.server.challenge_certification.ui.usecase.CertificationUseCase
 import com.app.server.user_challenge.application.dto.CreateUserChallengeDto
 import com.app.server.user_challenge.application.service.UserChallengeService
 import com.app.server.user_challenge.domain.enums.EUserChallengeCertificationStatus
@@ -14,8 +14,10 @@ import com.app.server.user_challenge.domain.enums.EUserChallengeStatus
 import com.app.server.user_challenge.domain.model.UserChallenge
 import com.app.server.user_challenge.domain.model.UserChallengeHistory
 import com.app.server.user_challenge.ui.dto.GetTotalUserChallengeResponseDto
+import com.app.server.user_challenge.ui.usecase.GetTotalUserChallengeUseCase
 import jakarta.transaction.Transactional
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -77,6 +79,11 @@ class GetTotalUserChallengeUseCaseTest : IntegrationTestContainer() {
                 participantsStartDate.plusDays(i.toLong())
             )
         }
+    }
+
+    @AfterEach
+    fun tearDown() {
+        userChallengeService.deleteAll()
     }
 
     private fun makeUserChallengeAndHistory(challengeSelectId: Long, startDate: LocalDate): UserChallenge {

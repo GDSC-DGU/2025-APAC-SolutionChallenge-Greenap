@@ -131,7 +131,7 @@ class UserChallenge(
         throw BadRequestException(UserChallengeException.CANNOT_USE_ICE)
     }
 
-    fun validateIncreaseIceCount() : Int {
+    fun validateIncreaseIceCount(): Int {
         // 얼리기 조건 확인 후 얼리기 가능 여부 판단
         if (this.totalParticipationDayCount > (this.participantDays.floorDiv(2))) {
             this.iceCount += 1
@@ -149,6 +149,10 @@ class UserChallenge(
         this.reportMessage = reportMessage
     }
 
+    fun updateStatus(status: EUserChallengeStatus) {
+        this.status = status
+    }
+
     fun updateNowConsecutiveParticipationDayCount(day: Long) {
         this.nowConsecutiveParticipationDayCount = day
     }
@@ -162,15 +166,34 @@ class UserChallenge(
     }
 
     fun calculateProgress(todayDate: LocalDate): Int {
-        return ((calculateElapsedDays(todayDate).toDouble() / totalParticipationDayCount) * 100).toInt().coerceIn(0, 100)
+        return ((calculateElapsedDays(todayDate).toDouble() / totalParticipationDayCount) * 100).toInt()
+            .coerceIn(0, 100)
     }
 
     fun isCertificatedToday(todayDate: LocalDate): Boolean {
-        return userChallengeHistories.find { it.date.isEqual(todayDate) }?.status!! != EUserChallengeCertificationStatus.FAILED
+        return userChallengeHistories.find { it.date.isEqual(todayDate) }
+            ?.status!! != EUserChallengeCertificationStatus.FAILED
     }
 
-    fun getUserChallengeHistoriesBeforeToday(todayDate: LocalDate) : List<UserChallengeHistory> {
+    fun getUserChallengeHistoriesBeforeToday(todayDate: LocalDate): List<UserChallengeHistory> {
         return userChallengeHistories.filter { it.date.isBefore(todayDate.plusDays(1)) }
+    }
+
+    fun checkIsDone(todayDate: LocalDate): Boolean {
+        // status가 running인데, 오늘 날짜와 챌린지 종료 날짜가 같은 상황에서 인증이 완료되었거나, 챌린지 종료 날짜가 지난 경우
+        val endDate = this.createdAt!!.toLocalDate().plusDays(participantDays.toLong())
+
+        return this.status == EUserChallengeStatus.RUNNING &&
+                (
+                        todayDate.isAfter(endDate) ||
+                                (todayDate.isEqual(endDate) &&
+                                        userChallengeHistories.last().status != EUserChallengeCertificationStatus.FAILED)
+                        )
+    }
+
+    fun getSuccessDayCount() : Int {
+        return this.userChallengeHistories
+            .count { it.status != EUserChallengeCertificationStatus.FAILED }
     }
 
 }

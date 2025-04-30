@@ -7,8 +7,8 @@ import com.app.server.challenge_certification.infra.CertificationInfraService
 import com.app.server.challenge_certification.ui.dto.CertificationRequestDto
 import com.app.server.challenge_certification.ui.dto.SendToCertificationServerRequestDto
 import com.app.server.challenge_certification.ui.dto.UserChallengeIceRequestDto
-import com.app.server.challenge_certification.usecase.CertificationUseCase
-import com.app.server.challenge_certification.usecase.UsingIceUseCase
+import com.app.server.challenge_certification.ui.usecase.CertificationUseCase
+import com.app.server.user_challenge.ui.usecase.UsingIceUseCase
 import com.app.server.common.exception.BadRequestException
 import com.app.server.user_challenge.application.dto.CreateUserChallengeDto
 import com.app.server.user_challenge.application.service.UserChallengeService

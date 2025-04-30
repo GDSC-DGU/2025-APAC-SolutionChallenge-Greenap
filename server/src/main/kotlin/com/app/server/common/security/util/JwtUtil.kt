@@ -1,12 +1,11 @@
 package com.app.server.common.security.util
 
 import com.app.server.common.constant.Constants
-import com.app.server.user.presentation.dto.response.JwtTokenDto
+import com.app.server.user.ui.dto.response.JwtTokenDto
 import io.jsonwebtoken.*
 import io.jsonwebtoken.io.Decoders
 import io.jsonwebtoken.security.Keys
 import jakarta.servlet.http.HttpServletRequest
-import org.springframework.beans.factory.InitializingBean
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.springframework.util.StringUtils

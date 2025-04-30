@@ -2,11 +2,8 @@ package com.app.server.challenge_certification.infra
 
 import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
 import com.app.server.challenge_certification.ui.dto.SendToCertificationServerRequestDto
-import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.http.HttpEntity
-import org.springframework.http.HttpHeaders
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import org.springframework.util.LinkedMultiValueMap

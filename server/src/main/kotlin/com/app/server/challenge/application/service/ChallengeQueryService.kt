@@ -1,9 +1,9 @@
 package com.app.server.challenge.application.service
 
-import com.app.server.challenge.application.usecase.GetListChallengesUseCase
-import com.app.server.challenge.application.usecase.dto.response.CategoryDto
-import com.app.server.challenge.application.usecase.dto.response.ChallengeDetailDto
-import com.app.server.challenge.application.usecase.dto.response.ChallengesSimpleDto
+import com.app.server.challenge.ui.usecase.GetListChallengesUseCase
+import com.app.server.challenge.ui.usecase.dto.response.CategoryDto
+import com.app.server.challenge.ui.usecase.dto.response.ChallengeDetailDto
+import com.app.server.challenge.ui.usecase.dto.response.ChallengesSimpleDto
 import com.app.server.challenge.domain.model.Challenge
 import com.app.server.challenge.domain.model.ChallengeCategory
 import org.springframework.stereotype.Service

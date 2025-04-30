@@ -6,7 +6,7 @@ import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
 import com.app.server.challenge_certification.infra.CertificationInfraService
 import com.app.server.challenge_certification.ui.dto.CertificationRequestDto
 import com.app.server.challenge_certification.ui.dto.SendToCertificationServerRequestDto
-import com.app.server.challenge_certification.usecase.CertificationUseCase
+import com.app.server.challenge_certification.ui.usecase.CertificationUseCase
 import com.app.server.common.exception.BadRequestException
 import com.app.server.user_challenge.application.dto.CreateUserChallengeDto
 import com.app.server.user_challenge.application.service.UserChallengeService
@@ -182,22 +182,20 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
     }
 
     @Test
-    @DisplayName("챌린지에 처음 인증에 성공했다면, 연속 참여 일수가 증가한다.")
+    @DisplayName("챌린지를 처음 인증하여 성공했다면, 연속 참여 일수가 증가한다.")
     fun completeChallengeFirstTryWithIncreasingConsecutiveParticipationDays()  {
         // given
         given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
             EUserCertificatedResultCode.SUCCESS_CERTIFICATED
         )
         val pastUserChallengeNowConsecutiveParticipationDayCount = savedUserChallenge!!.nowConsecutiveParticipationDayCount
-        val pastUserChallengeMaxConsecutiveParticipationDayCount = savedUserChallenge!!.maxConsecutiveParticipationDayCount
-
         // when
         val todayUserChallenge : UserChallenge =
             certificationUseCase.certificateChallengeWithDate(certificationRequestDto, participantsStartDate)
         // then
         assertThat(todayUserChallenge.nowConsecutiveParticipationDayCount).isGreaterThan(pastUserChallengeNowConsecutiveParticipationDayCount)
         assertThat(todayUserChallenge.nowConsecutiveParticipationDayCount - pastUserChallengeNowConsecutiveParticipationDayCount).isOne
-        assertThat(todayUserChallenge.maxConsecutiveParticipationDayCount).isEqualTo(pastUserChallengeMaxConsecutiveParticipationDayCount)
+        assertThat(todayUserChallenge.maxConsecutiveParticipationDayCount).isOne
     }
 
     @Test
@@ -278,5 +276,21 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
             )
         }
         assertThat(exception.message).isEqualTo(UserChallengeException.ALREADY_CERTIFICATED.message)
+    }
+
+    @Test
+    @DisplayName("챌린지 인증에 성공했다면, 인증 사진을 저장한다.")
+    fun saveChallengeImage() {
+        // given
+        given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
+            EUserCertificatedResultCode.SUCCESS_CERTIFICATED
+        )
+        // when
+        certificationUseCase.certificateChallengeWithDate(
+            certificationRequestDto, participantsStartDate
+        )
+        // then
+        assertThat(savedUserChallenge!!.getUserChallengeHistories().first().certificatedImageUrl)
+            .isEqualTo(imageUrl)
     }
 }

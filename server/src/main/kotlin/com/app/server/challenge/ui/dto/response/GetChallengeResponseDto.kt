@@ -1,6 +1,6 @@
 package com.app.server.challenge.ui.dto.response
 
-import com.app.server.challenge.application.usecase.dto.response.ChallengeDetailResponseDto
+import com.app.server.challenge.ui.usecase.dto.response.ChallengeDetailResponseDto
 
 data class GetChallengeResponseDto (
     val challenge: ChallengeResponseDto

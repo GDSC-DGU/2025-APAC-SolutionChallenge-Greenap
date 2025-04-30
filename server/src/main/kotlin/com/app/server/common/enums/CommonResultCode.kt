@@ -15,6 +15,7 @@ enum class CommonResultCode(
     FORBIDDEN("COM004", "Forbidden"),
     INTERNAL_SERVER_ERROR("COM005", "Internal Server Error"),
     ILLEGAL_ARGUMENT("COM006", "Illegal Argument"),
+    TIMEOUT("COM007", "Timeout"),
 
     // domain
     AUTH_EXCEPTION("AUT000", "Auth Exception"),
