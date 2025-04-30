@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDate
 
 @RestController
-@RequestMapping("/api/v1/challenge/user/{userChallengeId}")
+@RequestMapping("/api/v1/challenges/user/{userChallengeId}")
 class CertificationController(
     private val certificationUseCase: CertificationUseCase,
     private val usingIceUseCase: UsingIceUseCase

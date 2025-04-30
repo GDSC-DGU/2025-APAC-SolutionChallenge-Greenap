@@ -28,7 +28,7 @@ class UserChallengeControllerTest : IntegrationTestContainer() {
         SecurityContextHolder.setContext(context)
 
         // when & then
-        mockMvc.post("/api/v1/challenge") {
+        mockMvc.post("/api/v1/challenges") {
             contentType = MediaType.APPLICATION_JSON
             header("Authorization", "Bearer $token")
             content = """
@@ -41,6 +41,5 @@ class UserChallengeControllerTest : IntegrationTestContainer() {
         .andExpect {
             status { isOk() }
         }
-
     }
 }

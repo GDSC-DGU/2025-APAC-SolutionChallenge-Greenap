@@ -16,7 +16,7 @@ class CertificationControllerTest : IntegrationTestContainer() {
     @Disabled
     fun participateChallenge() {
         // when
-        mockMvc.post("/api/v1/challenge/user/$userChallengeId/certification") {
+        mockMvc.post("/api/v1/challenges/user/$userChallengeId/certification") {
             contentType = MediaType.APPLICATION_JSON
             header("Authorization", "Bearer $token")
             content = """

@@ -157,4 +157,20 @@ class UserChallenge(
         this.maxConsecutiveParticipationDayCount = day
     }
 
+    fun calculateElapsedDays(todayDate: LocalDate): Long {
+        return todayDate.toEpochDay() - userChallengeHistories.first().date.toEpochDay()
+    }
+
+    fun calculateProgress(todayDate: LocalDate): Int {
+        return ((calculateElapsedDays(todayDate).toDouble() / totalParticipationDayCount) * 100).toInt().coerceIn(0, 100)
+    }
+
+    fun isCertificatedToday(todayDate: LocalDate): Boolean {
+        return userChallengeHistories.find { it.date.isEqual(todayDate) }?.status!! != EUserChallengeCertificationStatus.FAILED
+    }
+
+    fun getUserChallengeHistoriesBeforeToday(todayDate: LocalDate) : List<UserChallengeHistory> {
+        return userChallengeHistories.filter { it.date.isBefore(todayDate.plusDays(1)) }
+    }
+
 }

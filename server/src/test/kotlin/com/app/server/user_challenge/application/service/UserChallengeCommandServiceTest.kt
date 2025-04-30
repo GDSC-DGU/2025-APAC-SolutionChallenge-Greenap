@@ -35,15 +35,6 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
 
     @Test
     @Disabled
-    @DisplayName("해당 챌린지에서 가장 오래 연속으로 참여한 일수를 확인할 수 있다.")
-    fun getMaxConsecutiveParticipationDays() {
-        // given
-        // when
-        // then
-    }
-
-    @Test
-    @Disabled
     @DisplayName("챌린지 종료 일자와 오늘 일자가 같고 오늘 인증에 성공했다면, 챌린지 상태를 Pending으로 변경한다.")
     fun finishChallenge() {
         // given
@@ -175,60 +166,6 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
          // given
          // when
          // then
-    }
-
-    @Test
-    @Disabled
-    @DisplayName("챌린지 인증에 실패했다면, 인증에 실패하였음을 클라이언트에게 전달한다.")
-    fun failChallenge() {
-        // given
-        // when
-        // then
-    }
-
-    @Test
-    @Disabled
-    @DisplayName("챌린지 인증에 성공했다면, 인증 사진을 저장한다.")
-    fun saveChallengeImage() {
-        // given
-        // when
-        // then
-    }
-
-    @Test
-    @Disabled
-    @DisplayName("챌린지 인증에 성공하여 사진까지 저장했다면, 인증 성공 이벤트를 게시한다.")
-    fun publishChallengeImage() {
-        // given
-        // when
-        // then
-    }
-
-    @Test
-    @Disabled
-    @DisplayName("챌린지 인증에 성공한 날짜가 챌린지 종료일자와 같다면, 리포트 메시지를 AI 서버로부터 받아온다.")
-    fun getReportMessage() {
-        // given
-        // when
-        // then
-    }
-
-    @Test
-    @Disabled
-    @DisplayName("챌린지 리포트 메시지를 받아왔다면 저장하고, 챌린지의 상태를 Pending으로 변경한다.")
-    fun saveReportMessage() {
-        // given
-        // when
-        // then
-    }
-
-    @Test
-    @Disabled
-    @DisplayName("마지막 날짜의 챌린지 인증에는 성공하였으나, 리포트 메시지를 받아오지 못했다면, 챌린지의 상태를 Dead으로 변경한다.")
-    fun getReportMessageWithFail() {
-        // given
-        // when
-        // then
     }
 
     @Test

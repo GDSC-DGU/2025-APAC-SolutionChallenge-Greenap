@@ -22,6 +22,8 @@ class UserChallengeService (
         userChallengeRepository.findById(userChallengeId)
             .orElseThrow { NotFoundException(CommonResultCode.NOT_FOUND, "해당 챌린지를 참여하고 있지 않습니다.")
             }
+    fun findAllByUserId(userId: Long): List<UserChallenge> =
+        userChallengeRepository.findAllByUserId(userId)
 
     fun countCompletedUserBy(challengeId: Long): Long =
         userChallengeRepository.countByChallengeIdAndStatusIsCompleted(
