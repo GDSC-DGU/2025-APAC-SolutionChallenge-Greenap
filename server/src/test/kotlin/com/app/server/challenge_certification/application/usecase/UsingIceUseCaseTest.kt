@@ -172,7 +172,7 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
             EUserCertificatedResultCode.SUCCESS_CERTIFICATED
         )
         for ( i in 0 until requiredSuccessfulDaysForIce)
-            certificationUseCase.certificateChallengeWithDate(certificationRequestDto, participantsStartDate.plusDays(i.toLong()))
+            certificationUseCase.certificateChallengeWithDate(userId, certificationRequestDto, participantsStartDate.plusDays(i.toLong()))
 
         // when
         val userChallenge: UserChallenge = usingIceUseCase.processAfterCertificateIce(
@@ -193,7 +193,7 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
             EUserCertificatedResultCode.SUCCESS_CERTIFICATED
         )
         for ( i in 0 until notSufficientSuccessfulDaysForIce)
-            certificationUseCase.certificateChallengeWithDate(certificationRequestDto, participantsStartDate.plusDays(i.toLong()))
+            certificationUseCase.certificateChallengeWithDate(userId, certificationRequestDto, participantsStartDate.plusDays(i.toLong()))
         // when
         val exception = assertThrows<BadRequestException> {
             usingIceUseCase.processAfterCertificateIce(
@@ -214,7 +214,7 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
             EUserCertificatedResultCode.SUCCESS_CERTIFICATED
         )
         for ( i in 0 until requiredSuccessfulDaysForIce)
-            certificationUseCase.certificateChallengeWithDate(certificationRequestDto, participantsStartDate.plusDays(i.toLong()))
+            certificationUseCase.certificateChallengeWithDate(userId, certificationRequestDto, participantsStartDate.plusDays(i.toLong()))
 
         val existTotalParticipantDayCount = savedUserChallenge!!.totalParticipationDayCount
         // when
@@ -237,7 +237,7 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
             EUserCertificatedResultCode.SUCCESS_CERTIFICATED
         )
         for ( i in 0 until requiredSuccessfulDaysForIce)
-            certificationUseCase.certificateChallengeWithDate(certificationRequestDto, participantsStartDate.plusDays(i.toLong()))
+            certificationUseCase.certificateChallengeWithDate(userId, certificationRequestDto, participantsStartDate.plusDays(i.toLong()))
         val existNowConsecutiveParticipantDayCount = savedUserChallenge!!.nowConsecutiveParticipationDayCount
         // when
         val userChallenge : UserChallenge = usingIceUseCase.processAfterCertificateIce(
@@ -260,7 +260,7 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
             EUserCertificatedResultCode.SUCCESS_CERTIFICATED
         )
         for ( i in 0 until requiredSuccessfulDaysForIce)
-            certificationUseCase.certificateChallengeWithDate(certificationRequestDto, participantsStartDate.plusDays(i.toLong()))
+            certificationUseCase.certificateChallengeWithDate(userId, certificationRequestDto, participantsStartDate.plusDays(i.toLong()))
         val existNowConsecutiveParticipantDayCount = savedUserChallenge!!.nowConsecutiveParticipationDayCount
         // when
         val userChallenge : UserChallenge = usingIceUseCase.processAfterCertificateIce(
@@ -291,7 +291,7 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
         )
 
         for ( i in 0 until requiredSuccessfulDaysForIce)
-            certificationUseCase.certificateChallengeWithDate(certificationRequestDto, participantsStartDate.plusDays(i.toLong()))
+            certificationUseCase.certificateChallengeWithDate(userId, certificationRequestDto, participantsStartDate.plusDays(i.toLong()))
 
         val userChallenge : UserChallenge = usingIceUseCase.processAfterCertificateIce(
             iceRequestDto = userChallengeIceRequestDto,

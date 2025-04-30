@@ -158,7 +158,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
 
         // when
         val todayUserChallenge : UserChallenge =
-            certificationUseCase.certificateChallengeWithDate(certificationRequestDto, participantsStartDate)
+            certificationUseCase.certificateChallengeWithDate(userId, certificationRequestDto, participantsStartDate)
         // then
         assertThat(todayUserChallenge.getUserChallengeHistories().first().status).isEqualTo(EUserChallengeCertificationStatus.SUCCESS)
     }
@@ -174,7 +174,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
 
         // when
         val todayUserChallenge : UserChallenge =
-            certificationUseCase.certificateChallengeWithDate(certificationRequestDto, participantsStartDate)
+            certificationUseCase.certificateChallengeWithDate(userId, certificationRequestDto, participantsStartDate)
 
         // then
         assertThat(todayUserChallenge.totalParticipationDayCount).isGreaterThan(pastUserChallenge.totalParticipationDayCount)
@@ -191,7 +191,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
         val pastUserChallengeNowConsecutiveParticipationDayCount = savedUserChallenge!!.nowConsecutiveParticipationDayCount
         // when
         val todayUserChallenge : UserChallenge =
-            certificationUseCase.certificateChallengeWithDate(certificationRequestDto, participantsStartDate)
+            certificationUseCase.certificateChallengeWithDate(userId, certificationRequestDto, participantsStartDate)
         // then
         assertThat(todayUserChallenge.nowConsecutiveParticipationDayCount).isGreaterThan(pastUserChallengeNowConsecutiveParticipationDayCount)
         assertThat(todayUserChallenge.nowConsecutiveParticipationDayCount - pastUserChallengeNowConsecutiveParticipationDayCount).isOne
@@ -208,12 +208,12 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
         val certificationDate: LocalDate = LocalDate.now()
         val afterCertificationDate: LocalDate = LocalDate.now().plusDays(1)
         val todayUserChallenge : UserChallenge =
-            certificationUseCase.certificateChallengeWithDate(certificationRequestDto, certificationDate)
+            certificationUseCase.certificateChallengeWithDate(userId, certificationRequestDto, certificationDate)
 
         val todayUserChallengeNowConsecutiveParticipationDayCount = todayUserChallenge.nowConsecutiveParticipationDayCount
         // when
         val afterUserChallenge : UserChallenge =
-            certificationUseCase.certificateChallengeWithDate(certificationRequestDto, afterCertificationDate)
+            certificationUseCase.certificateChallengeWithDate(userId, certificationRequestDto, afterCertificationDate)
 
         // then
         assertThat(afterUserChallenge.nowConsecutiveParticipationDayCount).isGreaterThan(todayUserChallengeNowConsecutiveParticipationDayCount)
@@ -230,10 +230,10 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
         val certificationDate: LocalDate = LocalDate.now()
         val afterCertificationDate: LocalDate = LocalDate.now().plusDays(2)
         val todayUserChallenge : UserChallenge =
-            certificationUseCase.certificateChallengeWithDate(certificationRequestDto, certificationDate)
+            certificationUseCase.certificateChallengeWithDate(userId, certificationRequestDto, certificationDate)
 
         // when
-        certificationUseCase.certificateChallengeWithDate(certificationRequestDto, afterCertificationDate)
+        certificationUseCase.certificateChallengeWithDate(userId, certificationRequestDto, afterCertificationDate)
 
         // then
         assertThat(todayUserChallenge.nowConsecutiveParticipationDayCount).isLessThan(todayUserChallenge.maxConsecutiveParticipationDayCount).isZero()
@@ -249,6 +249,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
         // when & then
         val exception = assertThrows<BadRequestException>{
             certificationUseCase.certificateChallengeWithDate(
+                userId = userId,
                 certificationRequestDto = certificationRequestDto,
                 certificationDate = participantsStartDate
             )
@@ -264,6 +265,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
             EUserCertificatedResultCode.SUCCESS_CERTIFICATED
         )
         certificationUseCase.certificateChallengeWithDate(
+            userId = userId,
             certificationRequestDto = certificationRequestDto,
             certificationDate = participantsStartDate
         )
@@ -271,6 +273,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
         // when & then
         val exception = assertThrows<BadRequestException> {
             certificationUseCase.certificateChallengeWithDate(
+                userId = userId,
                 certificationRequestDto = certificationRequestDto,
                 certificationDate = participantsStartDate
             )
@@ -287,7 +290,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
         )
         // when
         certificationUseCase.certificateChallengeWithDate(
-            certificationRequestDto, participantsStartDate
+            userId, certificationRequestDto, participantsStartDate
         )
         // then
         assertThat(savedUserChallenge!!.getUserChallengeHistories().first().certificatedImageUrl)

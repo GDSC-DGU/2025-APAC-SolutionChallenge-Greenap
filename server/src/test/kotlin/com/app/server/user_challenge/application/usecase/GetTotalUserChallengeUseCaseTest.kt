@@ -75,6 +75,7 @@ class GetTotalUserChallengeUseCaseTest : IntegrationTestContainer() {
 
         for ( i in 0 until completedUserChallenge!!.participantDays) {
             certificationUseCase.certificateChallengeWithDate(
+                userId,
                 certificationRequestDto,
                 participantsStartDate.plusDays(i.toLong())
             )
@@ -153,7 +154,7 @@ class GetTotalUserChallengeUseCaseTest : IntegrationTestContainer() {
         val newUserChallenge = makeUserChallengeAndHistory(newChallengeId, participantsStartDate)
         // when
         val getTotalUserChallengeResponseDto : GetTotalUserChallengeResponseDto =
-            getTotalUserChallengeUseCase.execute(userId)
+            getTotalUserChallengeUseCase.execute(userId, participantsStartDate)
         // then
         assertThat(getTotalUserChallengeResponseDto.userChallenges.first().certificationDataList.first().isCertificated)
             .isEqualTo(completedUserChallenge!!.getUserChallengeHistoriesBeforeToday(LocalDate.now())

@@ -165,7 +165,7 @@ class CertificateServiceTest : IntegrationTestContainer() {
         // when
         val exception = assertThrows<BadRequestException> {
             certificationUseCase.certificateChallengeWithDate(
-                certificationRequestDto, participantsStartDate
+                userId, certificationRequestDto, participantsStartDate
             )
         }
         // then
@@ -181,7 +181,7 @@ class CertificateServiceTest : IntegrationTestContainer() {
         )
         // when
         certificationUseCase.certificateChallengeWithDate(
-            certificationRequestDto, participantsStartDate
+            userId, certificationRequestDto, participantsStartDate
         )
 
         // then
