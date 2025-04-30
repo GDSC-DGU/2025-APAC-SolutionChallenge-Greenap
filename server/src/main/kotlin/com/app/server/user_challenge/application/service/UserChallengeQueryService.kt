@@ -18,8 +18,7 @@ import java.time.LocalDate
 
 @Service
 class UserChallengeQueryService(
-    private val userChallengeService: UserChallengeService,
-    private val reportWaiter: ReportWaiter
+    private val userChallengeService: UserChallengeService
 ) : GetTotalUserChallengeUseCase, GetUserChallengeReportUseCase {
     fun getChallengeCompletedUserPercent(challengeId: Long): Double {
 

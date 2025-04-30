@@ -2,13 +2,12 @@ package com.app.server.user_challenge.application.service
 
 import com.app.server.challenge_certification.application.dto.CertificationDataDto
 import com.app.server.challenge_certification.event.CertificationSucceededEvent
+import com.app.server.user_challenge.domain.model.UserChallengeHistory
 import com.app.server.user_challenge.event.ReportCreatedEvent
 import com.app.server.user_challenge.ui.controller.ReportWaiter
 import com.app.server.user_challenge.ui.dto.CertificationReportDataDto
 import com.app.server.user_challenge.ui.dto.ReportDto
-import com.app.server.user_challenge.domain.enums.EUserChallengeCertificationStatus
-import com.app.server.user_challenge.domain.enums.EUserChallengeStatus
-import com.app.server.user_challenge.domain.model.UserChallengeHistory
+import org.springframework.context.annotation.Profile
 import org.springframework.context.event.EventListener
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Component
@@ -20,9 +19,20 @@ class UserChallengeEventListener(
     private val reportWaiter: ReportWaiter,
 ) {
 
+    @Profile("!test")
     @Async
     @EventListener
-    fun handleCertificationSuccessEvent(event: CertificationSucceededEvent) {
+    fun handleCertificationSucceededEvent(certificationSucceededEvent: CertificationSucceededEvent) {
+        processWhenReceive(certificationSucceededEvent)
+    }
+
+    @Profile("test")
+    @EventListener
+    fun handleCertificationSucceededEventForTest(certificationSucceededEvent: CertificationSucceededEvent) {
+        processWhenReceive(certificationSucceededEvent)
+    }
+
+    private fun processWhenReceive(event: CertificationSucceededEvent) {
         userChallengeCommandService.processAfterCertificateSuccess(
             userId = event.userId,
             userChallengeId = event.userChallengeId,
@@ -33,17 +43,27 @@ class UserChallengeEventListener(
         )
     }
 
+    @Profile("!test")
     @Async
     @EventListener
-    fun handleReportCreatedEvent(event: ReportCreatedEvent) {
+    fun handleReportCreatedEvent(reportCreatedEvent: ReportCreatedEvent) {
+        processWhenReceive(reportCreatedEvent)
+    }
 
+    @Profile("test")
+    @EventListener
+    fun handleReportCreatedEventForTest(reportCreatedEvent: ReportCreatedEvent) {
+        processWhenReceive(reportCreatedEvent)
+    }
+
+    private fun processWhenReceive(event: ReportCreatedEvent) {
         val userChallenge = userChallengeService.findById(event.userChallengeId)
 
         val userRank = 1L // TODO: UserChallenge에서 랭킹을 가져오는 로직 추가 필요
         val reportDto = ReportDto(
             userChallengeId = userChallenge.id!!,
             totalDays = userChallenge.participantDays,
-            successDays = userChallenge.getSuccessDayCount(),
+            successDays = userChallenge.totalParticipationDayCount.toInt(),
             reportMessage = userChallenge.reportMessage!!,
             maxConsecutiveParticipationDays = userChallenge.maxConsecutiveParticipationDayCount,
             challengeRanking = userRank,

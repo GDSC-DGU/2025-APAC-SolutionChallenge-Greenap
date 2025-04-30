@@ -77,7 +77,9 @@ class UserChallengeCommandService (
         val sendToReportServerRequestDto = SendToReportServerRequestDto.from(
             userId = userId,
             challengeTitle = userChallenge.challenge.title,
-            progress = userChallenge.getSuccessDayCount(),
+            progress = userChallenge.totalParticipationDayCount.floorDiv(
+                userChallenge.participantDays.toLong()
+            ).toInt(),
             totalDay = userChallenge.participantDays
         )
 
@@ -178,7 +180,7 @@ class UserChallengeCommandService (
         } else if (
             userChallengeHistory.status != EUserChallengeCertificationStatus.FAILED &&
             pastUserChallengeHistory!!.status != EUserChallengeCertificationStatus.FAILED &&
-            userChallenge.nowConsecutiveParticipationDayCount > userChallenge.maxConsecutiveParticipationDayCount
+            userChallenge.nowConsecutiveParticipationDayCount == userChallenge.maxConsecutiveParticipationDayCount
         ) {
             consecutiveState = EConsecutiveState.CONSECUTIVE_MAX
         }
@@ -212,6 +214,7 @@ class UserChallengeCommandService (
             }
 
             EConsecutiveState.CONSECUTIVE_MAX -> {
+                userChallenge.updateNowConsecutiveParticipationDayCount(nowCount + 1)
                 userChallenge.updateMaxConsecutiveParticipationDayCount(nowCount + 1)
             }
 

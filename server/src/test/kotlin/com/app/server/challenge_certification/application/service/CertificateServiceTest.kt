@@ -188,31 +188,6 @@ class CertificateServiceTest : IntegrationTestContainer() {
         verify(applicationEventPublisher).publishEvent(isA(CertificationSucceededEvent::class.java))
     }
 
-
-    @Test
-    @DisplayName("챌린지 인증에 성공한 날짜가 챌린지 종료일자와 같다면, 리포트 메시지를 AI 서버로부터 받아온다.")
-    fun getReportMessage() {
-        // given
-        // when
-        // then
-    }
-
-    @Test
-    @DisplayName("챌린지 리포트 메시지를 받아왔다면 저장하고, 챌린지의 상태를 Pending으로 변경한다.")
-    fun saveReportMessage() {
-        // given
-        // when
-        // then
-    }
-
-    @Test
-    @DisplayName("마지막 날짜의 챌린지 인증에는 성공하였으나, 리포트 메시지를 받아오지 못했다면, 챌린지의 상태를 Dead으로 변경한다.")
-    fun getReportMessageWithFail() {
-        // given
-        // when
-        // then
-    }
-
     @TestConfiguration
     class MockitoPublisherConfiguration {
         @Bean

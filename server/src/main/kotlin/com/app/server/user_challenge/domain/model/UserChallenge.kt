@@ -108,8 +108,7 @@ class UserChallenge(
     }
 
     private fun validateUpdateTotalParticipatedDaysAndUpdate(userChallengeHistory: UserChallengeHistory) {
-        // 얼리기는 전체 참여 일수에 포함되지 않음
-        if (userChallengeHistory.status == EUserChallengeCertificationStatus.SUCCESS) {
+        if (userChallengeHistory.status != EUserChallengeCertificationStatus.FAILED) {
             this.totalParticipationDayCount += 1
         } else {
             throw BadRequestException(UserChallengeException.ALREADY_CERTIFICATED)
@@ -133,7 +132,7 @@ class UserChallenge(
 
     fun validateIncreaseIceCount(): Int {
         // 얼리기 조건 확인 후 얼리기 가능 여부 판단
-        if (this.totalParticipationDayCount > (this.participantDays.floorDiv(2))) {
+        if (this.totalParticipationDayCount > (this.participantDays.floorDiv(2)) && iceCount < 1) {
             this.iceCount += 1
         }
         return this.iceCount
@@ -181,7 +180,7 @@ class UserChallenge(
 
     fun checkIsDone(todayDate: LocalDate): Boolean {
         // status가 running인데, 오늘 날짜와 챌린지 종료 날짜가 같은 상황에서 인증이 완료되었거나, 챌린지 종료 날짜가 지난 경우
-        val endDate = this.createdAt!!.toLocalDate().plusDays(participantDays.toLong())
+        val endDate = this.createdAt!!.toLocalDate().plusDays(participantDays-1L)
 
         return this.status == EUserChallengeStatus.RUNNING &&
                 (
@@ -189,11 +188,6 @@ class UserChallenge(
                                 (todayDate.isEqual(endDate) &&
                                         userChallengeHistories.last().status != EUserChallengeCertificationStatus.FAILED)
                         )
-    }
-
-    fun getSuccessDayCount() : Int {
-        return this.userChallengeHistories
-            .count { it.status != EUserChallengeCertificationStatus.FAILED }
     }
 
 }

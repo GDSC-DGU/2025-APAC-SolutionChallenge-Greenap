@@ -21,6 +21,7 @@ import jakarta.transaction.Transactional
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
@@ -206,7 +207,9 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
     }
 
 
+    // Legacy
     @Test
+    @Disabled
     @DisplayName("얼리기를 사용하면 전체 참여일은 올라가지 않는다.")
     fun skipChallengeWithoutIncreasingParticipationDays() {
         // given
