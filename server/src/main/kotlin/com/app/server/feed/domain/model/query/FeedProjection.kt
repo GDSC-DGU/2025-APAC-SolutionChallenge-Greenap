@@ -30,7 +30,34 @@ class FeedProjection (
     @Column(name = "feed_image_url")
     val feedImageUrl: String,
     @Column(name = "feed_content")
-    val feedContent: String?,
+    var feedContent: String?,
 
     ) : BaseEntity(){
+
+    companion object {
+        fun createEntity(
+            feed : Feed,
+            challengeCategoryTitle: String,
+            challengeTitle: String,
+            userName: String,
+            userProfileImageUrl: String?,
+            userNowMaxConsecutiveParticipationDayCount: Long,
+        ): FeedProjection {
+            return FeedProjection(
+                id = feed.id!!,
+                feed = feed,
+                challengeCategoryTitle = challengeCategoryTitle,
+                challengeTitle = challengeTitle,
+                userName = userName,
+                userProfileImageUrl = userProfileImageUrl,
+                userNowMaxConsecutiveParticipationDayCount = userNowMaxConsecutiveParticipationDayCount,
+                feedImageUrl = feed.imageUrl,
+                feedContent = feed.content
+            )
+        }
+    }
+
+    fun updateContent(content: String?) {
+        this.feedContent = content
+    }
 }

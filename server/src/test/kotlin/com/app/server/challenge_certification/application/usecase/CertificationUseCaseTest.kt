@@ -21,6 +21,7 @@ import jakarta.transaction.Transactional
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.assertThrows
 import org.mockito.BDDMockito.given
@@ -407,6 +408,15 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
         // then
         assertThat(savedUserChallenge!!.getUserChallengeHistories().first().certificatedImageUrl)
             .isEqualTo(imageUrl)
+    }
+
+    @Test
+    @DisplayName("챌린지 인증에 성공하면 사용자의 현재 최대 연속 참여 일수를 갱신한다.")
+    @Disabled
+    fun updateMaxConsecutiveParticipationDays() {
+        // given
+        // when
+        // then
     }
 
     private fun makeCertificationSucceededEvent(certificateDate : LocalDate) : CertificationSucceededEvent {

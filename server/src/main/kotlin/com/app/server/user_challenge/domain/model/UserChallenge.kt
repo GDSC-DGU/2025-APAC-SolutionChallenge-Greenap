@@ -186,9 +186,8 @@ class UserChallenge(
             .coerceIn(0, 100)
     }
 
-    fun isCertificatedToday(todayDate: LocalDate): Boolean {
-        return userChallengeHistories.find { it.date.isEqual(todayDate) }
-            ?.status!! != EUserChallengeCertificationStatus.FAILED
+    fun isCertificatedToday(todayDate: LocalDate): EUserChallengeCertificationStatus {
+        return userChallengeHistories.find { it.date.isEqual(todayDate) }!!.status
     }
 
     fun getUserChallengeHistoriesBeforeToday(todayDate: LocalDate): List<UserChallengeHistory> {
@@ -205,6 +204,10 @@ class UserChallenge(
                                 (todayDate.isEqual(endDate) &&
                                         userChallengeHistories.last().status != EUserChallengeCertificationStatus.FAILED)
                         )
+    }
+
+    fun getUserChallengeImageUrl(imageDate: LocalDate): String {
+        return this.userChallengeHistories.find { it.date.isEqual(imageDate) }!!.certificatedImageUrl!!
     }
 
 }

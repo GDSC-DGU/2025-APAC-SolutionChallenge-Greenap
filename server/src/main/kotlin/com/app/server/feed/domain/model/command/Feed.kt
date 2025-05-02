@@ -12,18 +12,51 @@ class Feed (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "feed_id")
-    val id: Long,
+    val id: Long? = null,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    val user: User,
+    @Column(name = "user_id", nullable = false)
+    val userId : Long,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_challenge_id", nullable = false)
-    val userChallenge: UserChallenge,
+    @Column(name = "user_challenge_id", nullable = false)
+    val userChallengeId : Long,
 
-    val image_url: String,
-    val content: String?
+    @Column(name = "image_url")
+    val imageUrl: String,
+
+    var content: String?
 
 ) : BaseEntity() {
+
+    private constructor(
+        userId: Long,
+        userChallengeId: Long,
+        imageUrl: String,
+        content: String?
+    ) : this(
+        id = null,
+        userId = userId,
+        userChallengeId = userChallengeId,
+        imageUrl = imageUrl,
+        content = content
+    )
+
+    companion object{
+        fun createEntity(
+            userId: Long,
+            userChallengeId: Long,
+            imageUrl: String,
+            content: String?
+        ): Feed {
+            return Feed(
+                userId = userId,
+                userChallengeId = userChallengeId,
+                imageUrl = imageUrl,
+                content = content
+            )
+        }
+    }
+
+    fun updateContent(newContent: String?) {
+        this.content = newContent
+    }
 }

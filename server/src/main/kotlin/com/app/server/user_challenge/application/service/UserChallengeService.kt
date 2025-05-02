@@ -3,11 +3,12 @@ package com.app.server.user_challenge.application.service
 import com.app.server.common.enums.CommonResultCode
 import com.app.server.common.exception.NotFoundException
 import com.app.server.user_challenge.application.repository.UserChallengeRepository
+import com.app.server.user_challenge.domain.enums.EUserChallengeCertificationStatus
 import com.app.server.user_challenge.domain.enums.EUserChallengeStatus
 import com.app.server.user_challenge.domain.model.UserChallenge
 import com.app.server.user_challenge.domain.model.UserChallengeHistory
-import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
+import java.time.LocalDate
 
 @Service
 class UserChallengeService (
@@ -57,4 +58,10 @@ class UserChallengeService (
         userChallengeRepository.flush()
     }
 
+    fun isCertificatedWhen(userChallengeId : Long, todayDate : LocalDate) : EUserChallengeCertificationStatus {
+        return findById(userChallengeId).isCertificatedToday(todayDate)
+    }
+    fun getUserChallengeImageUrl(userChallengeId : Long, imageDate : LocalDate): String {
+        return findById(userChallengeId).getUserChallengeImageUrl(imageDate)
+    }
 }

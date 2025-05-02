@@ -236,4 +236,14 @@ VALUES (
         '2025-04-21 00:00:00',
         '2025-04-21 00:00:00',
         null
+),(
+   2,
+    'testUser2',
+   'test2Email@email.com',
+    'test2ImageUrl',
+    0,
+    'test2RefreshToken',
+    '2025-04-21 00:00:00',
+    '2025-04-21 00:00:00',
+    null
 )

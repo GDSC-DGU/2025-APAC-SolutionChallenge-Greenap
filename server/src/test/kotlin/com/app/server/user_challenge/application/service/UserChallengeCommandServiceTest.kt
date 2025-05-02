@@ -179,7 +179,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
     }
 
     @Test
-    @DisplayName("마지막 날짜의 챌린지 인증에는 성공하였으나, 리포트 메시지를 생성에 실패했다면, 챌린지의 상태를 Dead으로 변경한다.")
+    @DisplayName("마지막 날짜의 챌린지 인증에는 성공하였으나, 리포트 메시지를 생성에 실패했다면, 챌린지의 상태를 Dead으로 변경하여 추후 처리가 가능하게 한다.")
     fun getReportMessageWithFail() {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_FAILED)
@@ -197,7 +197,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
     }
 
     @Test
-    @DisplayName("마지막 날짜의 챌린지 인증에는 성공하였으나, 리포트 서버의 응답을 받지 못했다면, 챌린지의 상태를 Dead으로 변경한다.")
+    @DisplayName("마지막 날짜의 챌린지 인증에는 성공하였으나, 리포트 서버의 응답을 받지 못했다면, 챌린지의 상태를 Dead으로 변경하여 추후 처리가 가능하게 한다.")
     fun getReportMessageWithReportServerDeadAndChangeStatusToDead() {
         // given
         settingReceiveReport(status = EUserReportResultCode.ERROR_IN_RECEIVE_REPORT_SERVER)
@@ -258,7 +258,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
     }
 
     @Test
-    @DisplayName("Pending 상태의 챌린지는 사용자가 챌린지 종료 다음날 안으로 리포트를 확인한다면 WAIT 상태로 변경된다.")
+    @DisplayName("리포트를 아직 확인하지 않은 상태의 챌린지는 사용자가 챌린지 종료 다음날 안으로 리포트를 확인한다면 해당 챌린지는 이어하기가 가능한 상태로 변경된다.")
     fun checkReport() {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
@@ -275,7 +275,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
     }
 
     @Test
-    @DisplayName("Pending 상태의 챌린지는 사용자가 챌린지 종료 다음날이후로 리포트를 확인했다면 COMPLETED 상태로 변경된다.")
+    @DisplayName("리포트를 아직 확인하지 않은 상태의 챌린지는 사용자가 챌린지 종료 다음 날 이후로 리포트를 확인했다면 더 이상 이어할 수 없고 완전히 종료된다.")
     fun completeReport() {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
@@ -292,7 +292,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
     }
 
     @Test
-    @DisplayName("챌린지 이어하기를 성공했다면, 해당 챌린지의 상태는 다시 Running으로 변경된다.")
+    @DisplayName("챌린지 이어하기를 성공했다면, 해당 챌린지의 상태는 다시 Running으로 변경되어 계속 이어 진행된다.")
     fun continueChallengeWithSuccess() {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
@@ -318,7 +318,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
     }
 
     @Test
-    @DisplayName("PENDING 상태의 챌린지에 대해 사용자가 참여 요청을 보냈을 때, 리포트를 아직 확인하지 않았다면 리포트를 확인해야 한다.")
+    @DisplayName("리포트를 아직 확인하지 않은 상태의 챌린지에 대해 사용자가 참여 요청을 보냈을 때, 리포트를 아직 확인하지 않았다면 리포트를 확인해야 한다.")
     fun continueChallengeWithPending() {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
@@ -345,7 +345,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
     }
 
     @Test
-    @DisplayName("COMPLETED 상태의 챌린지는 챌린지 이어하기 기능을 사용할 수 없다. 이어하기가 아니라 그냥 새로운 챌린지에 참여하게 된다.")
+    @DisplayName("완전 종료된 상태의 챌린지는 챌린지 이어하기 기능을 사용할 수 없다. 이 챌린지에 다시 참여 요청을 보내면 이어하기가 아니라 새로운 챌린지에 참여하게 된다.")
     fun continueChallenge() {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
@@ -374,7 +374,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
     }
 
     @Test
-    @DisplayName("WAIT 상태의 챌린지는 챌린지 종료 다음 날 안으로 이어할 수 있다.")
+    @DisplayName("리포트를 확인한 챌린지는 챌린지 종료 다음 날 안으로 이어할 수 있다.")
     fun continueChallengeWithWait() {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
@@ -404,7 +404,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
     }
 
     @Test
-    @DisplayName("WAIT 상태의 챌린지를 사용자가 이어하고 싶다면, 총 참가 일수가 증가한다.")
+    @DisplayName("이어하기가 가능한 상태의 챌린지를 사용자가 이어한다면, 새로 선택한 참가일수만큼 총 참가 일수가 증가한다.")
     fun continueChallengeWithWaitAndIncreaseTotalParticipationDays() {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
@@ -430,7 +430,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
     }
 
     @Test
-    @DisplayName("WAIT 상태의 챌린지를 사용자가 이어하고 싶다면, 참여 중인 챌린지의 참여 히스토리가 늘어난다.")
+    @DisplayName("이어하기가 가능한 상태의 챌린지를 사용자가 이어하고 싶다면, 참여 중인 챌린지의 참여 히스토리가 늘어난다.")
     fun continueChallengeWithWaitAndIncreaseParticipationDays() {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
@@ -458,7 +458,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
     }
 
     @Test
-    @DisplayName("WAIT 상태의 챌린지를 사용자가 이어하여 참여 히스토리가 늘어났을 때, 새로 추가된 히스토리들의 상태는 모두 fail이다.")
+    @DisplayName("이어하기가 가능한 상태의 챌린지를 사용자가 이어하여 참여 히스토리가 늘어났을 때, 새로 추가된 히스토리들의 상태는 모두 실패된 상태라고 간주한다.")
     fun continueChallengeWithWaitAndChangeStatusToFail() {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
@@ -489,7 +489,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
     }
 
     @Test
-    @DisplayName("WAIT 상태의 챌린지를 사용자가 이어하여 참여 히스토리가 늘어났을 때, 기존 히스토리들은 그대로 유지된다.")
+    @DisplayName("이어하기가 가능한 상태의 챌린지를 사용자가 이어하여 참여 히스토리가 늘어났을 때, 기존 히스토리들은 그대로 유지된다.")
     fun continueChallengeWithWaitAndKeepStatus() {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
@@ -520,7 +520,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
     }
 
     @Test
-    @DisplayName("WAIT 상태의 챌린지를 사용자가 이어하고 싶다면, 기존 리포트 메시지는 삭제된다.")
+    @DisplayName("이어하기가 가능한 상태의 챌린지를 사용자가 이어하고 싶다면, 기존 리포트 메시지는 삭제된다.")
     fun continueChallengeWithWaitAndDeleteReportMessage() {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
@@ -547,7 +547,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
     }
 
     @Test
-    @DisplayName("WAIT 상태의 챌린지를 사용자가 이어했을 때, 연속 참여 횟수도 이어서 증가할 수 있다.")
+    @DisplayName("이어하기가 가능한 상태의 챌린지를 사용자가 이어했을 때, 연속 참여 횟수도 이어서 증가할 수 있다.")
     fun continueChallengeWithWaitAndIncreaseConsecutiveParticipationDays() {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
@@ -586,7 +586,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
 
     @Test
     @Disabled
-    @DisplayName("WAIT 상태인 챌린지가 챌린지 종료일자로부터 이틀이 지났다면, 챌린지 상태를 COMPLETED로 변경한다.")
+    @DisplayName("이어하기가 가능한 상태의 챌린지(WAIT 상태인 챌린지)가 챌린지 종료일자로부터 이틀이 지났다면, 해당 챌린지는 더이상 이어하기를 진행할 수 없다.(COMPLETED 상태로 변경된다.)")
     fun completeChallengeWithWait() {
         // TODO 배치로 WAIT 상태인 챌린지들을 COMPLETED로 변경하는 작업이 필요하다.
         // given
@@ -596,7 +596,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
 
     @Test
     @Disabled
-    @DisplayName("챌린지의 상태가 Dead인 챌린지들을 모아 다시 리포트 메시지를 요청할 수 있다. 이 요청은 주기적으로 이루어지거나, Dead 상태의 챌린지들의 개수가 10개 이상 일 때 이루어진다.")
+    @DisplayName("리포트 발급에 실패한 챌린지들(챌린지의 상태가 Dead인 챌린지들)을 모아 다시 리포트 메시지를 요청할 수 있다. 이 요청은 주기적으로 이루어지거나, Dead 상태의 챌린지들의 개수가 10개 이상 일 때 이루어진다.")
     fun getReportMessageWithDead() {
         // given
         // when

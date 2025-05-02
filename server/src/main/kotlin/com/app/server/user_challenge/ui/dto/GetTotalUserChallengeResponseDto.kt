@@ -1,5 +1,6 @@
 package com.app.server.user_challenge.ui.dto
 
+import com.app.server.user_challenge.domain.enums.EUserChallengeCertificationStatus
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.LocalDate
 
@@ -21,7 +22,7 @@ data class UserChallengeQuery(
     @JsonProperty("ice_count")
     val iceCount: Int,
     @JsonProperty("is_certificated_in_today")
-    val isCertificatedInToday: Boolean,
+    val isCertificatedInToday: EUserChallengeCertificationStatus,
     @JsonProperty("certification_data_list")
     val certificationDataList: List<CertificationData>
 )
