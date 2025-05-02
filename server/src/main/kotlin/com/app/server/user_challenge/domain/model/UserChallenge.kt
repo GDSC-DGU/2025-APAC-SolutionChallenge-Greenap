@@ -2,13 +2,13 @@ package com.app.server.user_challenge.domain.model
 
 import com.app.server.challenge.domain.model.Challenge
 import com.app.server.common.exception.BadRequestException
-import com.app.server.common.exception.BusinessException
 import com.app.server.common.exception.InternalServerErrorException
 import com.app.server.common.model.BaseEntity
 import com.app.server.user_challenge.application.dto.CreateUserChallengeDto
 import com.app.server.user_challenge.domain.enums.EUserChallengeCertificationStatus
 import com.app.server.user_challenge.domain.enums.EUserChallengeStatus
 import com.app.server.user_challenge.domain.exception.UserChallengeException
+import com.app.server.user_challenge.enums.EUserChallengeParticipantState
 import jakarta.persistence.*
 import org.hibernate.annotations.DynamicUpdate
 import java.time.LocalDate
@@ -36,7 +36,7 @@ class UserChallenge(
     @Enumerated(EnumType.STRING)
     var status: EUserChallengeStatus = EUserChallengeStatus.RUNNING,
     @Column(name = "participant_days", nullable = false)
-    val participantDays: Int,
+    var participantDays: Int,
     @Column(name = "ice_count")
     var iceCount: Int = 0,
     @Column(name = "now_consecutive_participation_day_count", nullable = false)
@@ -75,13 +75,13 @@ class UserChallenge(
         }
     }
 
-    fun validateCanParticipants() {
+    fun validateCanParticipants(): EUserChallengeParticipantState {
 
-        when (this.status) {
-            EUserChallengeStatus.COMPLETED -> {}
+        return when (this.status) {
+            EUserChallengeStatus.COMPLETED -> EUserChallengeParticipantState.NEW_CHALLENGE_START
             EUserChallengeStatus.RUNNING -> throw BadRequestException(UserChallengeException.ALREADY_PARTICIPATED_AND_STATUS_IS_RUNNING)
             EUserChallengeStatus.PENDING -> throw BadRequestException(UserChallengeException.CHALLENGE_WAITED_AND_STATUS_IS_PENDING)
-            EUserChallengeStatus.WAITING -> throw BusinessException(UserChallengeException.CONTINUE_CHALLENGE_AND_STATUS_IS_WAITING)
+            EUserChallengeStatus.WAITING -> EUserChallengeParticipantState.EXISTING_CHALLENGE_CONTINUE
             EUserChallengeStatus.DEAD -> throw InternalServerErrorException(UserChallengeException.REPORT_NOT_FOUND_AND_STATUS_IS_DEAD)
         }
     }
@@ -107,6 +107,10 @@ class UserChallenge(
         validateUpdateTotalParticipatedDaysAndUpdate(userChallengeHistory!!)
     }
 
+    fun plusParticipatedDays(participantsDate: Int) {
+        this.participantDays += participantsDate
+    }
+
     private fun validateUpdateTotalParticipatedDaysAndUpdate(userChallengeHistory: UserChallengeHistory) {
         if (userChallengeHistory.status != EUserChallengeCertificationStatus.FAILED) {
             this.totalParticipationDayCount += 1
@@ -122,7 +126,7 @@ class UserChallenge(
         return userChallengeHistory
     }
 
-    fun validateCanIceAndUse(): Boolean {
+    fun useIce(): Boolean {
         if (this.iceCount > 0) {
             this.iceCount -= 1
             return true
@@ -132,10 +136,23 @@ class UserChallenge(
 
     fun validateIncreaseIceCount(): Int {
         // 얼리기 조건 확인 후 얼리기 가능 여부 판단
-        if (this.totalParticipationDayCount > (this.participantDays.floorDiv(2)) && iceCount < 1) {
+        if (this.totalParticipationDayCount > (this.participantDays.floorDiv(2))
+            && iceCount < 1
+            && !alreadyUsedIce()
+        ) {
             this.iceCount += 1
         }
         return this.iceCount
+    }
+
+    fun increaseIceCountWhenUserChallengeContinues(){
+        if (this.iceCount < 1) {
+            this.iceCount += 1
+        }
+    }
+
+    private fun alreadyUsedIce(): Boolean {
+        return this.userChallengeHistories.any { it.status == EUserChallengeCertificationStatus.ICE }
     }
 
     fun updateCertificationStateIsIce(certificationDate: LocalDate) {
@@ -144,7 +161,7 @@ class UserChallenge(
         userChallengeHistory!!.updateStatus(status = EUserChallengeCertificationStatus.ICE)
     }
 
-    fun updateReportMessage(reportMessage: String) {
+    fun updateReportMessage(reportMessage: String?) {
         this.reportMessage = reportMessage
     }
 
@@ -180,7 +197,7 @@ class UserChallenge(
 
     fun checkIsDone(todayDate: LocalDate): Boolean {
         // status가 running인데, 오늘 날짜와 챌린지 종료 날짜가 같은 상황에서 인증이 완료되었거나, 챌린지 종료 날짜가 지난 경우
-        val endDate = this.createdAt!!.toLocalDate().plusDays(participantDays-1L)
+        val endDate = this.createdAt!!.toLocalDate().plusDays(participantDays - 1L)
 
         return this.status == EUserChallengeStatus.RUNNING &&
                 (

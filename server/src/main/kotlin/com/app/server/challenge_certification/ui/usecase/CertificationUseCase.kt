@@ -7,7 +7,6 @@ import java.time.LocalDate
 interface CertificationUseCase {
 
     fun certificateChallengeWithDate(
-        userId: Long,
         certificationRequestDto: CertificationRequestDto,
         certificationDate: LocalDate
     ): UserChallenge

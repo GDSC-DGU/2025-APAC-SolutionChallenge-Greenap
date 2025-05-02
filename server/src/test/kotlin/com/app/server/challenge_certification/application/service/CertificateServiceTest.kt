@@ -26,6 +26,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers.isA
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.mock
+import org.mockito.kotlin.reset
 import org.mockito.kotlin.verify
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -93,6 +94,7 @@ class CertificateServiceTest : IntegrationTestContainer() {
     @AfterEach
     fun tearDown() {
         userChallengeService.deleteAll()
+        reset(applicationEventPublisher)
     }
 
     private fun makeUserChallengeAndHistory(startDate: LocalDate): UserChallenge {
@@ -165,7 +167,7 @@ class CertificateServiceTest : IntegrationTestContainer() {
         // when
         val exception = assertThrows<BadRequestException> {
             certificationUseCase.certificateChallengeWithDate(
-                userId, certificationRequestDto, participantsStartDate
+                certificationRequestDto, participantsStartDate
             )
         }
         // then
@@ -181,7 +183,7 @@ class CertificateServiceTest : IntegrationTestContainer() {
         )
         // when
         certificationUseCase.certificateChallengeWithDate(
-            userId, certificationRequestDto, participantsStartDate
+            certificationRequestDto, participantsStartDate
         )
 
         // then

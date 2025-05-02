@@ -3,6 +3,7 @@ package com.app.server.challenge_certification.application.usecase
 import com.app.server.IntegrationTestContainer
 import com.app.server.challenge.application.service.ChallengeService
 import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
+import com.app.server.challenge_certification.event.CertificationSucceededEvent
 import com.app.server.challenge_certification.infra.CertificationInfraService
 import com.app.server.challenge_certification.ui.dto.CertificationRequestDto
 import com.app.server.challenge_certification.ui.dto.SendToCertificationServerRequestDto
@@ -11,6 +12,7 @@ import com.app.server.challenge_certification.ui.usecase.CertificationUseCase
 import com.app.server.user_challenge.ui.usecase.UsingIceUseCase
 import com.app.server.common.exception.BadRequestException
 import com.app.server.user_challenge.application.dto.CreateUserChallengeDto
+import com.app.server.user_challenge.application.service.UserChallengeEventListener
 import com.app.server.user_challenge.application.service.UserChallengeService
 import com.app.server.user_challenge.domain.enums.EUserChallengeCertificationStatus
 import com.app.server.user_challenge.domain.enums.EUserChallengeStatus
@@ -26,8 +28,15 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.BDDMockito.given
+import org.mockito.Mockito.mock
+import org.mockito.kotlin.reset
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.context.TestConfiguration
+import org.springframework.context.ApplicationEventPublisher
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Primary
 import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.context.junit.jupiter.SpringExtension
@@ -37,8 +46,13 @@ import kotlin.test.Test
 @SpringBootTest
 @Transactional
 @Rollback
-@ExtendWith(SpringExtension::class)
 class UsingIceUseCaseTest : IntegrationTestContainer() {
+
+    @MockitoBean
+    private lateinit var applicationEventPublisher: ApplicationEventPublisher
+
+    @Autowired
+    private lateinit var challengeService: ChallengeService
 
     @Autowired
     private lateinit var usingIceUseCase: UsingIceUseCase
@@ -47,7 +61,7 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
     private lateinit var certificationUseCase: CertificationUseCase
 
     @Autowired
-    private lateinit var challengeService: ChallengeService
+    private lateinit var userChallengeEventListener: UserChallengeEventListener
 
     @Autowired
     private lateinit var userChallengeService : UserChallengeService
@@ -55,13 +69,12 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
     @MockitoBean
     private lateinit var certificationInfraService: CertificationInfraService
 
-    var userChallengeIceRequestDto = UserChallengeIceRequestDto(
-        userChallengeId = 1L
-    )
 
     val requiredSuccessfulDaysForIce = (participationDays).floorDiv(2).plus(1)
     val notSufficientSuccessfulDaysForIce = (participationDays).floorDiv(2).minus(1)
-
+    var userChallengeIceRequestDto = UserChallengeIceRequestDto(
+        userChallengeId = 1L
+    )
     var certificationRequestDto = CertificationRequestDto(
         userChallengeId = userChallengeId,
         imageUrl = imageUrl,
@@ -79,14 +92,6 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
     fun setUpChallengeFixture() {
         savedUserChallenge = makeUserChallengeAndHistory(participantsStartDate)
 
-        certificationRequestDto = CertificationRequestDto(
-            userChallengeId = savedUserChallenge!!.id!!,
-            imageUrl = imageUrl,
-        )
-
-        userChallengeIceRequestDto = UserChallengeIceRequestDto(
-            userChallengeId = savedUserChallenge!!.id!!
-        )
 
         val challenge = challengeService.findById(challengeId)
         sendToCertificationServerRequestDto = SendToCertificationServerRequestDto(
@@ -97,6 +102,14 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
         )
         given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
             EUserCertificatedResultCode.SUCCESS_CERTIFICATED
+        )
+        certificationRequestDto = CertificationRequestDto(
+            userChallengeId = savedUserChallenge!!.id!!,
+            imageUrl = imageUrl,
+        )
+
+        userChallengeIceRequestDto = UserChallengeIceRequestDto(
+            userChallengeId = savedUserChallenge!!.id!!
         )
     }
 
@@ -163,6 +176,7 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
     @AfterEach
     fun tearDown() {
         userChallengeService.deleteAll()
+        reset(applicationEventPublisher)
     }
 
     @Test
@@ -173,7 +187,11 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
             EUserCertificatedResultCode.SUCCESS_CERTIFICATED
         )
         for ( i in 0 until requiredSuccessfulDaysForIce)
-            certificationUseCase.certificateChallengeWithDate(userId, certificationRequestDto, participantsStartDate.plusDays(i.toLong()))
+            userChallengeEventListener.handleCertificationSucceededEventForTest(
+                certificationSucceededEvent = makeCertificationSucceededEvent(
+                    participantsStartDate.plusDays(i.toLong())
+                )
+            )
 
         // when
         val userChallenge: UserChallenge = usingIceUseCase.processAfterCertificateIce(
@@ -194,8 +212,11 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
             EUserCertificatedResultCode.SUCCESS_CERTIFICATED
         )
         for ( i in 0 until notSufficientSuccessfulDaysForIce)
-            certificationUseCase.certificateChallengeWithDate(userId, certificationRequestDto, participantsStartDate.plusDays(i.toLong()))
-        // when
+            userChallengeEventListener.handleCertificationSucceededEventForTest(
+                certificationSucceededEvent = makeCertificationSucceededEvent(
+                    participantsStartDate.plusDays(i.toLong())
+                )
+            )        // when
         val exception = assertThrows<BadRequestException> {
             usingIceUseCase.processAfterCertificateIce(
                 iceRequestDto = userChallengeIceRequestDto,
@@ -217,8 +238,11 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
             EUserCertificatedResultCode.SUCCESS_CERTIFICATED
         )
         for ( i in 0 until requiredSuccessfulDaysForIce)
-            certificationUseCase.certificateChallengeWithDate(userId, certificationRequestDto, participantsStartDate.plusDays(i.toLong()))
-
+            userChallengeEventListener.handleCertificationSucceededEventForTest(
+                certificationSucceededEvent = makeCertificationSucceededEvent(
+                    participantsStartDate.plusDays(i.toLong())
+                )
+            )
         val existTotalParticipantDayCount = savedUserChallenge!!.totalParticipationDayCount
         // when
         val userChallenge: UserChallenge = usingIceUseCase.processAfterCertificateIce(
@@ -240,7 +264,12 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
             EUserCertificatedResultCode.SUCCESS_CERTIFICATED
         )
         for ( i in 0 until requiredSuccessfulDaysForIce)
-            certificationUseCase.certificateChallengeWithDate(userId, certificationRequestDto, participantsStartDate.plusDays(i.toLong()))
+            userChallengeEventListener.handleCertificationSucceededEventForTest(
+                certificationSucceededEvent = makeCertificationSucceededEvent(
+                    participantsStartDate.plusDays(i.toLong())
+                )
+            )
+
         val existNowConsecutiveParticipantDayCount = savedUserChallenge!!.nowConsecutiveParticipationDayCount
         // when
         val userChallenge : UserChallenge = usingIceUseCase.processAfterCertificateIce(
@@ -263,7 +292,11 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
             EUserCertificatedResultCode.SUCCESS_CERTIFICATED
         )
         for ( i in 0 until requiredSuccessfulDaysForIce)
-            certificationUseCase.certificateChallengeWithDate(userId, certificationRequestDto, participantsStartDate.plusDays(i.toLong()))
+            userChallengeEventListener.handleCertificationSucceededEventForTest(
+                certificationSucceededEvent = makeCertificationSucceededEvent(
+                    participantsStartDate.plusDays(i.toLong())
+                )
+            )
         val existNowConsecutiveParticipantDayCount = savedUserChallenge!!.nowConsecutiveParticipationDayCount
         // when
         val userChallenge : UserChallenge = usingIceUseCase.processAfterCertificateIce(
@@ -294,8 +327,11 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
         )
 
         for ( i in 0 until requiredSuccessfulDaysForIce)
-            certificationUseCase.certificateChallengeWithDate(userId, certificationRequestDto, participantsStartDate.plusDays(i.toLong()))
-
+            userChallengeEventListener.handleCertificationSucceededEventForTest(
+                certificationSucceededEvent = makeCertificationSucceededEvent(
+                    participantsStartDate.plusDays(i.toLong())
+                )
+            )
         val userChallenge : UserChallenge = usingIceUseCase.processAfterCertificateIce(
             iceRequestDto = userChallengeIceRequestDto,
             certificationDate = participantsStartDate.plusDays(requiredSuccessfulDaysForIce.toLong())
@@ -309,10 +345,28 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
         val exception = assertThrows<BadRequestException>{
             usingIceUseCase.processAfterCertificateIce(
                 iceRequestDto = userChallengeIceRequestDto,
-                certificationDate = participantsStartDate.plusDays(requiredSuccessfulDaysForIce.plus(1).toLong())
+                certificationDate = participantsStartDate.plusDays(
+                    requiredSuccessfulDaysForIce.plus(1).toLong()
+                )
             )
         }
         assertThat(exception.message).isEqualTo(UserChallengeException.CANNOT_USE_ICE.message)
 
+    }
+
+    private fun makeCertificationSucceededEvent(certificateDate : LocalDate) : CertificationSucceededEvent {
+        return CertificationSucceededEvent(
+            userChallengeId = savedUserChallenge!!.id!!,
+            imageUrl = imageUrl,
+            certificatedDate = certificateDate
+        )
+    }
+    @TestConfiguration
+    class MockitoPublisherConfiguration {
+        @Bean
+        @Primary
+        fun publisher(): ApplicationEventPublisher {
+            return mock(ApplicationEventPublisher::class.java)
+        }
     }
 }

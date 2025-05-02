@@ -26,6 +26,10 @@ class UserChallengeController(
     private val usingIceUseCase: UsingIceUseCase
 ) {
 
+    /**
+     * 특정 챌린지에 사용자가 참여할 수 있다.
+     *
+     */
     @PostMapping("/challenges")
     fun participateChallenge(
         @UserId userId: Long,

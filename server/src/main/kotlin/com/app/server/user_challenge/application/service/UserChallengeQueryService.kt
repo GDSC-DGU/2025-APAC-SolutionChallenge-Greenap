@@ -1,18 +1,12 @@
 package com.app.server.user_challenge.application.service
 
-import com.app.server.user_challenge.ui.controller.ReportWaiter
-import com.app.server.user_challenge.ui.dto.CertificationReportDataDto
-import com.app.server.user_challenge.ui.dto.ReportDto
 import com.app.server.user_challenge.domain.enums.EUserChallengeCertificationStatus
 import com.app.server.user_challenge.domain.enums.EUserChallengeStatus
-import com.app.server.user_challenge.ui.usecase.GetTotalUserChallengeUseCase
 import com.app.server.user_challenge.domain.model.UserChallenge
 import com.app.server.user_challenge.domain.model.UserChallengeHistory
-import com.app.server.user_challenge.ui.dto.CertificationData
-import com.app.server.user_challenge.ui.dto.GetTotalUserChallengeResponseDto
-import com.app.server.user_challenge.ui.dto.UserChallengeQuery
+import com.app.server.user_challenge.ui.dto.*
+import com.app.server.user_challenge.ui.usecase.GetTotalUserChallengeUseCase
 import com.app.server.user_challenge.ui.usecase.GetUserChallengeReportUseCase
-import org.springframework.cglib.core.Local
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 
@@ -59,6 +53,7 @@ class UserChallengeQueryService(
         return ReportDto(
             userChallengeId = userChallenge.id!!,
             totalDays = userChallenge.participantDays,
+            userChallengeStatus = userChallenge.status,
             successDays = successDays,
             reportMessage = userChallenge.reportMessage!!,
             maxConsecutiveParticipationDays = userChallenge.maxConsecutiveParticipationDayCount,
@@ -73,7 +68,7 @@ class UserChallengeQueryService(
         todayDate: LocalDate
     ) {
         val endDate : LocalDate = userChallenge.createdAt!!.toLocalDate()
-            .plusDays(userChallenge.participantDays.toLong())
+            .plusDays(userChallenge.participantDays-1L)
 
         if (userChallenge.status == EUserChallengeStatus.PENDING &&
             todayDate.isBefore(endDate.plusDays(2))

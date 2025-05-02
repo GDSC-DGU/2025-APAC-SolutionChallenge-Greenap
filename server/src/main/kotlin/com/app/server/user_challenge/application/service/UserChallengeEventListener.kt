@@ -34,7 +34,6 @@ class UserChallengeEventListener(
 
     private fun processWhenReceive(event: CertificationSucceededEvent) {
         userChallengeCommandService.processAfterCertificateSuccess(
-            userId = event.userId,
             userChallengeId = event.userChallengeId,
             certificationDto = CertificationDataDto(
                 imageUrl = event.imageUrl,
@@ -63,6 +62,7 @@ class UserChallengeEventListener(
         val reportDto = ReportDto(
             userChallengeId = userChallenge.id!!,
             totalDays = userChallenge.participantDays,
+            userChallengeStatus = userChallenge.status,
             successDays = userChallenge.totalParticipationDayCount.toInt(),
             reportMessage = userChallenge.reportMessage!!,
             maxConsecutiveParticipationDays = userChallenge.maxConsecutiveParticipationDayCount,

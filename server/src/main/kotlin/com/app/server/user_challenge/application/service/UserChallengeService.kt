@@ -18,6 +18,10 @@ class UserChallengeService (
         return userChallengeRepository.save(userChallenge)
     }
 
+    fun saveAll(userChallenges: List<UserChallenge>) : List<UserChallenge> {
+        return userChallengeRepository.saveAll(userChallenges)
+    }
+
     fun findById(userChallengeId: Long) : UserChallenge =
         userChallengeRepository.findById(userChallengeId)
             .orElseThrow { NotFoundException(CommonResultCode.NOT_FOUND, "해당 챌린지를 참여하고 있지 않습니다.")

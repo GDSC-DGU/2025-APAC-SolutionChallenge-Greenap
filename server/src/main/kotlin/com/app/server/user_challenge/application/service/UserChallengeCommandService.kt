@@ -15,6 +15,7 @@ import com.app.server.user_challenge.domain.enums.EUserChallengeStatus
 import com.app.server.user_challenge.domain.exception.UserChallengeException
 import com.app.server.user_challenge.domain.model.UserChallenge
 import com.app.server.user_challenge.domain.model.UserChallengeHistory
+import com.app.server.user_challenge.enums.EUserChallengeParticipantState
 import com.app.server.user_challenge.enums.EUserReportResultCode
 import com.app.server.user_challenge.event.ReportCreatedEvent
 import com.app.server.user_challenge.infra.ReportInfraService
@@ -25,26 +26,62 @@ import org.springframework.stereotype.Service
 import java.time.LocalDate
 
 @Service
-@Transactional
-class UserChallengeCommandService (
+class UserChallengeCommandService(
     private val userChallengeService: UserChallengeService,
     private val challengeService: ChallengeService,
     private val userChallengeHistoryCommandService: UserChallengeHistoryCommandService,
     private val reportInfraService: ReportInfraService,
-    private val eventPublisher : ApplicationEventPublisher
+    private val eventPublisher: ApplicationEventPublisher
 ) : ParticipantChallengeUseCase, UsingIceUseCase {
 
     override fun execute(
         challengeParticipantDto: ChallengeParticipantDto,
-    ) : UserChallenge {
-        validateUserCanParticipateInChallenge(challengeParticipantDto)
-        val userChallenge = createUserChallenge(challengeParticipantDto)
-        saveUserChallengeWithHistory(userChallenge, challengeParticipantDto.participantsTotalDays)
+    ): UserChallenge {
+        val userCanParticipantInChallenge: EUserChallengeParticipantState? =
+            validateUserCanParticipateInChallenge(challengeParticipantDto)
+
+        if (userCanParticipantInChallenge == null ||
+            userCanParticipantInChallenge == EUserChallengeParticipantState.NEW_CHALLENGE_START
+        ) {
+            val userChallenge = createUserChallenge(challengeParticipantDto)
+
+            saveUserChallengeWithHistory(
+                userChallenge,
+                challengeParticipantDto.participantsTotalDays,
+                challengeParticipantDto.participantsStartDate
+            )
+
+            return userChallenge
+        }
+        // 이미 참여 중인 챌린지인 경우
+        // if (userCanParticipantInChallenge == EUserChallengeParticipantState.EXISTING_CHALLENGE_CONTINUE)
+        val userChallenge = userChallengeService.findByUserIdAndChallengeId(
+            userId = challengeParticipantDto.userId,
+            challengeId = challengeParticipantDto.challengeId
+        )
+
+        userChallenge!!.plusParticipatedDays(
+            participantsDate = challengeParticipantDto.participantsTotalDays,
+        )
+
+        saveUserChallengeWithHistory(
+            userChallenge,
+            challengeParticipantDto.participantsTotalDays,
+            participantsStartDay = challengeParticipantDto.participantsStartDate
+        )
+
+        userChallenge.increaseIceCountWhenUserChallengeContinues()
+
+        userChallenge.updateReportMessage(null)
+
+        userChallenge.updateStatus(EUserChallengeStatus.RUNNING)
+
         return userChallenge
+
     }
 
     fun processAfterCertificateSuccess(
-        userId : Long, userChallengeId : Long, certificationDto: CertificationDataDto
+        userChallengeId: Long, certificationDto: CertificationDataDto
     ): UserChallenge {
         val userChallenge = userChallengeService.findById(userChallengeId)
 
@@ -66,16 +103,15 @@ class UserChallengeCommandService (
         userChallenge.validateIncreaseIceCount()
 
         // 챌린지 종료 여부 확인
-        if (userChallenge.checkIsDone(certificationDto.certificationDate)){
-            makeReport(userId, userChallenge)
+        if (userChallenge.checkIsDone(certificationDto.certificationDate)) {
+            makeReport(userChallenge)
         }
 
         return userChallenge
     }
 
-    private fun makeReport(userId: Long, userChallenge: UserChallenge) {
+    private fun makeReport(userChallenge: UserChallenge) {
         val sendToReportServerRequestDto = SendToReportServerRequestDto.from(
-            userId = userId,
             challengeTitle = userChallenge.challenge.title,
             progress = userChallenge.totalParticipationDayCount.floorDiv(
                 userChallenge.participantDays.toLong()
@@ -134,7 +170,7 @@ class UserChallengeCommandService (
         val userChallenge = userChallengeService.findById(userChallengeId = iceDto.userChallengeId)
 
         // 얼리기 가능 여부 판단
-        userChallenge.validateCanIceAndUse()
+        userChallenge.useIce()
         // 날짜 인증 상태 Ice로 변경
         userChallenge.updateCertificationStateIsIce(certificationDate)
         // 연속 참여 일수 증가
@@ -163,26 +199,26 @@ class UserChallengeCommandService (
         pastUserChallengeHistory: UserChallengeHistory?,
         userChallengeHistory: UserChallengeHistory
     ) {
-        // 첫 날인 경우
-        val nowCount : Long = userChallenge.nowConsecutiveParticipationDayCount
+        val nowCount: Long = userChallenge.nowConsecutiveParticipationDayCount
         var consecutiveState: EConsecutiveState
 
+        // 첫 날인 경우
         if (pastUserChallengeHistory == null && userChallengeHistory.status != EUserChallengeCertificationStatus.FAILED) {
             consecutiveState = EConsecutiveState.FIRST_DAY
         }
         // 연속 일자 증가
-        else if (userChallengeHistory.status != EUserChallengeCertificationStatus.FAILED &&
-            pastUserChallengeHistory!!.status != EUserChallengeCertificationStatus.FAILED
-        ) {
-
-            consecutiveState = EConsecutiveState.CONSECUTIVE_ONLY
-
-        } else if (
+        else if (
             userChallengeHistory.status != EUserChallengeCertificationStatus.FAILED &&
             pastUserChallengeHistory!!.status != EUserChallengeCertificationStatus.FAILED &&
             userChallenge.nowConsecutiveParticipationDayCount == userChallenge.maxConsecutiveParticipationDayCount
         ) {
             consecutiveState = EConsecutiveState.CONSECUTIVE_MAX
+        }
+        else if (
+            userChallengeHistory.status != EUserChallengeCertificationStatus.FAILED &&
+            pastUserChallengeHistory!!.status != EUserChallengeCertificationStatus.FAILED
+        ) {
+            consecutiveState = EConsecutiveState.CONSECUTIVE_ONLY
         }
         // 연속 일자 초기화
         else if (userChallengeHistory.status != EUserChallengeCertificationStatus.FAILED && pastUserChallengeHistory!!.status == EUserChallengeCertificationStatus.FAILED) {
@@ -224,13 +260,14 @@ class UserChallengeCommandService (
         }
     }
 
-    private fun validateUserCanParticipateInChallenge(challengeParticipantDto: ChallengeParticipantDto) {
-        val existingUserChallenge = userChallengeService.findByUserIdAndChallengeId(
+    private fun validateUserCanParticipateInChallenge(challengeParticipantDto: ChallengeParticipantDto)
+            : EUserChallengeParticipantState? {
+        val existingUserChallenge: UserChallenge? = userChallengeService.findByUserIdAndChallengeId(
             userId = challengeParticipantDto.userId,
             challengeId = challengeParticipantDto.challengeId
         )
 
-        existingUserChallenge?.validateCanParticipants()
+        return existingUserChallenge?.validateCanParticipants()
     }
 
     private fun createUserChallenge(
@@ -242,16 +279,21 @@ class UserChallengeCommandService (
                 userId = challengeParticipantDto.userId,
                 challenge = challenge,
                 participantsDate = challengeParticipantDto.participantsTotalDays,
-                status =challengeParticipantDto.status
+                status = challengeParticipantDto.status
             )
         )
     }
 
-    private fun saveUserChallengeWithHistory(userChallenge: UserChallenge, participantsDate: Int) {
+    private fun saveUserChallengeWithHistory(
+        userChallenge: UserChallenge,
+        participantsDate: Int,
+        participantsStartDay: LocalDate
+    ) {
         // UserChallengeHistory를 생성하고 UserChallenge에 연결
         userChallengeHistoryCommandService.createUserChallengeHistory(
             userChallenge = userChallenge,
-            participantsDate = participantsDate
+            participantsDate = participantsDate,
+            startDay = participantsStartDay
         )
 
         // UserChallenge와 연결된 모든 히스토리가 함께 저장됨

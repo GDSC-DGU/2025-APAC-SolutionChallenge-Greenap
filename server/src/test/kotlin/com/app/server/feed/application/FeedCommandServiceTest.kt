@@ -1,23 +1,104 @@
 package com.app.server.feed.application
 
 import com.app.server.IntegrationTestContainer
+import com.app.server.challenge.application.service.ChallengeService
+import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
+import com.app.server.challenge_certification.event.CertificationSucceededEvent
+import com.app.server.challenge_certification.infra.CertificationInfraService
+import com.app.server.challenge_certification.ui.dto.CertificationRequestDto
+import com.app.server.challenge_certification.ui.dto.SendToCertificationServerRequestDto
+import com.app.server.challenge_certification.ui.usecase.CertificationUseCase
+import com.app.server.user_challenge.application.dto.CreateUserChallengeDto
+import com.app.server.user_challenge.application.service.UserChallengeEventListener
+import com.app.server.user_challenge.application.service.UserChallengeService
+import com.app.server.user_challenge.domain.enums.EUserChallengeCertificationStatus
+import com.app.server.user_challenge.domain.enums.EUserChallengeStatus
+import com.app.server.user_challenge.domain.model.UserChallenge
+import com.app.server.user_challenge.domain.model.UserChallengeHistory
 import jakarta.transaction.Transactional
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.BDDMockito.given
+import org.mockito.kotlin.reset
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.test.annotation.Rollback
-import org.springframework.test.context.junit.jupiter.SpringExtension
+import org.springframework.test.context.bean.override.mockito.MockitoBean
+import java.time.LocalDate
 import kotlin.test.Test
 
 @SpringBootTest
 @Transactional
 @Rollback
-@ExtendWith(SpringExtension::class)
 class FeedCommandServiceTest : IntegrationTestContainer() {
 
+    @MockitoBean
+    private lateinit var applicationEventPublisher: ApplicationEventPublisher
+
+    @Autowired
+    private lateinit var certificationUseCase: CertificationUseCase
+
+    @Autowired
+    private lateinit var userChallengeService: UserChallengeService
+
+    @Autowired
+    private lateinit var challengeService: ChallengeService
+
+    @Autowired
+    private lateinit var userChallengeEventListener: UserChallengeEventListener
+
+    @MockitoBean
+    private lateinit var certificationInfraService: CertificationInfraService
+
+
+    var certificationRequestDto = CertificationRequestDto(
+        userChallengeId = userChallengeId,
+        imageUrl = imageUrl,
+    )
+
+    var sendToCertificationServerRequestDto = SendToCertificationServerRequestDto(
+        imageUrl = imageUrl,
+        challengeId = challengeId,
+        challengeName = challengeTitle,
+        challengeDescription = challengeDescription
+    )
+
+    var savedUserChallenge: UserChallenge? = null
+
+    @BeforeEach
+    fun setUp() {
+
+        savedUserChallenge = makeUserChallengeAndHistory(participantsStartDate)
+
+        certificationRequestDto = CertificationRequestDto(
+            userChallengeId = savedUserChallenge!!.id!!,
+            imageUrl = imageUrl,
+        )
+
+        val challenge = challengeService.findById(challengeId)
+
+        sendToCertificationServerRequestDto = SendToCertificationServerRequestDto(
+            imageUrl = imageUrl,
+            challengeId = challenge.id!!,
+            challengeName = challenge.title,
+            challengeDescription = challenge.description
+        )
+
+        given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
+            EUserCertificatedResultCode.SUCCESS_CERTIFICATED
+        )
+    }
+
+    @AfterEach
+    fun tearDown() {
+        userChallengeService.deleteAll()
+        reset(applicationEventPublisher)
+    }
+
     @Test
-    @Disabled
     @DisplayName("인증에 성공한 챌린지는 피드로 작성할 수 있다.")
     fun createFeed() {
         // given
@@ -159,4 +240,72 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
         // when
         // then
     }
+    private fun makeCertificationSucceededEvent(certificateDate : LocalDate) : CertificationSucceededEvent {
+        return CertificationSucceededEvent(
+            userChallengeId = savedUserChallenge!!.id!!,
+            imageUrl = imageUrl,
+            certificatedDate = certificateDate
+        )
+    }
+
+    private fun makeUserChallengeAndHistory(startDate: LocalDate): UserChallenge {
+        val mainTestChallenge = challengeService.findById(challengeId)
+
+        val userChallenge: UserChallenge = UserChallenge.createEntity(
+            CreateUserChallengeDto(
+                userId = userId,
+                challenge = mainTestChallenge,
+                participantsDate = 7,
+                status = EUserChallengeStatus.RUNNING
+            )
+        )
+        userChallenge.addUserChallengeHistories(
+            listOf(
+                UserChallengeHistory(
+                    userChallenge = userChallenge,
+                    date = startDate,
+                    status = EUserChallengeCertificationStatus.FAILED,
+                    certificatedImageUrl = null
+                ),
+                UserChallengeHistory(
+                    userChallenge = userChallenge,
+                    date = startDate.plusDays(1),
+                    status = EUserChallengeCertificationStatus.FAILED,
+                    certificatedImageUrl = null
+                ),
+                UserChallengeHistory(
+                    userChallenge = userChallenge,
+                    date = startDate.plusDays(2),
+                    status = EUserChallengeCertificationStatus.FAILED,
+                    certificatedImageUrl = null
+                ),
+                UserChallengeHistory(
+                    userChallenge = userChallenge,
+                    date = startDate.plusDays(3),
+                    status = EUserChallengeCertificationStatus.FAILED,
+                    certificatedImageUrl = null
+                ),
+                UserChallengeHistory(
+                    userChallenge = userChallenge,
+                    date = startDate.plusDays(4),
+                    status = EUserChallengeCertificationStatus.FAILED,
+                    certificatedImageUrl = null
+                ),
+                UserChallengeHistory(
+                    userChallenge = userChallenge,
+                    date = startDate.plusDays(5),
+                    status = EUserChallengeCertificationStatus.FAILED,
+                    certificatedImageUrl = null
+                ),
+                UserChallengeHistory(
+                    userChallenge = userChallenge,
+                    date = startDate.plusDays(6),
+                    status = EUserChallengeCertificationStatus.FAILED,
+                    certificatedImageUrl = null
+                )
+            )
+        )
+        return userChallengeService.save(userChallenge)
+    }
+
 }

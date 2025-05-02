@@ -23,7 +23,6 @@ class CertificationService(
 ) : CertificationUseCase {
 
     override fun certificateChallengeWithDate(
-        userId: Long,
         certificationRequestDto: CertificationRequestDto,
         certificationDate: LocalDate
     ): UserChallenge {
@@ -45,7 +44,6 @@ class CertificationService(
 
         eventPublisher.publishEvent(
             CertificationSucceededEvent(
-                userId = userId,
                 userChallengeId = userChallenge.id!!,
                 imageUrl = certificationRequestDto.imageUrl,
                 certificatedDate = certificationDate,

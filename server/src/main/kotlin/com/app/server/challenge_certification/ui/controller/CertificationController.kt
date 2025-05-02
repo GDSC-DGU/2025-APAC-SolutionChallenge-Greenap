@@ -23,11 +23,9 @@ class CertificationController(
 
     @PostMapping("/certification")
     fun certificateDailyUserChallenge(
-        @UserId userId: Long,
         @RequestBody certificationRequestDto: CertificationRequestDto
     ): ApiResponse<ResultCode> {
         certificationUseCase.certificateChallengeWithDate(
-            userId = userId,
             certificationRequestDto = certificationRequestDto,
             certificationDate = LocalDate.now()
         )

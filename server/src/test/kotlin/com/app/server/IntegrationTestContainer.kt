@@ -38,7 +38,7 @@ abstract class IntegrationTestContainer {
 
     protected val userId: Long = 1L
     protected val challengeId: Long = 1L
-    protected val userChallengeId: Long = 1L
+    protected var userChallengeId: Long = 1L
     protected val participationDays: Int = 7
     protected val participantsStartDate: LocalDate = LocalDate.now()
     protected val testEmail = "testEmail@email.com"

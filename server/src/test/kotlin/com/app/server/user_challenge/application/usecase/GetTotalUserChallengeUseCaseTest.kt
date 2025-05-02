@@ -23,8 +23,15 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.BDDMockito.given
+import org.mockito.Mockito.mock
+import org.mockito.kotlin.reset
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.context.TestConfiguration
+import org.springframework.context.ApplicationEventPublisher
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Primary
 import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.context.junit.jupiter.SpringExtension
@@ -33,8 +40,10 @@ import java.time.LocalDate
 @SpringBootTest
 @Transactional
 @Rollback
-@ExtendWith(SpringExtension::class)
 class GetTotalUserChallengeUseCaseTest : IntegrationTestContainer() {
+
+    @MockitoBean
+    private lateinit var applicationEventPublisher: ApplicationEventPublisher
 
     @Autowired
     private lateinit var challengeService: ChallengeService
@@ -75,7 +84,6 @@ class GetTotalUserChallengeUseCaseTest : IntegrationTestContainer() {
 
         for ( i in 0 until completedUserChallenge!!.participantDays) {
             certificationUseCase.certificateChallengeWithDate(
-                userId,
                 certificationRequestDto,
                 participantsStartDate.plusDays(i.toLong())
             )
@@ -85,6 +93,7 @@ class GetTotalUserChallengeUseCaseTest : IntegrationTestContainer() {
     @AfterEach
     fun tearDown() {
         userChallengeService.deleteAll()
+        reset(applicationEventPublisher)
     }
 
     private fun makeUserChallengeAndHistory(challengeSelectId: Long, startDate: LocalDate): UserChallenge {
@@ -168,5 +177,14 @@ class GetTotalUserChallengeUseCaseTest : IntegrationTestContainer() {
         assertThat(getTotalUserChallengeResponseDto.userChallenges.last().status)
             .isEqualTo(newUserChallenge.status.content)
 
+    }
+
+    @TestConfiguration
+    class MockitoPublisherConfiguration {
+        @Bean
+        @Primary
+        fun publisher(): ApplicationEventPublisher {
+            return mock(ApplicationEventPublisher::class.java)
+        }
     }
 }
