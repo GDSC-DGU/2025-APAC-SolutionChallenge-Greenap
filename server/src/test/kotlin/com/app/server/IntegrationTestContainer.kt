@@ -45,7 +45,7 @@ abstract class IntegrationTestContainer {
     protected val participationDays: Int = 7
     protected val participantsStartDate: LocalDate = LocalDate.now()
     protected val testEmail = "testEmail@email.com"
-    protected val categoryName = "자원 절약"
+    protected val categoryId = 1L
     protected val imageUrl = "testImageUrl"
     protected val challengeTitle = "유휴 전원 / 대기 전력 OFF"
     protected val challengeDescription = "사용하지 않는 전자기기의 전원을 끄거나, 플러그를 뽑는 챌린지입니다. TV, 컴퓨터 등의 대기 전력을 차단함으로써 불필요한 전기 낭비를 줄이고 온실가스 배출을 저감할 수 있습니다."

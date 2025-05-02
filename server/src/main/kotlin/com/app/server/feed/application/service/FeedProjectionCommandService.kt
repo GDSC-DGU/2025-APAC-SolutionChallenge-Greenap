@@ -39,7 +39,8 @@ class FeedProjectionCommandService (
             userProfileImageUrl = user.profileImageUrl,
             userNowConsecutiveDays = user.nowMaxConsecutiveParticipationDayCount
         )
-        return feedProjection
+
+        return feedProjectionService.save(feedProjection)
     }
 
     private fun createFeedProjectionEntity(
@@ -69,6 +70,7 @@ class FeedProjectionCommandService (
 
         return feedProjection
     }
+
     fun deleteReadOnlyFeed(feed: Feed): FeedProjection {
         val feedProjection = feedProjectionRepository.findById(feed.id!!).orElseThrow {
             throw NotFoundException(FeedException.NOT_FOUND_FEED_PROJECTION)

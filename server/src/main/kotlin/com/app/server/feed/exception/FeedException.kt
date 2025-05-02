@@ -15,6 +15,8 @@ enum class FeedException (
     NOT_FOUND_FEED_PROJECTION("FED006", "조회용 피드를 찾을 수 없습니다."),
     PAGE_OVER_LIMIT("FED007", "페이지는 1 이상이어야 합니다."),
     SIZE_OVER_LIMIT("FED008", "사이즈는 1 이상이어야 합니다."),
+    INVALID_GET_FEED_REQUEST("FED009", "잘못된 피드 조회 요청입니다."),
+    NOT_FOUND_FEED_THIS_USER_CHALLENGE("FED010", "해당 챌린지가 존재하지 않아 피드를 찾을 수 없습니다."),
     ;
 
 }

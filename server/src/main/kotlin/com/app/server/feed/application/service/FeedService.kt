@@ -11,12 +11,26 @@ class FeedService (
     private val feedRepository : FeedRepository
 ){
 
+    fun save(feed: Feed) : Feed {
+        return feedRepository.save(feed)
+    }
+
     fun saveAndFlush(feed : Feed){
         feedRepository.saveAndFlush(feed)
     }
 
     fun findById(feedId: Long) : Feed = feedRepository.findById(feedId).orElseThrow {
         throw NotFoundException(FeedException.NOT_FOUND_FEED)
+    }
+
+    fun findAllIdsByUserChallengeId(userChallengeId: Long) : List<Long> {
+        return feedRepository.findAllIdsByUserChallengeId(userChallengeId).orElseThrow {
+            throw NotFoundException(FeedException.NOT_FOUND_FEED_THIS_USER_CHALLENGE)
+        }
+    }
+
+    fun deleteAll() {
+        feedRepository.deleteAll()
     }
 
 }

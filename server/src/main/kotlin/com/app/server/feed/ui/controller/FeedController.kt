@@ -7,6 +7,7 @@ import com.app.server.common.response.ApiResponse
 import com.app.server.feed.ui.dto.CreateFeedRequestDto
 import com.app.server.feed.ui.dto.FeedListResponseDto
 import com.app.server.feed.ui.dto.ReadFeedProjectionCommand
+import com.app.server.feed.ui.dto.ReadFeedRequestDto
 import com.app.server.feed.ui.usecase.CreateFeedUseCase
 import com.app.server.feed.ui.usecase.DeleteFeedUseCase
 import com.app.server.feed.ui.usecase.ReadFeedUseCase
@@ -14,6 +15,7 @@ import com.app.server.feed.ui.usecase.UpdateFeedUseCase
 import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
@@ -33,20 +35,18 @@ class FeedController(
 
     @GetMapping
     fun readFeed(
-        @RequestParam("category") category: String,
-        @RequestParam("scope") scope: String,
-        @RequestParam("challenge") userChallengeId: Long,
-        @RequestParam("page") page: Int,
-        @RequestParam("size") size: Int
+        @UserId userId: Long,
+        @ModelAttribute @Valid readFeedRequestDto : ReadFeedRequestDto,
     ) : ApiResponse<FeedListResponseDto> {
         return ApiResponse.success(
             readFeedUseCase.execute(
                 ReadFeedProjectionCommand.toCommand(
-                    categoryName = category,
-                    scope = scope,
-                    userChallengeId = userChallengeId,
-                    page = page,
-                    size = size
+                    userId = userId,
+                    categoryId = readFeedRequestDto.categoryId,
+                    scope = readFeedRequestDto.scope,
+                    userChallengeId = readFeedRequestDto.userChallengeId,
+                    page = readFeedRequestDto.page,
+                    size = readFeedRequestDto.size
                 )
             )
         )

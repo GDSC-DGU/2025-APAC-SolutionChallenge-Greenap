@@ -98,6 +98,7 @@ CREATE TABLE IF NOT EXISTS feed_projections
     feed_id                                          BIGINT       NOT NULL,
     challenge_category_TITLE                         VARCHAR(255) NOT NULL,
     challenge_title                                  VARCHAR(255) NOT NULL,
+    user_id                                          BIGINT       NOT NULL,
     user_name                                        VARCHAR(255) NOT NULL,
     user_profile_image_url                           TEXT         NULL,
     user_now_max_consecutive_participation_day_count BIGINT       NULL,

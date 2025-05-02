@@ -136,6 +136,8 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
     fun tearDown() {
         userChallengeService.deleteAll()
         reset(applicationEventPublisher)
+        feedService.deleteAll()
+        feedProjectionService.deleteAll()
     }
 
     @Test

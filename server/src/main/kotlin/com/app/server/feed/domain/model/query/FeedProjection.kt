@@ -10,10 +10,10 @@ class FeedProjection (
 
     @Id
     @Column(name = "feed_id")
-    val id: Long,
+    val id: Long? = null,
 
     @MapsId
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
     @JoinColumn(name = "feed_id", nullable = false)
     val feed: Feed,
 
@@ -21,6 +21,8 @@ class FeedProjection (
     val challengeCategoryTitle: String,
     @Column(name = "challenge_title")
     val challengeTitle: String,
+    @Column(name = "user_id")
+    val userId: Long,
     @Column(name = "user_name")
     val userName: String,
     @Column(name = "user_profile_image_url")
@@ -44,10 +46,10 @@ class FeedProjection (
             userNowMaxConsecutiveParticipationDayCount: Long,
         ): FeedProjection {
             return FeedProjection(
-                id = feed.id!!,
                 feed = feed,
                 challengeCategoryTitle = challengeCategoryTitle,
                 challengeTitle = challengeTitle,
+                userId = feed.userId,
                 userName = userName,
                 userProfileImageUrl = userProfileImageUrl,
                 userNowMaxConsecutiveParticipationDayCount = userNowMaxConsecutiveParticipationDayCount,
