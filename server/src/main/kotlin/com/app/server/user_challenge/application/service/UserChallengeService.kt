@@ -5,6 +5,7 @@ import com.app.server.common.exception.NotFoundException
 import com.app.server.user_challenge.application.repository.UserChallengeRepository
 import com.app.server.user_challenge.domain.enums.EUserChallengeCertificationStatus
 import com.app.server.user_challenge.domain.enums.EUserChallengeStatus
+import com.app.server.user_challenge.domain.exception.UserChallengeException
 import com.app.server.user_challenge.domain.model.UserChallenge
 import com.app.server.user_challenge.domain.model.UserChallengeHistory
 import org.springframework.stereotype.Service
@@ -46,16 +47,8 @@ class UserChallengeService (
             challengeId = challengeId
         )
 
-    fun findHistoryByUserChallenge(userChallengeId: Long): List<UserChallengeHistory> {
-        return findById(userChallengeId).getUserChallengeHistories()
-    }
-
     fun deleteAll() {
         userChallengeRepository.deleteAll()
-    }
-
-    fun flush(){
-        userChallengeRepository.flush()
     }
 
     fun isCertificatedWhen(userChallengeId : Long, todayDate : LocalDate) : EUserChallengeCertificationStatus {
@@ -63,5 +56,12 @@ class UserChallengeService (
     }
     fun getUserChallengeImageUrl(userChallengeId : Long, imageDate : LocalDate): String {
         return findById(userChallengeId).getUserChallengeImageUrl(imageDate)
+    }
+
+    fun findAllByStatus(status: EUserChallengeStatus): List<UserChallenge> {
+        return userChallengeRepository.findAllByStatus(status)
+            .orElseThrow{
+                NotFoundException(UserChallengeException.NOT_FOUND_THIS_STATUS)
+            }
     }
 }

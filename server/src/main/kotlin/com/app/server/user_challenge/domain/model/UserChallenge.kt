@@ -194,7 +194,7 @@ class UserChallenge(
         return userChallengeHistories.filter { it.date.isBefore(todayDate.plusDays(1)) }
     }
 
-    fun checkIsDone(todayDate: LocalDate): Boolean {
+    fun checkIsNotRunning(todayDate: LocalDate): Boolean {
         // status가 running인데, 오늘 날짜와 챌린지 종료 날짜가 같은 상황에서 인증이 완료되었거나, 챌린지 종료 날짜가 지난 경우
         val endDate = this.createdAt!!.toLocalDate().plusDays(participantDays - 1L)
 
@@ -204,6 +204,13 @@ class UserChallenge(
                                 (todayDate.isEqual(endDate) &&
                                         userChallengeHistories.last().status != EUserChallengeCertificationStatus.FAILED)
                         )
+    }
+
+    fun checkIsCompleted(todayDate: LocalDate): Boolean {
+        // 챌린지 종료 일보다 현재 날짜가 이틀 더 지났을 때
+        val endDate = this.createdAt!!.toLocalDate().plusDays(participantDays - 1L)
+
+        return todayDate.isAfter(endDate.plusDays(1))
     }
 
     fun getUserChallengeImageUrl(imageDate: LocalDate): String {

@@ -5,27 +5,29 @@ import com.app.server.challenge.ui.usecase.dto.request.ChallengeParticipantDto
 import com.app.server.challenge_certification.application.dto.CertificationDataDto
 import com.app.server.challenge_certification.application.service.constant.EConsecutiveState
 import com.app.server.challenge_certification.ui.dto.UserChallengeIceRequestDto
-import com.app.server.user_challenge.ui.usecase.UsingIceUseCase
 import com.app.server.common.exception.InternalServerErrorException
 import com.app.server.user_challenge.application.dto.CreateUserChallengeDto
 import com.app.server.user_challenge.application.dto.ReceiveReportResponseDto
-import com.app.server.user_challenge.ui.usecase.ParticipantChallengeUseCase
 import com.app.server.user_challenge.domain.enums.EUserChallengeCertificationStatus
 import com.app.server.user_challenge.domain.enums.EUserChallengeStatus
+import com.app.server.user_challenge.domain.event.ReportCreatedEvent
+import com.app.server.user_challenge.domain.event.SavedTodayUserChallengeCertificationEvent
 import com.app.server.user_challenge.domain.exception.UserChallengeException
 import com.app.server.user_challenge.domain.model.UserChallenge
 import com.app.server.user_challenge.domain.model.UserChallengeHistory
 import com.app.server.user_challenge.enums.EUserChallengeParticipantState
 import com.app.server.user_challenge.enums.EUserReportResultCode
-import com.app.server.user_challenge.domain.event.ReportCreatedEvent
-import com.app.server.user_challenge.domain.event.SavedTodayUserChallengeCertificationEvent
 import com.app.server.user_challenge.infra.ReportInfraService
 import com.app.server.user_challenge.ui.dto.SendToReportServerRequestDto
+import com.app.server.user_challenge.ui.usecase.ParticipantChallengeUseCase
+import com.app.server.user_challenge.ui.usecase.UsingIceUseCase
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 
 @Service
+@Transactional
 class UserChallengeCommandService(
     private val userChallengeService: UserChallengeService,
     private val challengeService: ChallengeService,
@@ -103,7 +105,7 @@ class UserChallengeCommandService(
         userChallenge.validateIncreaseIceCount()
 
         // 챌린지 종료 여부 확인
-        if (userChallenge.checkIsDone(certificationDto.certificationDate)) {
+        if (userChallenge.checkIsNotRunning(certificationDto.certificationDate)) {
             makeReport(userChallenge)
         }
 
@@ -146,7 +148,7 @@ class UserChallengeCommandService(
         when (report.status) {
             EUserReportResultCode.RECEIVE_REPORT_SUCCESS -> {
                 userChallenge.updateReportMessage(report.message)
-                updateUserChallengeStatusToPending(userChallenge)
+                userChallenge.updateStatus(EUserChallengeStatus.PENDING)
             }
 
             EUserReportResultCode.RECEIVE_REPORT_FAILED -> {
@@ -163,10 +165,6 @@ class UserChallengeCommandService(
                 )
             }
         }
-    }
-
-    private fun updateUserChallengeStatusToPending(userChallenge: UserChallenge) {
-        userChallenge.updateStatus(EUserChallengeStatus.PENDING)
     }
 
     override fun processAfterCertificateIce(
@@ -303,5 +301,33 @@ class UserChallengeCommandService(
 
         // UserChallenge와 연결된 모든 히스토리가 함께 저장됨
         userChallengeService.save(userChallenge)
+    }
+
+    suspend fun batchUpdateChallengeStatusFromRunningToPending(validateToday: LocalDate) {
+        val runningUserChallengeList : List<UserChallenge> = userChallengeService.findAllByStatus(EUserChallengeStatus.RUNNING)
+
+        runningUserChallengeList.forEach { userChallenge ->
+            if (userChallenge.checkIsNotRunning(validateToday)) {
+                makeReport(userChallenge)
+            }
+        }
+    }
+
+    suspend fun batchUpdateChallengeStatusFromPendingToCompleted(validateToday: LocalDate) {
+        val pendingUserChallengeList : List<UserChallenge> = userChallengeService.findAllByStatus(EUserChallengeStatus.PENDING)
+        pendingUserChallengeList.forEach { userChallenge ->
+            if (userChallenge.checkIsCompleted(validateToday)) {
+                userChallenge.updateStatus(EUserChallengeStatus.COMPLETED)
+            }
+        }
+    }
+
+    suspend fun batchUpdateChallengeStatusFromWaitingToCompleted(validateToday: LocalDate) {
+        val waitingUserChallengeList : List<UserChallenge> = userChallengeService.findAllByStatus(EUserChallengeStatus.WAITING)
+        waitingUserChallengeList.forEach { userChallenge ->
+            if (userChallenge.checkIsCompleted(validateToday)) {
+                userChallenge.updateStatus(EUserChallengeStatus.COMPLETED)
+            }
+        }
     }
 }

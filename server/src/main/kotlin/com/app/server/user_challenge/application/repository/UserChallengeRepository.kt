@@ -39,4 +39,9 @@ interface UserChallengeRepository : JpaRepository<UserChallenge, Long> {
             "AND uc.deletedAt IS NULL")
     fun findAllByUserId(userId: Long): List<UserChallenge>
 
+    @Query("SELECT uc FROM UserChallenge uc " +
+            "WHERE uc.status = :status " +
+            "AND uc.deletedAt IS NULL")
+    fun findAllByStatus(status: EUserChallengeStatus): Optional<List<UserChallenge>>
+
 }

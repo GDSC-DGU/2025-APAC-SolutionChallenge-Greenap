@@ -20,6 +20,7 @@ enum class UserChallengeException(
     ERROR_IN_CERTIFICATED_SERVER("UCH011", "챌린지 인증 서버 오류입니다."),
     CANNOT_MAKE_REPORT("UCH0012", "리포트를 만들 수 없습니다."),
     ERROR_IN_REPORT_SERVER("UCH0013", "리포트 서버 오류입니다."),
+    NOT_FOUND_THIS_STATUS("UCH0014", "해당 상태의 챌린지가 존재하지 않습니다."),
     ;
 
 }
