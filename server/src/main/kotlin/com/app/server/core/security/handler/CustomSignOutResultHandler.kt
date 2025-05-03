@@ -1,4 +1,4 @@
-package com.app.server.common.security.handler
+package com.app.server.core.security.handler
 
 import com.app.server.common.response.ApiResponse.Companion.success
 import com.fasterxml.jackson.databind.ObjectMapper

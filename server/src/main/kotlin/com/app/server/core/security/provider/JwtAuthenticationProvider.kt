@@ -1,4 +1,4 @@
-package com.app.server.common.security.provider
+package com.app.server.core.security.provider
 
 import com.app.server.common.exception.BadRequestException
 import com.app.server.common.security.JwtAuthenticationToken

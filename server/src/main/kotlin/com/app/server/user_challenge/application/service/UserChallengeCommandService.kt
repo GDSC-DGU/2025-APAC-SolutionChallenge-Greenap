@@ -80,7 +80,7 @@ class UserChallengeCommandService(
 
     }
 
-    fun processAfterCertificateSuccess(
+    suspend fun processAfterCertificateSuccess(
         userChallengeId: Long, certificationDto: CertificationDataDto
     ): UserChallenge {
         val userChallenge = userChallengeService.findById(userChallengeId)
@@ -150,7 +150,6 @@ class UserChallengeCommandService(
             }
 
             EUserReportResultCode.RECEIVE_REPORT_FAILED -> {
-                // TODO: 레포트 발급에 실패한 챌린지들은 따로 모아 배치작업으로 다시 재발급 필요
                 userChallenge.updateStatus(EUserChallengeStatus.DEAD)
                 throw InternalServerErrorException(
                     UserChallengeException.CANNOT_MAKE_REPORT

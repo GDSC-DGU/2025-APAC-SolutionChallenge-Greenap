@@ -1,4 +1,4 @@
-package com.app.server.common.security.config
+package com.app.server.core.security.config
 
 import com.app.server.common.constant.Constants
 import com.app.server.common.security.JwtAuthEntryPoint

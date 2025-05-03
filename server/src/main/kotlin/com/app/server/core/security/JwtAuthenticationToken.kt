@@ -1,4 +1,4 @@
-package com.app.server.common.security
+package com.app.server.core.security
 
 import org.springframework.security.authentication.AbstractAuthenticationToken
 import org.springframework.security.core.GrantedAuthority

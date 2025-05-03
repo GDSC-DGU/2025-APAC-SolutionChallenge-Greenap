@@ -144,7 +144,7 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
     @DisplayName("인증에 성공한 챌린지는 피드로 작성할 수 있다.")
     fun createFeed() {
         // given
-        userChallengeEventListener.handleCertificationSucceededEventForTest(
+        userChallengeEventListener.handleCertificationSucceededEvent(
             makeCertificationSucceededEvent(
                 certificateDate = participantsStartDate
             )
@@ -164,7 +164,7 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
     @DisplayName("피드로 작성하는 챌린지는 사용자의 인증 사진을 피드에 올리게 된다.")
     fun createFeedWithImage() {
         // given
-        userChallengeEventListener.handleCertificationSucceededEventForTest(
+        userChallengeEventListener.handleCertificationSucceededEvent(
             makeCertificationSucceededEvent(
                 certificateDate = participantsStartDate,
             )
@@ -184,7 +184,7 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
     @DisplayName("피드의 내용은 1000자 이하로 작성할 수 있다.")
     fun createFeedWithContent() {
         // given
-        userChallengeEventListener.handleCertificationSucceededEventForTest(
+        userChallengeEventListener.handleCertificationSucceededEvent(
             makeCertificationSucceededEvent(
                 certificateDate = participantsStartDate,
             )
@@ -202,7 +202,7 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
     @DisplayName("피드의 내용은 1000자 이상으로 작성할 수 없다.")
     fun createFeedWithContentOverLimit() {
         // given
-        userChallengeEventListener.handleCertificationSucceededEventForTest(
+        userChallengeEventListener.handleCertificationSucceededEvent(
             makeCertificationSucceededEvent(
                 certificateDate = participantsStartDate,
             )
@@ -223,7 +223,7 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
     @DisplayName("피드의 내용은 없어도 게시할 수 있다.")
     fun createFeedWithEmptyContent() {
         // given
-        userChallengeEventListener.handleCertificationSucceededEventForTest(
+        userChallengeEventListener.handleCertificationSucceededEvent(
             makeCertificationSucceededEvent(
                 certificateDate = participantsStartDate,
             )
@@ -237,7 +237,7 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
         assertThat(feed.content).isNull()
 
         // given
-        userChallengeEventListener.handleCertificationSucceededEventForTest(
+        userChallengeEventListener.handleCertificationSucceededEvent(
             makeCertificationSucceededEvent(
                 certificateDate = participantsStartDate.plusDays(1),
             )
@@ -254,7 +254,7 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
     @DisplayName("피드가 작성되어 피드 생성 이벤트가 게시되면, 피드 조회 전용 테이블에 피드가 복사되어 저장된다.")
     fun createFeedWithCopy() {
         // given
-        userChallengeEventListener.handleCertificationSucceededEventForTest(
+        userChallengeEventListener.handleCertificationSucceededEvent(
             makeCertificationSucceededEvent(
                 certificateDate = participantsStartDate,
             )
@@ -264,7 +264,7 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
         )
         verify(applicationEventPublisher).publishEvent(eq(FeedCreatedEvent.fromEntity(feed)))
         // when
-        val feedProjection = feedEventListener.handleCreatedFeedEvent(
+        val feedProjection = feedEventListener.createdFeedProjectionFrom(
             FeedCreatedEvent.fromEntity(feed)
         )
         // then
@@ -280,7 +280,7 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
     @DisplayName("피드 수정 시, 피드의 내용을 1000자 이하로 수정할 수 있다.")
     fun updateFeedWithContent() {
         // given
-        userChallengeEventListener.handleCertificationSucceededEventForTest(
+        userChallengeEventListener.handleCertificationSucceededEvent(
             makeCertificationSucceededEvent(
                 certificateDate = participantsStartDate,
             )
@@ -307,7 +307,7 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
     @DisplayName("피드 수정 시, 피드의 내용을 1000자 이상으로 수정할 수 없다.")
     fun updateFeedWithContentOverLimit() {
         // given
-        userChallengeEventListener.handleCertificationSucceededEventForTest(
+        userChallengeEventListener.handleCertificationSucceededEvent(
             makeCertificationSucceededEvent(
                 certificateDate = participantsStartDate,
             )
@@ -333,7 +333,7 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
     @DisplayName("피드를 삭제할 수 있다.")
     fun deleteFeed() {
         // given
-        userChallengeEventListener.handleCertificationSucceededEventForTest(
+        userChallengeEventListener.handleCertificationSucceededEvent(
             makeCertificationSucceededEvent(
                 certificateDate = participantsStartDate,
             )
@@ -355,7 +355,7 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
     @DisplayName("피드를 삭제하면 피드 조회 전용 테이블에서도 삭제된다.")
     fun deleteFeedWithCopy() {
         // given
-        userChallengeEventListener.handleCertificationSucceededEventForTest(
+        userChallengeEventListener.handleCertificationSucceededEvent(
             makeCertificationSucceededEvent(
                 certificateDate = participantsStartDate,
             )

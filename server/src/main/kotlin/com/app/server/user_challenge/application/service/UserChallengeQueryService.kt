@@ -80,7 +80,6 @@ class UserChallengeQueryService(
             ){
             userChallenge.updateStatus(EUserChallengeStatus.COMPLETED)
         }
-        // TODO: WAIT 상태인 챌린지들은 endDate.plusDays(1)보다 .isAfter하면 COMPLETED로 상태 변경 배치 작업 필요
     }
 
     private fun isReportReceivedFrom(userChallenge: UserChallenge): Boolean {

@@ -21,7 +21,7 @@ class FeedProjectionCommandService (
     private val feedProjectionService: FeedProjectionService,
 ){
 
-    fun createReadOnlyFeed(
+    suspend fun createReadOnlyFeed(
         feed : Feed,
         relatedUserChallengeId: Long,
         authorUserId: Long
@@ -61,7 +61,7 @@ class FeedProjectionCommandService (
         )
     }
 
-    fun updateReadOnlyFeed(feed: Feed) : FeedProjection {
+    suspend fun updateReadOnlyFeed(feed: Feed) : FeedProjection {
         val feedProjection = feedProjectionService.findById(feed.id!!)
 
         feedProjection.updateContent(
@@ -71,7 +71,7 @@ class FeedProjectionCommandService (
         return feedProjection
     }
 
-    fun deleteReadOnlyFeed(feed: Feed): FeedProjection {
+    suspend fun deleteReadOnlyFeed(feed: Feed): FeedProjection {
         val feedProjection = feedProjectionRepository.findById(feed.id!!).orElseThrow {
             throw NotFoundException(FeedException.NOT_FOUND_FEED_PROJECTION)
         }

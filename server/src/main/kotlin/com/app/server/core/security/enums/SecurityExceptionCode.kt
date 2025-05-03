@@ -1,4 +1,4 @@
-package com.app.server.common.security.enums
+package com.app.server.core.security.enums
 
 import com.app.server.common.enums.ResultCode
 import lombok.Getter

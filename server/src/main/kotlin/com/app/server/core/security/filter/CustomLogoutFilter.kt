@@ -1,4 +1,4 @@
-package com.app.server.common.security.filter
+package com.app.server.core.security.filter
 
 import com.app.server.common.security.enums.SecurityExceptionCode
 import jakarta.servlet.FilterChain

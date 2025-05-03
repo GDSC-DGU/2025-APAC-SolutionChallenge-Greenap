@@ -1,4 +1,4 @@
-package com.app.server.common.security.info
+package com.app.server.core.security.info
 
 import com.app.server.common.constant.Constants
 import com.app.server.user.domain.model.User

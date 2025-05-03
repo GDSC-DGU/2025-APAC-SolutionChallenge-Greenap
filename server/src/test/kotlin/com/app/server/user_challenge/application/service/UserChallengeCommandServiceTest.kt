@@ -147,7 +147,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
         // when
-        userChallengeEventListener.handleCertificationSucceededEventForTest(
+        userChallengeEventListener.handleCertificationSucceededEvent(
             CertificationSucceededEvent(
                 savedUserChallenge!!.id!!, imageUrl, endDate
             )
@@ -162,7 +162,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
         // when
-        userChallengeEventListener.handleCertificationSucceededEventForTest(
+        userChallengeEventListener.handleCertificationSucceededEvent(
             CertificationSucceededEvent(
                 savedUserChallenge!!.id!!, imageUrl, endDate
 
@@ -180,7 +180,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_FAILED)
         // when
         val exception = assertThrows<InternalServerErrorException> {
-            userChallengeEventListener.handleCertificationSucceededEventForTest(
+            userChallengeEventListener.handleCertificationSucceededEvent(
                 CertificationSucceededEvent(
                     savedUserChallenge!!.id!!, imageUrl, participantsStartDate.plusDays(participationDays - 1L)
                 )
@@ -198,7 +198,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
         settingReceiveReport(status = EUserReportResultCode.ERROR_IN_RECEIVE_REPORT_SERVER)
         // when
         val exception = assertThrows<InternalServerErrorException> {
-            userChallengeEventListener.handleCertificationSucceededEventForTest(
+            userChallengeEventListener.handleCertificationSucceededEvent(
                 CertificationSucceededEvent(
                     savedUserChallenge!!.id!!, imageUrl, endDate
                 )
@@ -215,7 +215,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
         // when
-        userChallengeEventListener.handleCertificationSucceededEventForTest(
+        userChallengeEventListener.handleCertificationSucceededEvent(
             CertificationSucceededEvent(
                 savedUserChallenge!!.id!!, imageUrl, endDate
             )
@@ -231,7 +231,6 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
         // when
-        // TODO : 배치 작업 테스트
         // then
         assertThat(savedUserChallenge!!.status).isEqualTo(EUserChallengeStatus.PENDING)
     }
@@ -242,7 +241,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
         // when
-        userChallengeEventListener.handleCertificationSucceededEventForTest(
+        userChallengeEventListener.handleCertificationSucceededEvent(
             CertificationSucceededEvent(
                 savedUserChallenge!!.id!!, imageUrl, endDate
             )
@@ -257,7 +256,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
     fun checkReport() {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
-        userChallengeEventListener.handleCertificationSucceededEventForTest(
+        userChallengeEventListener.handleCertificationSucceededEvent(
             CertificationSucceededEvent(
                 savedUserChallenge!!.id!!, imageUrl, endDate
             )
@@ -274,7 +273,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
     fun completeReport() {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
-        userChallengeEventListener.handleCertificationSucceededEventForTest(
+        userChallengeEventListener.handleCertificationSucceededEvent(
             CertificationSucceededEvent(
                 savedUserChallenge!!.id!!, imageUrl, endDate
             )
@@ -291,7 +290,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
     fun continueChallengeWithSuccess() {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
-        userChallengeEventListener.handleCertificationSucceededEventForTest(
+        userChallengeEventListener.handleCertificationSucceededEvent(
             CertificationSucceededEvent(
                 savedUserChallenge!!.id!!, imageUrl, endDate
             )
@@ -317,7 +316,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
     fun continueChallengeWithPending() {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
-        userChallengeEventListener.handleCertificationSucceededEventForTest(
+        userChallengeEventListener.handleCertificationSucceededEvent(
             CertificationSucceededEvent(
                 savedUserChallenge!!.id!!, imageUrl, endDate
             )
@@ -344,7 +343,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
     fun continueChallenge() {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
-        userChallengeEventListener.handleCertificationSucceededEventForTest(
+        userChallengeEventListener.handleCertificationSucceededEvent(
             CertificationSucceededEvent(
                 savedUserChallenge!!.id!!, imageUrl, endDate
             )
@@ -373,7 +372,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
     fun continueChallengeWithWait() {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
-        userChallengeEventListener.handleCertificationSucceededEventForTest(
+        userChallengeEventListener.handleCertificationSucceededEvent(
             CertificationSucceededEvent(
                 savedUserChallenge!!.id!!, imageUrl, endDate
             )
@@ -403,7 +402,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
     fun continueChallengeWithWaitAndIncreaseTotalParticipationDays() {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
-        userChallengeEventListener.handleCertificationSucceededEventForTest(
+        userChallengeEventListener.handleCertificationSucceededEvent(
             CertificationSucceededEvent(
                 savedUserChallenge!!.id!!, imageUrl, endDate
             )
@@ -429,7 +428,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
     fun continueChallengeWithWaitAndIncreaseParticipationDays() {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
-        userChallengeEventListener.handleCertificationSucceededEventForTest(
+        userChallengeEventListener.handleCertificationSucceededEvent(
             CertificationSucceededEvent(
                 savedUserChallenge!!.id!!, imageUrl, endDate
             )
@@ -457,7 +456,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
     fun continueChallengeWithWaitAndChangeStatusToFail() {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
-        userChallengeEventListener.handleCertificationSucceededEventForTest(
+        userChallengeEventListener.handleCertificationSucceededEvent(
             CertificationSucceededEvent(
                 savedUserChallenge!!.id!!, imageUrl, endDate
             )
@@ -488,7 +487,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
     fun continueChallengeWithWaitAndKeepStatus() {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
-        userChallengeEventListener.handleCertificationSucceededEventForTest(
+        userChallengeEventListener.handleCertificationSucceededEvent(
             CertificationSucceededEvent(
                 savedUserChallenge!!.id!!, imageUrl, endDate
             )
@@ -519,7 +518,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
     fun continueChallengeWithWaitAndDeleteReportMessage() {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
-        userChallengeEventListener.handleCertificationSucceededEventForTest(
+        userChallengeEventListener.handleCertificationSucceededEvent(
             CertificationSucceededEvent(
                 savedUserChallenge!!.id!!, imageUrl, endDate
             )
@@ -547,7 +546,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
 
-        userChallengeEventListener.handleCertificationSucceededEventForTest(
+        userChallengeEventListener.handleCertificationSucceededEvent(
             CertificationSucceededEvent(
                 savedUserChallenge!!.id!!, imageUrl, endDate
             )
@@ -569,7 +568,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
             )
         )
         // when
-        userChallengeEventListener.handleCertificationSucceededEventForTest(
+        userChallengeEventListener.handleCertificationSucceededEvent(
             CertificationSucceededEvent(
                 savedUserChallenge!!.id!!, imageUrl, endDate.plusDays(1)
             )
@@ -583,7 +582,6 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
     @Disabled
     @DisplayName("이어하기가 가능한 상태의 챌린지(WAIT 상태인 챌린지)가 챌린지 종료일자로부터 이틀이 지났다면, 해당 챌린지는 더이상 이어하기를 진행할 수 없다.(COMPLETED 상태로 변경된다.)")
     fun completeChallengeWithWait() {
-        // TODO 배치로 WAIT 상태인 챌린지들을 COMPLETED로 변경하는 작업이 필요하다.
         // given
         // when
         // then
@@ -620,8 +618,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
             )
         )
         for (i in 0 until participationDays - 1)
-        // TODO : 이벤트 리스너단계부터 검증이 필요. 지금은 리스너 메서드를 호출해서 테스트하지만, 제대로 이벤트를 수신받고 있는 지도 확인 필요
-            userChallengeEventListener.handleCertificationSucceededEventForTest(
+            userChallengeEventListener.handleCertificationSucceededEvent(
                 CertificationSucceededEvent(
                     savedUserChallenge!!.id!!, imageUrl, participantsStartDate.plusDays(i.toLong())
                 )

@@ -207,7 +207,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
                 participantsStartDate
             )
         )
-        userChallengeEventListener.handleCertificationSucceededEventForTest(
+        userChallengeEventListener.handleCertificationSucceededEvent(
             makeCertificationSucceededEvent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate
@@ -240,7 +240,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
                 participantsStartDate
             )
         )
-        userChallengeEventListener.handleCertificationSucceededEventForTest(
+        userChallengeEventListener.handleCertificationSucceededEvent(
             makeCertificationSucceededEvent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate
@@ -274,7 +274,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
                 participantsStartDate
             )
         )
-        userChallengeEventListener.handleCertificationSucceededEventForTest(
+        userChallengeEventListener.handleCertificationSucceededEvent(
             makeCertificationSucceededEvent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate
@@ -309,7 +309,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
                 participantsStartDate
             )
         )
-        userChallengeEventListener.handleCertificationSucceededEventForTest(
+        userChallengeEventListener.handleCertificationSucceededEvent(
             makeCertificationSucceededEvent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate
@@ -330,7 +330,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
                 participantsStartDate
             )
         )
-        userChallengeEventListener.handleCertificationSucceededEventForTest(
+        userChallengeEventListener.handleCertificationSucceededEvent(
             makeCertificationSucceededEvent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate.plusDays(1)
@@ -363,7 +363,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
                 participantsStartDate
             )
         )
-        userChallengeEventListener.handleCertificationSucceededEventForTest(
+        userChallengeEventListener.handleCertificationSucceededEvent(
             makeCertificationSucceededEvent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate
@@ -383,7 +383,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
                 participantsStartDate.plusDays(2)
             )
         )
-        userChallengeEventListener.handleCertificationSucceededEventForTest(
+        userChallengeEventListener.handleCertificationSucceededEvent(
             makeCertificationSucceededEvent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate.plusDays(2)
@@ -431,7 +431,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
                 participantsStartDate
             )
         )
-        userChallengeEventListener.handleCertificationSucceededEventForTest(
+        userChallengeEventListener.handleCertificationSucceededEvent(
             makeCertificationSucceededEvent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate
@@ -451,7 +451,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
                         participantsStartDate
                     )
                 )
-            userChallengeEventListener.handleCertificationSucceededEventForTest(
+            userChallengeEventListener.handleCertificationSucceededEvent(
                 makeCertificationSucceededEvent(
                     savedUserChallenge!!.id!!,
                     participantsStartDate
@@ -479,7 +479,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
                 participantsStartDate
             )
         )
-        userChallengeEventListener.handleCertificationSucceededEventForTest(
+        userChallengeEventListener.handleCertificationSucceededEvent(
             makeCertificationSucceededEvent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate
@@ -513,19 +513,19 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
             certificationDate = participantsStartDate
         )
 
-        userChallengeEventListener.handleCertificationSucceededEventForTest(
+        userChallengeEventListener.handleCertificationSucceededEvent(
             certificationSucceededEvent = makeCertificationSucceededEvent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate
             )
         )
-        userChallengeEventListener.handleCertificationSucceededEventForTest(
+        userChallengeEventListener.handleCertificationSucceededEvent(
             certificationSucceededEvent = makeCertificationSucceededEvent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate.plusDays(1)
             )
         )
-        userChallengeEventListener.handleCertificationSucceededEventForTest(
+        userChallengeEventListener.handleCertificationSucceededEvent(
             certificationSucceededEvent = makeCertificationSucceededEvent(
                 secondSavedUserChallenge!!.id!!,
                 participantsStartDate

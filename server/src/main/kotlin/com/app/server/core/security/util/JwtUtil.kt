@@ -1,4 +1,4 @@
-package com.app.server.common.security.util
+package com.app.server.core.security.util
 
 import com.app.server.common.constant.Constants
 import com.app.server.user.ui.dto.response.JwtTokenDto

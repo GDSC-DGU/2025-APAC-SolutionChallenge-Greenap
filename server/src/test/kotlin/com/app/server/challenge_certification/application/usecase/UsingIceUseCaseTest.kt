@@ -184,7 +184,7 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
             EUserCertificatedResultCode.SUCCESS_CERTIFICATED
         )
         for ( i in 0 until requiredSuccessfulDaysForIce)
-            userChallengeEventListener.handleCertificationSucceededEventForTest(
+            userChallengeEventListener.handleCertificationSucceededEvent(
                 certificationSucceededEvent = makeCertificationSucceededEvent(
                     participantsStartDate.plusDays(i.toLong())
                 )
@@ -209,7 +209,7 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
             EUserCertificatedResultCode.SUCCESS_CERTIFICATED
         )
         for ( i in 0 until notSufficientSuccessfulDaysForIce)
-            userChallengeEventListener.handleCertificationSucceededEventForTest(
+            userChallengeEventListener.handleCertificationSucceededEvent(
                 certificationSucceededEvent = makeCertificationSucceededEvent(
                     participantsStartDate.plusDays(i.toLong())
                 )
@@ -235,7 +235,7 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
             EUserCertificatedResultCode.SUCCESS_CERTIFICATED
         )
         for ( i in 0 until requiredSuccessfulDaysForIce)
-            userChallengeEventListener.handleCertificationSucceededEventForTest(
+            userChallengeEventListener.handleCertificationSucceededEvent(
                 certificationSucceededEvent = makeCertificationSucceededEvent(
                     participantsStartDate.plusDays(i.toLong())
                 )
@@ -261,7 +261,7 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
             EUserCertificatedResultCode.SUCCESS_CERTIFICATED
         )
         for ( i in 0 until requiredSuccessfulDaysForIce)
-            userChallengeEventListener.handleCertificationSucceededEventForTest(
+            userChallengeEventListener.handleCertificationSucceededEvent(
                 certificationSucceededEvent = makeCertificationSucceededEvent(
                     participantsStartDate.plusDays(i.toLong())
                 )
@@ -289,7 +289,7 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
             EUserCertificatedResultCode.SUCCESS_CERTIFICATED
         )
         for ( i in 0 until requiredSuccessfulDaysForIce)
-            userChallengeEventListener.handleCertificationSucceededEventForTest(
+            userChallengeEventListener.handleCertificationSucceededEvent(
                 certificationSucceededEvent = makeCertificationSucceededEvent(
                     participantsStartDate.plusDays(i.toLong())
                 )
@@ -324,7 +324,7 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
         )
 
         for ( i in 0 until requiredSuccessfulDaysForIce)
-            userChallengeEventListener.handleCertificationSucceededEventForTest(
+            userChallengeEventListener.handleCertificationSucceededEvent(
                 certificationSucceededEvent = makeCertificationSucceededEvent(
                     participantsStartDate.plusDays(i.toLong())
                 )

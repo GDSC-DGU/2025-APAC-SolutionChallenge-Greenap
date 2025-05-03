@@ -1,4 +1,4 @@
-package com.app.server.common.security.service
+package com.app.server.core.security.service
 
 import com.app.server.common.exception.NotFoundException
 import com.app.server.common.security.info.CustomUserDetails.Companion.create

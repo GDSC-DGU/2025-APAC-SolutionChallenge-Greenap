@@ -1,4 +1,4 @@
-package com.app.server.common.security.info
+package com.app.server.core.security.info
 
 
 data class JwtUserInfo(

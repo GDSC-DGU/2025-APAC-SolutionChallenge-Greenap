@@ -1,4 +1,4 @@
-package com.app.server.common.security.filter
+package com.app.server.core.security.filter
 
 import com.app.server.common.constant.Constants
 import com.app.server.common.security.JwtAuthenticationToken

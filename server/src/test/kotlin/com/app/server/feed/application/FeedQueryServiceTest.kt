@@ -509,7 +509,7 @@ class FeedQueryServiceTest : IntegrationTestContainer() {
     }
 
     private fun makeFeedWhenCertificate(userId: Long, userChallengeId: Long, date: LocalDate): FeedProjection {
-        userChallengeEventListener.handleCertificationSucceededEventForTest(
+        userChallengeEventListener.handleCertificationSucceededEvent(
             makeCertificationSucceededEvent(
                 certificateDate = date,
                 userChallengeId = userChallengeId
@@ -523,7 +523,7 @@ class FeedQueryServiceTest : IntegrationTestContainer() {
                 content = feedContent,
                 publishDate = date)
         )
-        return feedEventListener.handleCreatedFeedEvent(
+        return feedEventListener.createdFeedProjectionFrom(
             createdEvent = FeedCreatedEvent(
                 feed = feed, 
                 userId = userId, 
