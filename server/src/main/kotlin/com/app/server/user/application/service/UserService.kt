@@ -7,18 +7,28 @@ import com.app.server.user.exception.UserExceptionCode
 import org.springframework.stereotype.Service
 
 @Service
-class UserService (
+class UserService(
     private val userRepository: UserRepository
-){
+) {
     fun updateRefreshToken(userId: Long?, refreshToken: String?) {
     }
 
     fun findById(userId: Long): User =
         userRepository.findById(userId)
-            .orElseThrow { NotFoundException(UserExceptionCode.NOT_FOUND_USER)  }
+            .orElseThrow { NotFoundException(UserExceptionCode.NOT_FOUND_USER) }
 
     fun getNowMaxConsecutiveParticipationDayCount(userId: Long): Int {
         return userRepository.findNowMaxConsecutiveParticipationDayCountById(userId)
             ?: throw NotFoundException(UserExceptionCode.NOT_FOUND_USER)
+    }
+
+    fun updateNowMaxConsecutiveParticipationDayCount(
+        userId: Long,
+        maxConsecutiveParticipationDayCount: Long
+    ){
+        userRepository.updateNowMaxConsecutiveParticipationDayCountById(
+            userId = userId,
+            maxConsecutiveParticipationDayCount = maxConsecutiveParticipationDayCount
+        )?: throw NotFoundException(UserExceptionCode.NOT_FOUND_USER)
     }
 }

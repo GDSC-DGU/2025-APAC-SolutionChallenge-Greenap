@@ -2,9 +2,10 @@ package com.app.server.user.application.repository
 
 import com.app.server.user.domain.model.User
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository
-import java.util.Optional
+import java.util.*
 
 @Repository
 interface UserRepository : JpaRepository<User, Long> {
@@ -25,4 +26,11 @@ interface UserRepository : JpaRepository<User, Long> {
             "WHERE u.id = :userId " +
             "AND u.deletedAt IS NULL")
     fun findNowMaxConsecutiveParticipationDayCountById(userId: Long): Int?
+
+    @Modifying
+    @Query("UPDATE User u " +
+            "SET u.nowMaxConsecutiveParticipationDayCount = :maxConsecutiveParticipationDayCount " +
+            "WHERE u.id = :userId " +
+            "AND u.deletedAt IS NULL")
+    fun updateNowMaxConsecutiveParticipationDayCountById(userId: Long, maxConsecutiveParticipationDayCount: Long): Int?
 }

@@ -1,4 +1,4 @@
-package com.app.server.challenge_certification.event
+package com.app.server.challenge_certification.domain.event
 
 import java.time.LocalDate
 

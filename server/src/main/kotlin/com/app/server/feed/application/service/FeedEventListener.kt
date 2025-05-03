@@ -1,9 +1,9 @@
 package com.app.server.feed.application.service
 
 import com.app.server.feed.domain.model.query.FeedProjection
-import com.app.server.feed.event.FeedCreatedEvent
-import com.app.server.feed.event.FeedDeletedEvent
-import com.app.server.feed.event.FeedModifiedEvent
+import com.app.server.feed.domain.event.FeedCreatedEvent
+import com.app.server.feed.domain.event.FeedDeletedEvent
+import com.app.server.feed.domain.event.FeedModifiedEvent
 import org.springframework.context.event.EventListener
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service

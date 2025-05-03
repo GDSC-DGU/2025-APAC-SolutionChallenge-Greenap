@@ -3,7 +3,7 @@ package com.app.server.feed.application
 import com.app.server.IntegrationTestContainer
 import com.app.server.challenge.application.service.ChallengeService
 import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
-import com.app.server.challenge_certification.event.CertificationSucceededEvent
+import com.app.server.challenge_certification.domain.event.CertificationSucceededEvent
 import com.app.server.challenge_certification.infra.CertificationInfraService
 import com.app.server.challenge_certification.ui.dto.CertificationRequestDto
 import com.app.server.challenge_certification.ui.dto.SendToCertificationServerRequestDto
@@ -13,7 +13,7 @@ import com.app.server.feed.application.service.FeedEventListener
 import com.app.server.feed.application.service.FeedProjectionService
 import com.app.server.feed.application.service.FeedService
 import com.app.server.feed.domain.model.command.Feed
-import com.app.server.feed.event.FeedCreatedEvent
+import com.app.server.feed.domain.event.FeedCreatedEvent
 import com.app.server.feed.exception.FeedException
 import com.app.server.feed.ui.dto.CreateFeedCommand
 import com.app.server.feed.ui.dto.CreateFeedRequestDto

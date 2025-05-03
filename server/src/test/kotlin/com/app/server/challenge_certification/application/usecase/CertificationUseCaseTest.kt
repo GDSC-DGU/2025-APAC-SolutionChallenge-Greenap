@@ -3,12 +3,14 @@ package com.app.server.challenge_certification.application.usecase
 import com.app.server.IntegrationTestContainer
 import com.app.server.challenge.application.service.ChallengeService
 import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
-import com.app.server.challenge_certification.event.CertificationSucceededEvent
+import com.app.server.challenge_certification.domain.event.CertificationSucceededEvent
 import com.app.server.challenge_certification.infra.CertificationInfraService
 import com.app.server.challenge_certification.ui.dto.CertificationRequestDto
 import com.app.server.challenge_certification.ui.dto.SendToCertificationServerRequestDto
 import com.app.server.challenge_certification.ui.usecase.CertificationUseCase
 import com.app.server.common.exception.BadRequestException
+import com.app.server.user.application.service.UserEventListener
+import com.app.server.user.application.service.UserService
 import com.app.server.user_challenge.application.dto.CreateUserChallengeDto
 import com.app.server.user_challenge.application.service.UserChallengeEventListener
 import com.app.server.user_challenge.application.service.UserChallengeService
@@ -17,15 +19,16 @@ import com.app.server.user_challenge.domain.enums.EUserChallengeStatus
 import com.app.server.user_challenge.domain.exception.UserChallengeException
 import com.app.server.user_challenge.domain.model.UserChallenge
 import com.app.server.user_challenge.domain.model.UserChallengeHistory
+import com.app.server.user_challenge.domain.event.SavedTodayUserChallengeCertificationEvent
 import jakarta.transaction.Transactional
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.assertThrows
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.mock
+import org.mockito.kotlin.any
 import org.mockito.kotlin.reset
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
@@ -44,6 +47,12 @@ import kotlin.test.Test
 @Transactional
 @Rollback
 class CertificationUseCaseTest : IntegrationTestContainer() {
+
+    @Autowired
+    private lateinit var userEventListener: UserEventListener
+
+    @Autowired
+    private lateinit var userService: UserService
 
     @MockitoBean
     private lateinit var applicationEventPublisher: ApplicationEventPublisher
@@ -68,6 +77,10 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
         userChallengeId = userChallengeId,
         imageUrl = imageUrl,
     )
+    var secondCertificationRequestDto = CertificationRequestDto(
+        userChallengeId = userChallengeId,
+        imageUrl = imageUrl,
+    )
 
     var sendToCertificationServerRequestDto = SendToCertificationServerRequestDto(
         imageUrl = imageUrl,
@@ -77,16 +90,23 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
     )
 
     var savedUserChallenge: UserChallenge? = null
+    var secondSavedUserChallenge: UserChallenge? = null
 
     @BeforeEach
     fun setUp() {
 
-        savedUserChallenge = makeUserChallengeAndHistory(participantsStartDate)
+        savedUserChallenge = makeUserChallengeAndHistory(challengeId, participantsStartDate)
+        secondSavedUserChallenge = makeUserChallengeAndHistory(challengeId+1, participantsStartDate)
 
-        certificationRequestDto = CertificationRequestDto(
-            userChallengeId = savedUserChallenge!!.id!!,
-            imageUrl = imageUrl,
-        )
+        fun makeCertificationRequestDto(userChallengeId: Long): CertificationRequestDto {
+            return CertificationRequestDto(
+                userChallengeId = userChallengeId,
+                imageUrl = imageUrl,
+            )
+        }
+
+        certificationRequestDto = makeCertificationRequestDto(savedUserChallenge!!.id!!)
+        secondCertificationRequestDto = makeCertificationRequestDto(secondSavedUserChallenge!!.id!!)
 
         val challenge = challengeService.findById(challengeId)
 
@@ -108,7 +128,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
         reset(applicationEventPublisher)
     }
 
-    private fun makeUserChallengeAndHistory(startDate: LocalDate): UserChallenge {
+    private fun makeUserChallengeAndHistory(challengeId: Long, startDate: LocalDate): UserChallenge {
         val mainTestChallenge = challengeService.findById(challengeId)
 
         val userChallenge: UserChallenge = UserChallenge.createEntity(
@@ -181,11 +201,17 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
             certificationRequestDto = certificationRequestDto,
             certificationDate = participantsStartDate
         )
-        verify(applicationEventPublisher).publishEvent(makeCertificationSucceededEvent(
-            participantsStartDate
-        ))
+        verify(applicationEventPublisher).publishEvent(
+            makeCertificationSucceededEvent(
+                savedUserChallenge!!.id!!,
+                participantsStartDate
+            )
+        )
         userChallengeEventListener.handleCertificationSucceededEventForTest(
-            certificationSucceededEvent = makeCertificationSucceededEvent(participantsStartDate)
+            makeCertificationSucceededEvent(
+                savedUserChallenge!!.id!!,
+                participantsStartDate
+            )
         )
         // then
         assertThat(savedUserChallenge!!.getUserChallengeHistories().first().status).isEqualTo(
@@ -208,11 +234,17 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
             certificationRequestDto = certificationRequestDto,
             certificationDate = participantsStartDate
         )
-        verify(applicationEventPublisher).publishEvent(makeCertificationSucceededEvent(
-            participantsStartDate
-        ))
+        verify(applicationEventPublisher).publishEvent(
+            makeCertificationSucceededEvent(
+                savedUserChallenge!!.id!!,
+                participantsStartDate
+            )
+        )
         userChallengeEventListener.handleCertificationSucceededEventForTest(
-            certificationSucceededEvent = makeCertificationSucceededEvent(participantsStartDate)
+            makeCertificationSucceededEvent(
+                savedUserChallenge!!.id!!,
+                participantsStartDate
+            )
         )
 
         // then
@@ -236,18 +268,26 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
             certificationRequestDto = certificationRequestDto,
             certificationDate = participantsStartDate
         )
-        verify(applicationEventPublisher).publishEvent(makeCertificationSucceededEvent(
-            participantsStartDate
-        ))
+        verify(applicationEventPublisher).publishEvent(
+            makeCertificationSucceededEvent(
+                savedUserChallenge!!.id!!,
+                participantsStartDate
+            )
+        )
         userChallengeEventListener.handleCertificationSucceededEventForTest(
-            certificationSucceededEvent = makeCertificationSucceededEvent(participantsStartDate)
+            makeCertificationSucceededEvent(
+                savedUserChallenge!!.id!!,
+                participantsStartDate
+            )
         )
         // then
         assertThat(savedUserChallenge!!.nowConsecutiveParticipationDayCount).isGreaterThan(
             pastUserChallengeNowConsecutiveParticipationDayCount
         )
-        assertThat(savedUserChallenge!!.nowConsecutiveParticipationDayCount
-                - pastUserChallengeNowConsecutiveParticipationDayCount).isOne
+        assertThat(
+            savedUserChallenge!!.nowConsecutiveParticipationDayCount
+                    - pastUserChallengeNowConsecutiveParticipationDayCount
+        ).isOne
         assertThat(savedUserChallenge!!.maxConsecutiveParticipationDayCount).isOne
     }
 
@@ -263,11 +303,17 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
             certificationRequestDto = certificationRequestDto,
             certificationDate = participantsStartDate
         )
-        verify(applicationEventPublisher).publishEvent(makeCertificationSucceededEvent(
-            participantsStartDate
-        ))
+        verify(applicationEventPublisher).publishEvent(
+            makeCertificationSucceededEvent(
+                savedUserChallenge!!.id!!,
+                participantsStartDate
+            )
+        )
         userChallengeEventListener.handleCertificationSucceededEventForTest(
-            certificationSucceededEvent = makeCertificationSucceededEvent(participantsStartDate)
+            makeCertificationSucceededEvent(
+                savedUserChallenge!!.id!!,
+                participantsStartDate
+            )
         )
 
         val todayUserChallengeNowConsecutiveParticipationDayCount =
@@ -278,12 +324,17 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
             certificationRequestDto = certificationRequestDto,
             certificationDate = participantsStartDate.plusDays(1)
         )
-        verify(applicationEventPublisher).publishEvent(makeCertificationSucceededEvent(
-            participantsStartDate.plusDays(1)
-        ))
+        verify(applicationEventPublisher).publishEvent(
+            makeCertificationSucceededEvent(
+                savedUserChallenge!!.id!!,
+                participantsStartDate
+            )
+        )
         userChallengeEventListener.handleCertificationSucceededEventForTest(
-            certificationSucceededEvent = makeCertificationSucceededEvent(
-                participantsStartDate.plusDays(1))
+            makeCertificationSucceededEvent(
+                savedUserChallenge!!.id!!,
+                participantsStartDate.plusDays(1)
+            )
         )
 
         val expectedNowConsecutiveParticipationDayCount = savedUserChallenge!!.nowConsecutiveParticipationDayCount
@@ -306,11 +357,17 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
             certificationRequestDto = certificationRequestDto,
             certificationDate = participantsStartDate
         )
-        verify(applicationEventPublisher).publishEvent(makeCertificationSucceededEvent(
-            participantsStartDate
-        ))
+        verify(applicationEventPublisher).publishEvent(
+            makeCertificationSucceededEvent(
+                savedUserChallenge!!.id!!,
+                participantsStartDate
+            )
+        )
         userChallengeEventListener.handleCertificationSucceededEventForTest(
-            certificationSucceededEvent = makeCertificationSucceededEvent(participantsStartDate)
+            makeCertificationSucceededEvent(
+                savedUserChallenge!!.id!!,
+                participantsStartDate
+            )
         )
 
         val pastUserChallengeMaxConsecutiveParticipationDayCount =
@@ -320,12 +377,17 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
             certificationRequestDto = certificationRequestDto,
             certificationDate = participantsStartDate.plusDays(2)
         )
-        verify(applicationEventPublisher).publishEvent(makeCertificationSucceededEvent(
-            participantsStartDate.plusDays(2)
-        ))
+        verify(applicationEventPublisher).publishEvent(
+            makeCertificationSucceededEvent(
+                savedUserChallenge!!.id!!,
+                participantsStartDate.plusDays(2)
+            )
+        )
         userChallengeEventListener.handleCertificationSucceededEventForTest(
-            certificationSucceededEvent = makeCertificationSucceededEvent(
-                participantsStartDate.plusDays(2))
+            makeCertificationSucceededEvent(
+                savedUserChallenge!!.id!!,
+                participantsStartDate.plusDays(2)
+            )
         )
         val todayUserChallengeNowConsecutiveParticipationDayCount =
             savedUserChallenge!!.nowConsecutiveParticipationDayCount
@@ -363,11 +425,17 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
             certificationRequestDto = certificationRequestDto,
             certificationDate = participantsStartDate
         )
-        verify(applicationEventPublisher).publishEvent(makeCertificationSucceededEvent(
-            participantsStartDate
-        ))
+        verify(applicationEventPublisher).publishEvent(
+            makeCertificationSucceededEvent(
+                savedUserChallenge!!.id!!,
+                participantsStartDate
+            )
+        )
         userChallengeEventListener.handleCertificationSucceededEventForTest(
-            certificationSucceededEvent = makeCertificationSucceededEvent(participantsStartDate)
+            makeCertificationSucceededEvent(
+                savedUserChallenge!!.id!!,
+                participantsStartDate
+            )
         )
 
         // when & then
@@ -377,11 +445,17 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
                 certificationDate = participantsStartDate
             )
             verify(applicationEventPublisher, times(2))
-                .publishEvent(makeCertificationSucceededEvent(
-                participantsStartDate
-            ))
+                .publishEvent(
+                    makeCertificationSucceededEvent(
+                        savedUserChallenge!!.id!!,
+                        participantsStartDate
+                    )
+                )
             userChallengeEventListener.handleCertificationSucceededEventForTest(
-                certificationSucceededEvent = makeCertificationSucceededEvent(participantsStartDate)
+                makeCertificationSucceededEvent(
+                    savedUserChallenge!!.id!!,
+                    participantsStartDate
+                )
             )
         }
         assertThat(exception.message).isEqualTo(UserChallengeException.ALREADY_CERTIFICATED.message)
@@ -399,11 +473,17 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
             certificationRequestDto = certificationRequestDto,
             certificationDate = participantsStartDate
         )
-        verify(applicationEventPublisher).publishEvent(makeCertificationSucceededEvent(
-            participantsStartDate
-        ))
+        verify(applicationEventPublisher).publishEvent(
+            makeCertificationSucceededEvent(
+                savedUserChallenge!!.id!!,
+                participantsStartDate
+            )
+        )
         userChallengeEventListener.handleCertificationSucceededEventForTest(
-            certificationSucceededEvent = makeCertificationSucceededEvent(participantsStartDate)
+            makeCertificationSucceededEvent(
+                savedUserChallenge!!.id!!,
+                participantsStartDate
+            )
         )
         // then
         assertThat(savedUserChallenge!!.getUserChallengeHistories().first().certificatedImageUrl)
@@ -412,18 +492,93 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("챌린지 인증에 성공하면 사용자의 현재 최대 연속 참여 일수를 갱신한다.")
-    @Disabled
     fun updateMaxConsecutiveParticipationDays() {
         // given
+        given(certificationInfraService.certificate(any()))
+            .willReturn(
+            EUserCertificatedResultCode.SUCCESS_CERTIFICATED
+        )
+
         // when
+        certificationUseCase.certificateChallengeWithDate(
+            certificationRequestDto = certificationRequestDto,
+            certificationDate = participantsStartDate
+        )
+        certificationUseCase.certificateChallengeWithDate(
+            certificationRequestDto = certificationRequestDto,
+            certificationDate = participantsStartDate.plusDays(1)
+        )
+        certificationUseCase.certificateChallengeWithDate(
+            certificationRequestDto = secondCertificationRequestDto,
+            certificationDate = participantsStartDate
+        )
+
+        userChallengeEventListener.handleCertificationSucceededEventForTest(
+            certificationSucceededEvent = makeCertificationSucceededEvent(
+                savedUserChallenge!!.id!!,
+                participantsStartDate
+            )
+        )
+        userChallengeEventListener.handleCertificationSucceededEventForTest(
+            certificationSucceededEvent = makeCertificationSucceededEvent(
+                savedUserChallenge!!.id!!,
+                participantsStartDate.plusDays(1)
+            )
+        )
+        userChallengeEventListener.handleCertificationSucceededEventForTest(
+            certificationSucceededEvent = makeCertificationSucceededEvent(
+                secondSavedUserChallenge!!.id!!,
+                participantsStartDate
+            )
+        )
+        verify(applicationEventPublisher, times(3)).publishEvent(
+            org.mockito.ArgumentMatchers.any(SavedTodayUserChallengeCertificationEvent::class.java)
+        )
+        userEventListener.handleUserCreatedEvent(
+            makeSavedUserChallengeCertificationEvent(
+                userId = userId,
+                maxConsecutiveParticipationDayCount = savedUserChallenge!!.maxConsecutiveParticipationDayCount
+            )
+        )
+        userEventListener.handleUserCreatedEvent(
+            makeSavedUserChallengeCertificationEvent(
+                userId = userId,
+                maxConsecutiveParticipationDayCount = savedUserChallenge!!.maxConsecutiveParticipationDayCount
+            )
+        )
+        userEventListener.handleUserCreatedEvent(
+            makeSavedUserChallengeCertificationEvent(
+                userId = userId,
+                maxConsecutiveParticipationDayCount = secondSavedUserChallenge!!.maxConsecutiveParticipationDayCount
+            )
+        )
         // then
+        assertThat(savedUserChallenge!!.maxConsecutiveParticipationDayCount)
+            .isGreaterThan(
+                secondSavedUserChallenge!!.maxConsecutiveParticipationDayCount
+            )
+            .isEqualTo(
+                userService.findById(userId).nowMaxConsecutiveParticipationDayCount
+            )
+            .isEqualTo(2)
     }
 
-    private fun makeCertificationSucceededEvent(certificateDate : LocalDate) : CertificationSucceededEvent {
+    private fun makeCertificationSucceededEvent(userChallengeId: Long, certificateDate: LocalDate)
+            : CertificationSucceededEvent {
         return CertificationSucceededEvent(
-            userChallengeId = savedUserChallenge!!.id!!,
+            userChallengeId = userChallengeId,
             imageUrl = imageUrl,
             certificatedDate = certificateDate
+        )
+    }
+
+    private fun makeSavedUserChallengeCertificationEvent(
+        userId: Long,
+        maxConsecutiveParticipationDayCount: Long
+    ): SavedTodayUserChallengeCertificationEvent {
+        return SavedTodayUserChallengeCertificationEvent(
+            userId = userId,
+            maxConsecutiveParticipationDayCount = maxConsecutiveParticipationDayCount
         )
     }
 

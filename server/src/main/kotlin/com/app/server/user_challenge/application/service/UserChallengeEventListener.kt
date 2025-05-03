@@ -1,9 +1,9 @@
 package com.app.server.user_challenge.application.service
 
 import com.app.server.challenge_certification.application.dto.CertificationDataDto
-import com.app.server.challenge_certification.event.CertificationSucceededEvent
+import com.app.server.challenge_certification.domain.event.CertificationSucceededEvent
 import com.app.server.user_challenge.domain.model.UserChallengeHistory
-import com.app.server.user_challenge.event.ReportCreatedEvent
+import com.app.server.user_challenge.domain.event.ReportCreatedEvent
 import com.app.server.user_challenge.ui.controller.ReportWaiter
 import com.app.server.user_challenge.ui.dto.CertificationReportDataDto
 import com.app.server.user_challenge.ui.dto.ReportDto

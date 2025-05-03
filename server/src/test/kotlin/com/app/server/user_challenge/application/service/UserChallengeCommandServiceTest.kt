@@ -4,12 +4,8 @@ import com.app.server.IntegrationTestContainer
 import com.app.server.challenge.application.service.ChallengeService
 import com.app.server.challenge.ui.usecase.dto.request.ChallengeParticipantDto
 import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
-import com.app.server.challenge_certification.event.CertificationSucceededEvent
+import com.app.server.challenge_certification.domain.event.CertificationSucceededEvent
 import com.app.server.challenge_certification.infra.CertificationInfraService
-import com.app.server.challenge_certification.ui.dto.CertificationRequestDto
-import com.app.server.challenge_certification.ui.dto.SendToCertificationServerRequestDto
-import com.app.server.challenge_certification.ui.dto.UserChallengeIceRequestDto
-import com.app.server.challenge_certification.ui.usecase.CertificationUseCase
 import com.app.server.common.exception.BadRequestException
 import com.app.server.common.exception.InternalServerErrorException
 import com.app.server.user_challenge.application.dto.CreateUserChallengeDto
@@ -20,11 +16,10 @@ import com.app.server.user_challenge.domain.exception.UserChallengeException
 import com.app.server.user_challenge.domain.model.UserChallenge
 import com.app.server.user_challenge.domain.model.UserChallengeHistory
 import com.app.server.user_challenge.enums.EUserReportResultCode
-import com.app.server.user_challenge.event.ReportCreatedEvent
+import com.app.server.user_challenge.domain.event.ReportCreatedEvent
 import com.app.server.user_challenge.infra.ReportInfraService
 import com.app.server.user_challenge.ui.usecase.GetUserChallengeReportUseCase
 import com.app.server.user_challenge.ui.usecase.ParticipantChallengeUseCase
-import com.app.server.user_challenge.ui.usecase.UsingIceUseCase
 import jakarta.transaction.Transactional
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.*

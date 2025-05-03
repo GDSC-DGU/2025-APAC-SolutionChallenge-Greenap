@@ -17,10 +17,10 @@ import com.app.server.user_challenge.domain.model.UserChallenge
 import com.app.server.user_challenge.domain.model.UserChallengeHistory
 import com.app.server.user_challenge.enums.EUserChallengeParticipantState
 import com.app.server.user_challenge.enums.EUserReportResultCode
-import com.app.server.user_challenge.event.ReportCreatedEvent
+import com.app.server.user_challenge.domain.event.ReportCreatedEvent
+import com.app.server.user_challenge.domain.event.SavedTodayUserChallengeCertificationEvent
 import com.app.server.user_challenge.infra.ReportInfraService
 import com.app.server.user_challenge.ui.dto.SendToReportServerRequestDto
-import jakarta.transaction.Transactional
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import java.time.LocalDate
@@ -106,6 +106,13 @@ class UserChallengeCommandService(
         if (userChallenge.checkIsDone(certificationDto.certificationDate)) {
             makeReport(userChallenge)
         }
+
+        eventPublisher.publishEvent(
+            SavedTodayUserChallengeCertificationEvent(
+                userId = userChallenge.userId,
+                maxConsecutiveParticipationDayCount = userChallenge.maxConsecutiveParticipationDayCount,
+            )
+        )
 
         return userChallenge
     }
@@ -213,8 +220,7 @@ class UserChallengeCommandService(
             userChallenge.nowConsecutiveParticipationDayCount == userChallenge.maxConsecutiveParticipationDayCount
         ) {
             consecutiveState = EConsecutiveState.CONSECUTIVE_MAX
-        }
-        else if (
+        } else if (
             userChallengeHistory.status != EUserChallengeCertificationStatus.FAILED &&
             pastUserChallengeHistory!!.status != EUserChallengeCertificationStatus.FAILED
         ) {

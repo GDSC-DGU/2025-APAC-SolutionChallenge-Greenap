@@ -2,9 +2,9 @@ package com.app.server.feed.application.service
 
 import com.app.server.common.exception.BadRequestException
 import com.app.server.feed.domain.model.command.Feed
-import com.app.server.feed.event.FeedCreatedEvent
-import com.app.server.feed.event.FeedDeletedEvent
-import com.app.server.feed.event.FeedModifiedEvent
+import com.app.server.feed.domain.event.FeedCreatedEvent
+import com.app.server.feed.domain.event.FeedDeletedEvent
+import com.app.server.feed.domain.event.FeedModifiedEvent
 import com.app.server.feed.exception.FeedException
 import com.app.server.feed.ui.dto.CreateFeedCommand
 import com.app.server.feed.ui.usecase.CreateFeedUseCase
