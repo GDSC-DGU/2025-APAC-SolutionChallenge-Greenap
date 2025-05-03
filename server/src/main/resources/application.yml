@@ -18,6 +18,9 @@ spring:
     oauth2:
       google:
 
+certification-server:
+  url: "https://localhost:8080"
+
 # Jasypt
 jasypt:
   encryptor:

@@ -16,19 +16,4 @@ class UserService(
     fun findById(userId: Long): User =
         userRepository.findById(userId)
             .orElseThrow { NotFoundException(UserExceptionCode.NOT_FOUND_USER) }
-
-    fun getNowMaxConsecutiveParticipationDayCount(userId: Long): Int {
-        return userRepository.findNowMaxConsecutiveParticipationDayCountById(userId)
-            ?: throw NotFoundException(UserExceptionCode.NOT_FOUND_USER)
-    }
-
-    fun updateNowMaxConsecutiveParticipationDayCount(
-        userId: Long,
-        maxConsecutiveParticipationDayCount: Long
-    ){
-        userRepository.updateNowMaxConsecutiveParticipationDayCountById(
-            userId = userId,
-            maxConsecutiveParticipationDayCount = maxConsecutiveParticipationDayCount
-        )?: throw NotFoundException(UserExceptionCode.NOT_FOUND_USER)
-    }
 }

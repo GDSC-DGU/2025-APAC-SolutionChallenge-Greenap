@@ -14,11 +14,12 @@ class UserCommandService(
         updateMaxConsecutiveParticipationDayCount: Long
     ){
 
-        val userNowMaxConsecutiveParticipationDayCount: Int = userService.getNowMaxConsecutiveParticipationDayCount(userId)
+        val user = userService.findById(userId)
+
+        val userNowMaxConsecutiveParticipationDayCount: Long = user.nowMaxConsecutiveParticipationDayCount
 
         if (userNowMaxConsecutiveParticipationDayCount < updateMaxConsecutiveParticipationDayCount) {
-            userService.updateNowMaxConsecutiveParticipationDayCount(
-                userId = userId,
+            user.updateNowMaxConsecutiveParticipationDayCount(
                 maxConsecutiveParticipationDayCount = updateMaxConsecutiveParticipationDayCount
             )
         }
