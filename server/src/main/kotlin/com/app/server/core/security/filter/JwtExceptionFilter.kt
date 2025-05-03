@@ -4,16 +4,14 @@ import com.app.server.common.enums.CommonResultCode
 import com.app.server.common.enums.ResultCode
 import com.app.server.common.exception.BadRequestException
 import com.app.server.common.response.ApiResponse.Companion.failure
-import com.app.server.common.security.enums.SecurityExceptionCode
+import com.app.server.core.security.enums.SecurityExceptionCode
 import com.app.server.user.exception.UserExceptionCode
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.jsonwebtoken.*
 import jakarta.servlet.FilterChain
-import jakarta.servlet.ServletException
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.web.filter.OncePerRequestFilter
-import java.io.IOException
 
 
 class JwtExceptionFilter : OncePerRequestFilter() {

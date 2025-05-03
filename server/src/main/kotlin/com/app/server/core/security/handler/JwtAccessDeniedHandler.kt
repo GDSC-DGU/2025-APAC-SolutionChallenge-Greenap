@@ -1,15 +1,13 @@
 package com.app.server.core.security.handler
 
 import com.app.server.common.response.ApiResponse.Companion.failure
-import com.app.server.common.security.enums.SecurityExceptionCode
+import com.app.server.core.security.enums.SecurityExceptionCode
 import com.fasterxml.jackson.databind.ObjectMapper
-import jakarta.servlet.ServletException
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.web.access.AccessDeniedHandler
 import org.springframework.stereotype.Component
-import java.io.IOException
 
 @Component
 class JwtAccessDeniedHandler : AccessDeniedHandler {

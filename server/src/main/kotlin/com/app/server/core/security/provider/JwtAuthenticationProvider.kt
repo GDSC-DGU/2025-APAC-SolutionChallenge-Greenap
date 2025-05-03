@@ -1,12 +1,11 @@
 package com.app.server.core.security.provider
 
 import com.app.server.common.exception.BadRequestException
-import com.app.server.common.security.JwtAuthenticationToken
-import com.app.server.common.security.enums.SecurityExceptionCode
-import com.app.server.common.security.info.CustomUserDetails
-import com.app.server.common.security.info.JwtUserInfo
-import com.app.server.common.security.service.CustomUserDetailsService
-import lombok.RequiredArgsConstructor
+import com.app.server.core.security.JwtAuthenticationToken
+import com.app.server.core.security.enums.SecurityExceptionCode
+import com.app.server.core.security.info.CustomUserDetails
+import com.app.server.core.security.info.JwtUserInfo
+import com.app.server.core.security.service.CustomUserDetailsService
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication

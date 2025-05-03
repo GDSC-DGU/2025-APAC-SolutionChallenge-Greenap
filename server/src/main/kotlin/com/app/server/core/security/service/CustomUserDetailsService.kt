@@ -1,14 +1,12 @@
 package com.app.server.core.security.service
 
 import com.app.server.common.exception.NotFoundException
-import com.app.server.common.security.info.CustomUserDetails.Companion.create
+import com.app.server.core.security.info.CustomUserDetails.Companion.create
 import com.app.server.user.application.repository.UserRepository
-import com.app.server.user.exception.UserExceptionCode
 import com.app.server.user.domain.model.User
-import lombok.RequiredArgsConstructor
+import com.app.server.user.exception.UserExceptionCode
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
-import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
 
 @Service

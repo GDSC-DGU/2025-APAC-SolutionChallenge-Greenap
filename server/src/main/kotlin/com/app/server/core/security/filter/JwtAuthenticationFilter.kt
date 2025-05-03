@@ -1,10 +1,10 @@
 package com.app.server.core.security.filter
 
 import com.app.server.common.constant.Constants
-import com.app.server.common.security.JwtAuthenticationToken
-import com.app.server.common.security.info.JwtUserInfo
-import com.app.server.common.security.provider.JwtAuthenticationProvider
-import com.app.server.common.security.util.JwtUtil
+import com.app.server.core.security.JwtAuthenticationToken
+import com.app.server.core.security.info.JwtUserInfo
+import com.app.server.core.security.provider.JwtAuthenticationProvider
+import com.app.server.core.security.util.JwtUtil
 import io.jsonwebtoken.JwtException
 import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletException

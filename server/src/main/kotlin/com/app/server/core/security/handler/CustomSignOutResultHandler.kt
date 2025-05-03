@@ -2,13 +2,11 @@ package com.app.server.core.security.handler
 
 import com.app.server.common.response.ApiResponse.Companion.success
 import com.fasterxml.jackson.databind.ObjectMapper
-import jakarta.servlet.ServletException
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.security.core.Authentication
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler
 import org.springframework.stereotype.Component
-import java.io.IOException
 
 @Component
 class CustomSignOutResultHandler : LogoutSuccessHandler {
