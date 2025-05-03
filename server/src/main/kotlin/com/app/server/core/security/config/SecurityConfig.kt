@@ -1,16 +1,16 @@
 package com.app.server.core.security.config
 
 import com.app.server.common.constant.Constants
-import com.app.server.common.security.JwtAuthEntryPoint
-import com.app.server.common.security.filter.CustomLogoutFilter
-import com.app.server.common.security.filter.JwtAuthenticationFilter
-import com.app.server.common.security.filter.JwtExceptionFilter
-import com.app.server.common.security.handler.CustomSignOutProcessHandler
-import com.app.server.common.security.handler.CustomSignOutResultHandler
-import com.app.server.common.security.handler.JwtAccessDeniedHandler
-import com.app.server.common.security.provider.JwtAuthenticationProvider
-import com.app.server.common.security.service.CustomUserDetailsService
-import com.app.server.common.security.util.JwtUtil
+import com.app.server.core.security.JwtAuthEntryPoint
+import com.app.server.core.security.filter.CustomLogoutFilter
+import com.app.server.core.security.filter.JwtAuthenticationFilter
+import com.app.server.core.security.filter.JwtExceptionFilter
+import com.app.server.core.security.handler.CustomSignOutProcessHandler
+import com.app.server.core.security.handler.CustomSignOutResultHandler
+import com.app.server.core.security.handler.JwtAccessDeniedHandler
+import com.app.server.core.security.provider.JwtAuthenticationProvider
+import com.app.server.core.security.service.CustomUserDetailsService
+import com.app.server.core.security.util.JwtUtil
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
