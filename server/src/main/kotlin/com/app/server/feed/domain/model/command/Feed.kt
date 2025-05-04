@@ -6,6 +6,7 @@ import com.app.server.user_challenge.domain.model.UserChallenge
 import jakarta.persistence.*
 
 @Entity
+// TODO : Index 적용 고려
 @Table(name = "feeds")
 class Feed (
 

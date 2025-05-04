@@ -20,6 +20,7 @@ import com.app.server.user_challenge.domain.exception.UserChallengeException
 import com.app.server.user_challenge.domain.model.UserChallenge
 import com.app.server.user_challenge.domain.model.UserChallengeHistory
 import jakarta.transaction.Transactional
+import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -178,14 +179,14 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("얼리기는 전체 참여 기간의 50% 이상 성공했을 때, 인증 대신 얼리기를 사용하여 인증을 건너뛸 수 있다.")
-    fun skipChallengeWithLimit() {
+    fun skipChallengeWithLimit() = runTest {
         // given
         given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
             EUserCertificatedResultCode.SUCCESS_CERTIFICATED
         )
         for ( i in 0 until requiredSuccessfulDaysForIce)
-            userChallengeEventListener.handleCertificationSucceededEvent(
-                certificationSucceededEvent = makeCertificationSucceededEvent(
+            userChallengeEventListener.processWhenReceive(
+                event = makeCertificationSucceededEvent(
                     participantsStartDate.plusDays(i.toLong())
                 )
             )
@@ -203,14 +204,14 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("전체 참여 기간의 50% 이상을 성공하지 못했다면 얼리기를 사용할 수 없다.")
-    fun skipChallengeWithLimitFailed() {
+    fun skipChallengeWithLimitFailed() = runTest {
         // given
         given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
             EUserCertificatedResultCode.SUCCESS_CERTIFICATED
         )
         for ( i in 0 until notSufficientSuccessfulDaysForIce)
-            userChallengeEventListener.handleCertificationSucceededEvent(
-                certificationSucceededEvent = makeCertificationSucceededEvent(
+            userChallengeEventListener.processWhenReceive(
+                event = makeCertificationSucceededEvent(
                     participantsStartDate.plusDays(i.toLong())
                 )
             )        // when
@@ -229,14 +230,14 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
     @Test
     @Disabled
     @DisplayName("얼리기를 사용하면 전체 참여일은 올라가지 않는다.")
-    fun skipChallengeWithoutIncreasingParticipationDays() {
+    fun skipChallengeWithoutIncreasingParticipationDays() = runTest {
         // given
         given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
             EUserCertificatedResultCode.SUCCESS_CERTIFICATED
         )
         for ( i in 0 until requiredSuccessfulDaysForIce)
-            userChallengeEventListener.handleCertificationSucceededEvent(
-                certificationSucceededEvent = makeCertificationSucceededEvent(
+            userChallengeEventListener.processWhenReceive(
+                event = makeCertificationSucceededEvent(
                     participantsStartDate.plusDays(i.toLong())
                 )
             )
@@ -255,14 +256,14 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("얼리기를 사용했을 때 연속 참여 조건을 만족한다면 연속 참여 일수가 증가한다.")
-    fun skipChallengeWithIncreasingConsecutiveParticipationDays() {
+    fun skipChallengeWithIncreasingConsecutiveParticipationDays() = runTest {
         // given
         given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
             EUserCertificatedResultCode.SUCCESS_CERTIFICATED
         )
         for ( i in 0 until requiredSuccessfulDaysForIce)
-            userChallengeEventListener.handleCertificationSucceededEvent(
-                certificationSucceededEvent = makeCertificationSucceededEvent(
+            userChallengeEventListener.processWhenReceive(
+                event = makeCertificationSucceededEvent(
                     participantsStartDate.plusDays(i.toLong())
                 )
             )
@@ -283,14 +284,14 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("얼리기를 사용했을 때 연속 참여 조건을 만족하지 않는다면 연속 참여 일수는 증가하지 않는다.")
-    fun skipChallengeWithoutIncreasingConsecutiveParticipationDays() {
+    fun skipChallengeWithoutIncreasingConsecutiveParticipationDays() = runTest {
         // given
         given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
             EUserCertificatedResultCode.SUCCESS_CERTIFICATED
         )
         for ( i in 0 until requiredSuccessfulDaysForIce)
-            userChallengeEventListener.handleCertificationSucceededEvent(
-                certificationSucceededEvent = makeCertificationSucceededEvent(
+            userChallengeEventListener.processWhenReceive(
+                event = makeCertificationSucceededEvent(
                     participantsStartDate.plusDays(i.toLong())
                 )
             )
@@ -317,15 +318,15 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("얼리기를 한번 사용하면 해당 챌린지에서는 다시 얼리기를 사용할 수 없다.")
-    fun skipChallengeWithIceCount() {
+    fun skipChallengeWithIceCount() = runTest {
         // given
         given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
             EUserCertificatedResultCode.SUCCESS_CERTIFICATED
         )
 
         for ( i in 0 until requiredSuccessfulDaysForIce)
-            userChallengeEventListener.handleCertificationSucceededEvent(
-                certificationSucceededEvent = makeCertificationSucceededEvent(
+            userChallengeEventListener.processWhenReceive(
+                event = makeCertificationSucceededEvent(
                     participantsStartDate.plusDays(i.toLong())
                 )
             )

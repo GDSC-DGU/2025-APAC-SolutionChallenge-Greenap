@@ -27,6 +27,7 @@ import com.app.server.user_challenge.domain.enums.EUserChallengeStatus
 import com.app.server.user_challenge.domain.model.UserChallenge
 import com.app.server.user_challenge.domain.model.UserChallengeHistory
 import jakarta.transaction.Transactional
+import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.*
 import org.mockito.BDDMockito.given
@@ -141,7 +142,7 @@ class FeedQueryServiceTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("피드 조회는 피드 조회 전용 테이블에서 가져온다.")
-    fun getFeed() {
+    fun getFeed() = runTest{
         // given
         makeFeedWhenCertificate(userId, savedUserChallenge!!.id!!, participantsStartDate)
         // when
@@ -158,7 +159,7 @@ class FeedQueryServiceTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("모든 피드를 조회할 수 있다.")
-    fun getAllFeed() {
+    fun getAllFeed() = runTest {
         // given
         makeFeedWhenCertificate(userId, savedUserChallenge!!.id!!, participantsStartDate)
         makeFeedWhenCertificate(notFindUserId, notFindUserChallenge!!.id!!, participantsStartDate)
@@ -178,7 +179,7 @@ class FeedQueryServiceTest : IntegrationTestContainer() {
     @Test
     @DisplayName("피드를 조회할 시에는 가장 최신순으로 정렬되어 제공된다.")
     @Disabled // TODO : 실제로는 잘 되지만, 테스트에서는 createdAt이 아닌 인증 일자를 데이터에 넣어줘야 함. 고민 필요
-    fun getFeedWithSort() {
+    fun getFeedWithSort() = runTest {
         // given
         makeFeedWhenCertificate(userId, savedUserChallenge!!.id!!,
             participantsStartDate)
@@ -206,7 +207,7 @@ class FeedQueryServiceTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("피드 조회 시, 사용자가 원하는 page를 조회할 수 있다.")
-    fun getFeedWithPage() {
+    fun getFeedWithPage() = runTest {
         // given
         makeFeedWhenCertificate(userId, savedUserChallenge!!.id!!, participantsStartDate)
         makeFeedWhenCertificate(userId, savedUserChallenge!!.id!!, participantsStartDate.plusDays(1))
@@ -237,7 +238,7 @@ class FeedQueryServiceTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("피드 조회 시, 기본 page는 1로 설정된다.")
-    fun getFeedWithDefaultPage() {
+    fun getFeedWithDefaultPage() = runTest {
         // given
         makeFeedWhenCertificate(userId, savedUserChallenge!!.id!!, participantsStartDate)
         makeFeedWhenCertificate(userId, savedUserChallenge!!.id!!, participantsStartDate.plusDays(1))
@@ -267,7 +268,7 @@ class FeedQueryServiceTest : IntegrationTestContainer() {
     @Test
     @Disabled
     @DisplayName("피드 조회 시, 페이지는 1부터 시작한다.")
-    fun getFeedWithPageOverLimit() {
+    fun getFeedWithPageOverLimit() =runTest {
         // given
         makeFeedWhenCertificate(userId, savedUserChallenge!!.id!!, participantsStartDate)
         // when
@@ -287,7 +288,7 @@ class FeedQueryServiceTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("피드 조회 시, 사용자가 원하는 size로 page의 크기를 정해 조회할 수 있다.")
-    fun getFeedWithSize() {
+    fun getFeedWithSize() = runTest {
         // given
         makeFeedWhenCertificate(userId, savedUserChallenge!!.id!!, participantsStartDate)
         makeFeedWhenCertificate(userId, savedUserChallenge!!.id!!, participantsStartDate.plusDays(1))
@@ -316,7 +317,7 @@ class FeedQueryServiceTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("피드 조회 시, 페이지의 size는 기본값인 7로 설정된다.")
-    fun getFeedWithoutPage() {
+    fun getFeedWithoutPage() = runTest {
         // given
         makeFeedWhenCertificate(userId, savedUserChallenge!!.id!!, participantsStartDate)
         makeFeedWhenCertificate(userId, savedUserChallenge!!.id!!, participantsStartDate.plusDays(1))
@@ -344,7 +345,7 @@ class FeedQueryServiceTest : IntegrationTestContainer() {
     @Test
     @Disabled
     @DisplayName("피드 조회 시, 페이지 size는 1 이상이어야 한다.")
-    fun getFeedWithSizeOverLimit() {
+    fun getFeedWithSizeOverLimit() = runTest {
         // given
         makeFeedWhenCertificate(userId, savedUserChallenge!!.id!!, participantsStartDate)
         // when
@@ -364,7 +365,7 @@ class FeedQueryServiceTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("특정 사용자의 특정 챌린지들에서 작성한 피드들만 조회할 수 있다.")
-    fun getFeedWithUserAndChallenge() {
+    fun getFeedWithUserAndChallenge() = runTest {
         // given
         makeFeedWhenCertificate(userId, savedUserChallenge!!.id!!, participantsStartDate)
         makeFeedWhenCertificate(userId, savedUserChallenge!!.id!!, participantsStartDate.plusDays(1))
@@ -387,7 +388,7 @@ class FeedQueryServiceTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("특정 사용자의 특정 카테고리 내에서 참여했던 모든 챌린지들에 대한 피드들만 조회할 수 있다.")
-    fun getFeedWithUserAndCategory() {
+    fun getFeedWithUserAndCategory() = runTest {
         // given
         makeFeedWhenCertificate(userId, savedUserChallenge!!.id!!, participantsStartDate)
         makeFeedWhenCertificate(userId, savedUserChallenge!!.id!!, participantsStartDate.plusDays(1))
@@ -408,7 +409,7 @@ class FeedQueryServiceTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("특정 카테고리의 챌린지들에서 작성된 모든 피드들을 조회할 수 있다.")
-    fun getFeedWithCategory() {
+    fun getFeedWithCategory() = runTest {
         // given
         makeFeedWhenCertificate(userId, savedUserChallenge!!.id!!, participantsStartDate)
         makeFeedWhenCertificate(userId, savedUserChallenge!!.id!!, participantsStartDate.plusDays(1))
@@ -508,8 +509,8 @@ class FeedQueryServiceTest : IntegrationTestContainer() {
         return userChallengeService.save(userChallenge)
     }
 
-    private fun makeFeedWhenCertificate(userId: Long, userChallengeId: Long, date: LocalDate): FeedProjection {
-        userChallengeEventListener.handleCertificationSucceededEvent(
+    private suspend fun makeFeedWhenCertificate(userId: Long, userChallengeId: Long, date: LocalDate): FeedProjection {
+        userChallengeEventListener.processWhenReceive(
             makeCertificationSucceededEvent(
                 certificateDate = date,
                 userChallengeId = userChallengeId

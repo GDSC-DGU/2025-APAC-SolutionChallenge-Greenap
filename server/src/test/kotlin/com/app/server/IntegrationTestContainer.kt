@@ -1,8 +1,6 @@
 package com.app.server
 
-import com.app.server.challenge.domain.model.Challenge
-import com.app.server.challenge.domain.model.ChallengeCategory
-import com.app.server.common.security.util.JwtUtil
+import com.app.server.core.security.util.JwtUtil
 import org.jasypt.encryption.StringEncryptor
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier

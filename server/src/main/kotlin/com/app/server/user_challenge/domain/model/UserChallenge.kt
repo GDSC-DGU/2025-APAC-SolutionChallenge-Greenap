@@ -16,6 +16,7 @@ import java.time.LocalDate
 @Entity
 @Table(name = "user_challenges")
 @DynamicUpdate
+// TODO : Index 적용 고려
 class UserChallenge(
 
     @Id

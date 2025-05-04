@@ -2,8 +2,8 @@ package com.app.server.challenge_certification.application.usecase
 
 import com.app.server.IntegrationTestContainer
 import com.app.server.challenge.application.service.ChallengeService
-import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
 import com.app.server.challenge_certification.domain.event.CertificationSucceededEvent
+import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
 import com.app.server.challenge_certification.infra.CertificationInfraService
 import com.app.server.challenge_certification.ui.dto.CertificationRequestDto
 import com.app.server.challenge_certification.ui.dto.SendToCertificationServerRequestDto
@@ -21,6 +21,7 @@ import com.app.server.user_challenge.domain.model.UserChallenge
 import com.app.server.user_challenge.domain.model.UserChallengeHistory
 import com.app.server.user_challenge.domain.event.SavedTodayUserChallengeCertificationEvent
 import jakarta.transaction.Transactional
+import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -190,7 +191,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("챌린지 인증에 성공하면 해당 날짜의 인증 상태를 변경할 수 있다.")
-    fun completeChallenge() {
+    fun completeChallenge() = runTest {
         // given
         given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
             EUserCertificatedResultCode.SUCCESS_CERTIFICATED
@@ -202,13 +203,13 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
             certificationDate = participantsStartDate
         )
         verify(applicationEventPublisher).publishEvent(
-            makeCertificationSucceededEvent(
+            makeevent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate
             )
         )
-        userChallengeEventListener.handleCertificationSucceededEvent(
-            makeCertificationSucceededEvent(
+        userChallengeEventListener.processWhenReceive(
+            makeevent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate
             )
@@ -221,7 +222,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("챌린지 인증에 성공하면 전체 참여 일수가 증가한다.")
-    fun completeChallengeWithIncreasingParticipationDays() {
+    fun completeChallengeWithIncreasingParticipationDays() = runTest {
         // given
         given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
             EUserCertificatedResultCode.SUCCESS_CERTIFICATED
@@ -235,13 +236,13 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
             certificationDate = participantsStartDate
         )
         verify(applicationEventPublisher).publishEvent(
-            makeCertificationSucceededEvent(
+            makeevent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate
             )
         )
-        userChallengeEventListener.handleCertificationSucceededEvent(
-            makeCertificationSucceededEvent(
+        userChallengeEventListener.processWhenReceive(
+            makeevent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate
             )
@@ -256,7 +257,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("챌린지를 처음 인증하여 성공했다면, 연속 참여 일수가 증가한다.")
-    fun completeChallengeFirstTryWithIncreasingConsecutiveParticipationDays() {
+    fun completeChallengeFirstTryWithIncreasingConsecutiveParticipationDays() = runTest {
         // given
         given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
             EUserCertificatedResultCode.SUCCESS_CERTIFICATED
@@ -269,13 +270,13 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
             certificationDate = participantsStartDate
         )
         verify(applicationEventPublisher).publishEvent(
-            makeCertificationSucceededEvent(
+            makeevent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate
             )
         )
-        userChallengeEventListener.handleCertificationSucceededEvent(
-            makeCertificationSucceededEvent(
+        userChallengeEventListener.processWhenReceive(
+            makeevent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate
             )
@@ -293,7 +294,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("챌린지 인증에 성공했을 때 연속 참여 조건을 만족한다면 연속 참여 일수가 증가한다.")
-    fun completeChallengeWithIncreasingConsecutiveParticipationDays() {
+    fun completeChallengeWithIncreasingConsecutiveParticipationDays() = runTest {
         // given
         given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
             EUserCertificatedResultCode.SUCCESS_CERTIFICATED
@@ -304,13 +305,13 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
             certificationDate = participantsStartDate
         )
         verify(applicationEventPublisher).publishEvent(
-            makeCertificationSucceededEvent(
+            makeevent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate
             )
         )
-        userChallengeEventListener.handleCertificationSucceededEvent(
-            makeCertificationSucceededEvent(
+        userChallengeEventListener.processWhenReceive(
+            makeevent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate
             )
@@ -325,13 +326,13 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
             certificationDate = participantsStartDate.plusDays(1)
         )
         verify(applicationEventPublisher).publishEvent(
-            makeCertificationSucceededEvent(
+            makeevent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate
             )
         )
-        userChallengeEventListener.handleCertificationSucceededEvent(
-            makeCertificationSucceededEvent(
+        userChallengeEventListener.processWhenReceive(
+            makeevent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate.plusDays(1)
             )
@@ -348,7 +349,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("챌린지 인증에 성공했을 때 연속 참여 조건을 만족하지 않는다면 연속 참여 일수가 초기화된다.")
-    fun completeChallengeWithResettingConsecutiveParticipationDays() {
+    fun completeChallengeWithResettingConsecutiveParticipationDays() = runTest {
         // given
         given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
             EUserCertificatedResultCode.SUCCESS_CERTIFICATED
@@ -358,13 +359,13 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
             certificationDate = participantsStartDate
         )
         verify(applicationEventPublisher).publishEvent(
-            makeCertificationSucceededEvent(
+            makeevent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate
             )
         )
-        userChallengeEventListener.handleCertificationSucceededEvent(
-            makeCertificationSucceededEvent(
+        userChallengeEventListener.processWhenReceive(
+            makeevent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate
             )
@@ -378,13 +379,13 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
             certificationDate = participantsStartDate.plusDays(2)
         )
         verify(applicationEventPublisher).publishEvent(
-            makeCertificationSucceededEvent(
+            makeevent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate.plusDays(2)
             )
         )
-        userChallengeEventListener.handleCertificationSucceededEvent(
-            makeCertificationSucceededEvent(
+        userChallengeEventListener.processWhenReceive(
+            makeevent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate.plusDays(2)
             )
@@ -416,7 +417,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("오늘 인증한 챌린지에 대해 인증을 시도하면 예외가 발생한다.")
-    fun alreadyCertificatedToday() {
+    fun alreadyCertificatedToday() = runTest {
         // given
         given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
             EUserCertificatedResultCode.SUCCESS_CERTIFICATED
@@ -426,13 +427,13 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
             certificationDate = participantsStartDate
         )
         verify(applicationEventPublisher).publishEvent(
-            makeCertificationSucceededEvent(
+            makeevent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate
             )
         )
-        userChallengeEventListener.handleCertificationSucceededEvent(
-            makeCertificationSucceededEvent(
+        userChallengeEventListener.processWhenReceive(
+            makeevent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate
             )
@@ -446,13 +447,13 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
             )
             verify(applicationEventPublisher, times(2))
                 .publishEvent(
-                    makeCertificationSucceededEvent(
+                    makeevent(
                         savedUserChallenge!!.id!!,
                         participantsStartDate
                     )
                 )
-            userChallengeEventListener.handleCertificationSucceededEvent(
-                makeCertificationSucceededEvent(
+            userChallengeEventListener.processWhenReceive(
+                makeevent(
                     savedUserChallenge!!.id!!,
                     participantsStartDate
                 )
@@ -463,7 +464,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("챌린지 인증에 성공했다면, 인증 사진을 저장한다.")
-    fun saveChallengeImage() {
+    fun saveChallengeImage() = runTest {
         // given
         given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
             EUserCertificatedResultCode.SUCCESS_CERTIFICATED
@@ -474,13 +475,13 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
             certificationDate = participantsStartDate
         )
         verify(applicationEventPublisher).publishEvent(
-            makeCertificationSucceededEvent(
+            makeevent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate
             )
         )
-        userChallengeEventListener.handleCertificationSucceededEvent(
-            makeCertificationSucceededEvent(
+        userChallengeEventListener.processWhenReceive(
+            makeevent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate
             )
@@ -492,7 +493,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("챌린지 인증에 성공하면 사용자의 현재 최대 연속 참여 일수를 갱신한다.")
-    fun updateMaxConsecutiveParticipationDays() {
+    fun updateMaxConsecutiveParticipationDays() = runTest {
         // given
         given(certificationInfraService.certificate(any()))
             .willReturn(
@@ -513,20 +514,20 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
             certificationDate = participantsStartDate
         )
 
-        userChallengeEventListener.handleCertificationSucceededEvent(
-            certificationSucceededEvent = makeCertificationSucceededEvent(
+        userChallengeEventListener.processWhenReceive(
+            event = makeevent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate
             )
         )
-        userChallengeEventListener.handleCertificationSucceededEvent(
-            certificationSucceededEvent = makeCertificationSucceededEvent(
+        userChallengeEventListener.processWhenReceive(
+            event = makeevent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate.plusDays(1)
             )
         )
-        userChallengeEventListener.handleCertificationSucceededEvent(
-            certificationSucceededEvent = makeCertificationSucceededEvent(
+        userChallengeEventListener.processWhenReceive(
+            event = makeevent(
                 secondSavedUserChallenge!!.id!!,
                 participantsStartDate
             )
@@ -563,7 +564,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
             .isEqualTo(2)
     }
 
-    private fun makeCertificationSucceededEvent(userChallengeId: Long, certificateDate: LocalDate)
+    private fun makeevent(userChallengeId: Long, certificateDate: LocalDate)
             : CertificationSucceededEvent {
         return CertificationSucceededEvent(
             userChallengeId = userChallengeId,

@@ -34,7 +34,7 @@ class UserChallengeEventListener(
         }
     }
 
-    private suspend fun processWhenReceive(event: CertificationSucceededEvent) {
+    suspend fun processWhenReceive(event: CertificationSucceededEvent) {
         userChallengeCommandService.processAfterCertificateSuccess(
             userChallengeId = event.userChallengeId,
             certificationDto = CertificationDataDto(
@@ -58,7 +58,7 @@ class UserChallengeEventListener(
         }
     }
 
-    private suspend fun processWhenReceive(event: ReportCreatedEvent) {
+    suspend fun processWhenReceive(event: ReportCreatedEvent) {
         val userChallenge = userChallengeService.findById(event.userChallengeId)
 
         val userRank = 1L // TODO: UserChallenge에서 랭킹을 가져오는 로직 추가 필요

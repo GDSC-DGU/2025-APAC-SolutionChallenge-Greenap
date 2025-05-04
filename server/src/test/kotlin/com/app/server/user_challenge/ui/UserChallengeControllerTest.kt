@@ -1,7 +1,7 @@
 package com.app.server.user_challenge.ui
 
 import com.app.server.IntegrationTestContainer
-import com.app.server.common.security.info.CustomUserDetails
+import com.app.server.core.security.info.CustomUserDetails
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.springframework.boot.test.context.SpringBootTest

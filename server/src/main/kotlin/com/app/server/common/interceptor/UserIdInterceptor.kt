@@ -2,7 +2,7 @@ package com.app.server.common.interceptor
 
 import com.app.server.common.enums.CommonResultCode
 import com.app.server.common.exception.UnauthorizedException
-import com.app.server.common.security.info.CustomUserDetails
+import com.app.server.core.security.info.CustomUserDetails
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import lombok.extern.slf4j.Slf4j

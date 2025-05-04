@@ -21,6 +21,7 @@ import com.app.server.user_challenge.infra.ReportInfraService
 import com.app.server.user_challenge.ui.usecase.GetUserChallengeReportUseCase
 import com.app.server.user_challenge.ui.usecase.ParticipantChallengeUseCase
 import jakarta.transaction.Transactional
+import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.extension.ExtendWith
@@ -143,11 +144,11 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("챌린지 인증에 성공한 날짜가 챌린지 종료일자와 같다면, 리포트 메시지를 AI 서버로부터 받아온다.")
-    fun getReportMessage() {
+    fun getReportMessage() = runTest {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
         // when
-        userChallengeEventListener.handleCertificationSucceededEvent(
+        userChallengeEventListener.processWhenReceive(
             CertificationSucceededEvent(
                 savedUserChallenge!!.id!!, imageUrl, endDate
             )
@@ -158,11 +159,11 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("챌린지 리포트 메시지를 받아왔다면 저장하고, 챌린지의 상태를 Pending으로 변경한다.")
-    fun saveReportMessage() {
+    fun saveReportMessage() = runTest {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
         // when
-        userChallengeEventListener.handleCertificationSucceededEvent(
+        userChallengeEventListener.processWhenReceive(
             CertificationSucceededEvent(
                 savedUserChallenge!!.id!!, imageUrl, endDate
 
@@ -175,12 +176,12 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("마지막 날짜의 챌린지 인증에는 성공하였으나, 리포트 메시지를 생성에 실패했다면, 챌린지의 상태를 Dead으로 변경하여 추후 처리가 가능하게 한다.")
-    fun getReportMessageWithFail() {
+    fun getReportMessageWithFail() = runTest {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_FAILED)
         // when
         val exception = assertThrows<InternalServerErrorException> {
-            userChallengeEventListener.handleCertificationSucceededEvent(
+            userChallengeEventListener.processWhenReceive(
                 CertificationSucceededEvent(
                     savedUserChallenge!!.id!!, imageUrl, participantsStartDate.plusDays(participationDays - 1L)
                 )
@@ -193,12 +194,12 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("마지막 날짜의 챌린지 인증에는 성공하였으나, 리포트 서버의 응답을 받지 못했다면, 챌린지의 상태를 Dead으로 변경하여 추후 처리가 가능하게 한다.")
-    fun getReportMessageWithReportServerDeadAndChangeStatusToDead() {
+    fun getReportMessageWithReportServerDeadAndChangeStatusToDead() = runTest {
         // given
         settingReceiveReport(status = EUserReportResultCode.ERROR_IN_RECEIVE_REPORT_SERVER)
         // when
         val exception = assertThrows<InternalServerErrorException> {
-            userChallengeEventListener.handleCertificationSucceededEvent(
+            userChallengeEventListener.processWhenReceive(
                 CertificationSucceededEvent(
                     savedUserChallenge!!.id!!, imageUrl, endDate
                 )
@@ -211,11 +212,11 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("챌린지 종료 일자와 오늘 일자가 같고 오늘 인증에 성공했다면, 챌린지 상태를 Pending으로 변경한다.")
-    fun finishChallenge() {
+    fun finishChallenge() = runTest {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
         // when
-        userChallengeEventListener.handleCertificationSucceededEvent(
+        userChallengeEventListener.processWhenReceive(
             CertificationSucceededEvent(
                 savedUserChallenge!!.id!!, imageUrl, endDate
             )
@@ -227,7 +228,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
     @Test
     @Disabled
     @DisplayName("챌린지 종료 일자보다 오늘 일자가 더 크다면, 챌린지 상태를 Pending으로 변경한다.")
-    fun finishChallengeWithOverdue() {
+    fun finishChallengeWithOverdue() = runTest {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
         // when
@@ -237,11 +238,11 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("Pending 상태의 챌린지는 리포트를 발급받은 상태이다.")
-    fun issueReport() {
+    fun issueReport() = runTest {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
         // when
-        userChallengeEventListener.handleCertificationSucceededEvent(
+        userChallengeEventListener.processWhenReceive(
             CertificationSucceededEvent(
                 savedUserChallenge!!.id!!, imageUrl, endDate
             )
@@ -253,10 +254,10 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("리포트를 아직 확인하지 않은 상태의 챌린지는 사용자가 챌린지 종료 다음날 안으로 리포트를 확인한다면 해당 챌린지는 이어하기가 가능한 상태로 변경된다.")
-    fun checkReport() {
+    fun checkReport() = runTest {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
-        userChallengeEventListener.handleCertificationSucceededEvent(
+        userChallengeEventListener.processWhenReceive(
             CertificationSucceededEvent(
                 savedUserChallenge!!.id!!, imageUrl, endDate
             )
@@ -270,10 +271,10 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("리포트를 아직 확인하지 않은 상태의 챌린지는 사용자가 챌린지 종료 다음 날 이후로 리포트를 확인했다면 더 이상 이어할 수 없고 완전히 종료된다.")
-    fun completeReport() {
+    fun completeReport() = runTest {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
-        userChallengeEventListener.handleCertificationSucceededEvent(
+        userChallengeEventListener.processWhenReceive(
             CertificationSucceededEvent(
                 savedUserChallenge!!.id!!, imageUrl, endDate
             )
@@ -287,10 +288,10 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("챌린지 이어하기를 성공했다면, 해당 챌린지의 상태는 다시 Running으로 변경되어 계속 이어 진행된다.")
-    fun continueChallengeWithSuccess() {
+    fun continueChallengeWithSuccess() = runTest {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
-        userChallengeEventListener.handleCertificationSucceededEvent(
+        userChallengeEventListener.processWhenReceive(
             CertificationSucceededEvent(
                 savedUserChallenge!!.id!!, imageUrl, endDate
             )
@@ -313,10 +314,10 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("리포트를 아직 확인하지 않은 상태의 챌린지에 대해 사용자가 참여 요청을 보냈을 때, 리포트를 아직 확인하지 않았다면 리포트를 확인해야 한다.")
-    fun continueChallengeWithPending() {
+    fun continueChallengeWithPending() = runTest {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
-        userChallengeEventListener.handleCertificationSucceededEvent(
+        userChallengeEventListener.processWhenReceive(
             CertificationSucceededEvent(
                 savedUserChallenge!!.id!!, imageUrl, endDate
             )
@@ -340,10 +341,10 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("완전 종료된 상태의 챌린지는 챌린지 이어하기 기능을 사용할 수 없다. 이 챌린지에 다시 참여 요청을 보내면 이어하기가 아니라 새로운 챌린지에 참여하게 된다.")
-    fun continueChallenge() {
+    fun continueChallenge() = runTest {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
-        userChallengeEventListener.handleCertificationSucceededEvent(
+        userChallengeEventListener.processWhenReceive(
             CertificationSucceededEvent(
                 savedUserChallenge!!.id!!, imageUrl, endDate
             )
@@ -369,10 +370,10 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("리포트를 확인한 챌린지는 챌린지 종료 다음 날 안으로 이어할 수 있다.")
-    fun continueChallengeWithWait() {
+    fun continueChallengeWithWait() = runTest {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
-        userChallengeEventListener.handleCertificationSucceededEvent(
+        userChallengeEventListener.processWhenReceive(
             CertificationSucceededEvent(
                 savedUserChallenge!!.id!!, imageUrl, endDate
             )
@@ -399,10 +400,10 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("이어하기가 가능한 상태의 챌린지를 사용자가 이어한다면, 새로 선택한 참가일수만큼 총 참가 일수가 증가한다.")
-    fun continueChallengeWithWaitAndIncreaseTotalParticipationDays() {
+    fun continueChallengeWithWaitAndIncreaseTotalParticipationDays() = runTest {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
-        userChallengeEventListener.handleCertificationSucceededEvent(
+        userChallengeEventListener.processWhenReceive(
             CertificationSucceededEvent(
                 savedUserChallenge!!.id!!, imageUrl, endDate
             )
@@ -425,10 +426,10 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("이어하기가 가능한 상태의 챌린지를 사용자가 이어하고 싶다면, 참여 중인 챌린지의 참여 히스토리가 늘어난다.")
-    fun continueChallengeWithWaitAndIncreaseParticipationDays() {
+    fun continueChallengeWithWaitAndIncreaseParticipationDays() = runTest {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
-        userChallengeEventListener.handleCertificationSucceededEvent(
+        userChallengeEventListener.processWhenReceive(
             CertificationSucceededEvent(
                 savedUserChallenge!!.id!!, imageUrl, endDate
             )
@@ -453,10 +454,10 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("이어하기가 가능한 상태의 챌린지를 사용자가 이어하여 참여 히스토리가 늘어났을 때, 새로 추가된 히스토리들의 상태는 모두 실패된 상태라고 간주한다.")
-    fun continueChallengeWithWaitAndChangeStatusToFail() {
+    fun continueChallengeWithWaitAndChangeStatusToFail() = runTest {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
-        userChallengeEventListener.handleCertificationSucceededEvent(
+        userChallengeEventListener.processWhenReceive(
             CertificationSucceededEvent(
                 savedUserChallenge!!.id!!, imageUrl, endDate
             )
@@ -484,10 +485,10 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("이어하기가 가능한 상태의 챌린지를 사용자가 이어하여 참여 히스토리가 늘어났을 때, 기존 히스토리들은 그대로 유지된다.")
-    fun continueChallengeWithWaitAndKeepStatus() {
+    fun continueChallengeWithWaitAndKeepStatus() = runTest {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
-        userChallengeEventListener.handleCertificationSucceededEvent(
+        userChallengeEventListener.processWhenReceive(
             CertificationSucceededEvent(
                 savedUserChallenge!!.id!!, imageUrl, endDate
             )
@@ -515,10 +516,10 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("이어하기가 가능한 상태의 챌린지를 사용자가 이어하고 싶다면, 기존 리포트 메시지는 삭제된다.")
-    fun continueChallengeWithWaitAndDeleteReportMessage() {
+    fun continueChallengeWithWaitAndDeleteReportMessage() = runTest {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
-        userChallengeEventListener.handleCertificationSucceededEvent(
+        userChallengeEventListener.processWhenReceive(
             CertificationSucceededEvent(
                 savedUserChallenge!!.id!!, imageUrl, endDate
             )
@@ -542,11 +543,11 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("이어하기가 가능한 상태의 챌린지를 사용자가 이어했을 때, 연속 참여 횟수도 이어서 증가할 수 있다.")
-    fun continueChallengeWithWaitAndIncreaseConsecutiveParticipationDays() {
+    fun continueChallengeWithWaitAndIncreaseConsecutiveParticipationDays() = runTest {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
 
-        userChallengeEventListener.handleCertificationSucceededEvent(
+        userChallengeEventListener.processWhenReceive(
             CertificationSucceededEvent(
                 savedUserChallenge!!.id!!, imageUrl, endDate
             )
@@ -568,7 +569,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
             )
         )
         // when
-        userChallengeEventListener.handleCertificationSucceededEvent(
+        userChallengeEventListener.processWhenReceive(
             CertificationSucceededEvent(
                 savedUserChallenge!!.id!!, imageUrl, endDate.plusDays(1)
             )
@@ -606,7 +607,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
     }
 
 
-    private fun settingReceiveReport(status: EUserReportResultCode) {
+    private suspend fun settingReceiveReport(status: EUserReportResultCode) {
         given(certificationInfraService.certificate(any())).willReturn(
             EUserCertificatedResultCode.SUCCESS_CERTIFICATED
         )
@@ -618,12 +619,13 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
             )
         )
         for (i in 0 until participationDays - 1)
-            userChallengeEventListener.handleCertificationSucceededEvent(
+            userChallengeEventListener.processWhenReceive(
                 CertificationSucceededEvent(
                     savedUserChallenge!!.id!!, imageUrl, participantsStartDate.plusDays(i.toLong())
                 )
             )
     }
+
     // TODO: 랭킹 작업 관련 테스트 작성
     // TODO: 알림 작업 관련 테스트 작성
 

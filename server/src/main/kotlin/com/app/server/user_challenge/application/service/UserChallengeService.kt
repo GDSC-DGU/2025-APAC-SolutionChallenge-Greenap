@@ -20,6 +20,10 @@ class UserChallengeService (
         return userChallengeRepository.save(userChallenge)
     }
 
+    fun saveAndFlush(userChallenge: UserChallenge) : UserChallenge {
+        return userChallengeRepository.saveAndFlush(userChallenge)
+    }
+
     fun saveAll(userChallenges: List<UserChallenge>) : List<UserChallenge> {
         return userChallengeRepository.saveAll(userChallenges)
     }

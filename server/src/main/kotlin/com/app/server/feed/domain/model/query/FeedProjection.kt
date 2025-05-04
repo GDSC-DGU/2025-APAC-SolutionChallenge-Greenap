@@ -5,6 +5,7 @@ import com.app.server.feed.domain.model.command.Feed
 import jakarta.persistence.*
 
 @Entity
+// TODO : Index 적용 고려
 @Table(name = "feed_projections")
 class FeedProjection (
 

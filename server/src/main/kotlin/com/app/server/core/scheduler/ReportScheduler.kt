@@ -1,5 +1,8 @@
 package com.app.server.core.scheduler
 
+import org.springframework.context.annotation.Configuration
+
+@Configuration
 class ReportScheduler {
 
     // TODO: 레포트 발급에 실패한 챌린지들은 따로 모아 배치작업으로 다시 재발급 필요

@@ -2,8 +2,8 @@ package com.app.server.feed.application
 
 import com.app.server.IntegrationTestContainer
 import com.app.server.challenge.application.service.ChallengeService
-import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
 import com.app.server.challenge_certification.domain.event.CertificationSucceededEvent
+import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
 import com.app.server.challenge_certification.infra.CertificationInfraService
 import com.app.server.challenge_certification.ui.dto.CertificationRequestDto
 import com.app.server.challenge_certification.ui.dto.SendToCertificationServerRequestDto
@@ -12,8 +12,8 @@ import com.app.server.common.exception.NotFoundException
 import com.app.server.feed.application.service.FeedEventListener
 import com.app.server.feed.application.service.FeedProjectionService
 import com.app.server.feed.application.service.FeedService
-import com.app.server.feed.domain.model.command.Feed
 import com.app.server.feed.domain.event.FeedCreatedEvent
+import com.app.server.feed.domain.model.command.Feed
 import com.app.server.feed.exception.FeedException
 import com.app.server.feed.ui.dto.CreateFeedCommand
 import com.app.server.feed.ui.dto.CreateFeedRequestDto
@@ -28,6 +28,7 @@ import com.app.server.user_challenge.domain.enums.EUserChallengeStatus
 import com.app.server.user_challenge.domain.model.UserChallenge
 import com.app.server.user_challenge.domain.model.UserChallengeHistory
 import jakarta.transaction.Transactional
+import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -142,9 +143,9 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("인증에 성공한 챌린지는 피드로 작성할 수 있다.")
-    fun createFeed() {
+    fun createFeed() = runTest {
         // given
-        userChallengeEventListener.handleCertificationSucceededEvent(
+        userChallengeEventListener.processWhenReceive(
             makeCertificationSucceededEvent(
                 certificateDate = participantsStartDate
             )
@@ -162,9 +163,9 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("피드로 작성하는 챌린지는 사용자의 인증 사진을 피드에 올리게 된다.")
-    fun createFeedWithImage() {
+    fun createFeedWithImage() = runTest {
         // given
-        userChallengeEventListener.handleCertificationSucceededEvent(
+        userChallengeEventListener.processWhenReceive(
             makeCertificationSucceededEvent(
                 certificateDate = participantsStartDate,
             )
@@ -182,9 +183,9 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("피드의 내용은 1000자 이하로 작성할 수 있다.")
-    fun createFeedWithContent() {
+    fun createFeedWithContent() = runTest {
         // given
-        userChallengeEventListener.handleCertificationSucceededEvent(
+        userChallengeEventListener.processWhenReceive(
             makeCertificationSucceededEvent(
                 certificateDate = participantsStartDate,
             )
@@ -200,9 +201,9 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("피드의 내용은 1000자 이상으로 작성할 수 없다.")
-    fun createFeedWithContentOverLimit() {
+    fun createFeedWithContentOverLimit() = runTest {
         // given
-        userChallengeEventListener.handleCertificationSucceededEvent(
+        userChallengeEventListener.processWhenReceive(
             makeCertificationSucceededEvent(
                 certificateDate = participantsStartDate,
             )
@@ -221,9 +222,9 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("피드의 내용은 없어도 게시할 수 있다.")
-    fun createFeedWithEmptyContent() {
+    fun createFeedWithEmptyContent() =runTest {
         // given
-        userChallengeEventListener.handleCertificationSucceededEvent(
+        userChallengeEventListener.processWhenReceive(
             makeCertificationSucceededEvent(
                 certificateDate = participantsStartDate,
             )
@@ -237,7 +238,7 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
         assertThat(feed.content).isNull()
 
         // given
-        userChallengeEventListener.handleCertificationSucceededEvent(
+        userChallengeEventListener.processWhenReceive(
             makeCertificationSucceededEvent(
                 certificateDate = participantsStartDate.plusDays(1),
             )
@@ -252,9 +253,9 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("피드가 작성되어 피드 생성 이벤트가 게시되면, 피드 조회 전용 테이블에 피드가 복사되어 저장된다.")
-    fun createFeedWithCopy() {
+    fun createFeedWithCopy() = runTest {
         // given
-        userChallengeEventListener.handleCertificationSucceededEvent(
+        userChallengeEventListener.processWhenReceive(
             makeCertificationSucceededEvent(
                 certificateDate = participantsStartDate,
             )
@@ -278,9 +279,9 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("피드 수정 시, 피드의 내용을 1000자 이하로 수정할 수 있다.")
-    fun updateFeedWithContent() {
+    fun updateFeedWithContent() = runTest {
         // given
-        userChallengeEventListener.handleCertificationSucceededEvent(
+        userChallengeEventListener.processWhenReceive(
             makeCertificationSucceededEvent(
                 certificateDate = participantsStartDate,
             )
@@ -305,9 +306,9 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("피드 수정 시, 피드의 내용을 1000자 이상으로 수정할 수 없다.")
-    fun updateFeedWithContentOverLimit() {
+    fun updateFeedWithContentOverLimit() = runTest {
         // given
-        userChallengeEventListener.handleCertificationSucceededEvent(
+        userChallengeEventListener.processWhenReceive(
             makeCertificationSucceededEvent(
                 certificateDate = participantsStartDate,
             )
@@ -331,9 +332,9 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("피드를 삭제할 수 있다.")
-    fun deleteFeed() {
+    fun deleteFeed() = runTest {
         // given
-        userChallengeEventListener.handleCertificationSucceededEvent(
+        userChallengeEventListener.processWhenReceive(
             makeCertificationSucceededEvent(
                 certificateDate = participantsStartDate,
             )
@@ -353,9 +354,9 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
 
     @Test
     @DisplayName("피드를 삭제하면 피드 조회 전용 테이블에서도 삭제된다.")
-    fun deleteFeedWithCopy() {
+    fun deleteFeedWithCopy() = runTest {
         // given
-        userChallengeEventListener.handleCertificationSucceededEvent(
+        userChallengeEventListener.processWhenReceive(
             makeCertificationSucceededEvent(
                 certificateDate = participantsStartDate,
             )
