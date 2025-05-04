@@ -111,8 +111,9 @@ class UserChallengeCommandService(
 
         eventPublisher.publishEvent(
             SavedTodayUserChallengeCertificationEvent(
-                userId = userChallenge.userId,
+                userChallengeId = userChallenge.id!!,
                 maxConsecutiveParticipationDayCount = userChallenge.maxConsecutiveParticipationDayCount,
+                totalParticipationDayCount = userChallenge.totalParticipationDayCount
             )
         )
 

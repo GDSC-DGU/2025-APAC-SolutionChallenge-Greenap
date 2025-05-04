@@ -8,7 +8,9 @@ data class FeedListResponseDto(
     val feedList: List<FeedDto>,
     val page: Int,
     val size: Int,
-    val hasNext: Boolean
+    val hasNext: Boolean,
+    val totalElements: Long,
+    val totalPages: Int
 ){
     companion object {
         fun fromPage(feedProjectionPage: Page<FeedProjection>): FeedListResponseDto {
@@ -31,7 +33,9 @@ data class FeedListResponseDto(
                 feedList = feedList,
                 page = feedProjectionPage.number + 1,
                 size = feedProjectionPage.size,
-                hasNext = feedProjectionPage.hasNext()
+                hasNext = feedProjectionPage.hasNext(),
+                totalElements = feedProjectionPage.totalElements,
+                totalPages = feedProjectionPage.totalPages
             )
         }
     }

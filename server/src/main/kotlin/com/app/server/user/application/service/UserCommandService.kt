@@ -1,20 +1,23 @@
 package com.app.server.user.application.service
 
+import com.app.server.user_challenge.application.service.UserChallengeService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
 @Transactional
 class UserCommandService(
-    private val userService: UserService
+    private val userService: UserService,
+    private val userChallengeService: UserChallengeService,
 ) {
 
     fun verifyUserCanUpdateNowMaxConsecutiveParticipantsDayCount(
-        userId: Long,
+        userChallengeId: Long,
         updateMaxConsecutiveParticipationDayCount: Long
     ){
 
-        val user = userService.findById(userId)
+        val userChallenge = userChallengeService.findById(userChallengeId)
+        val user = userService.findById(userChallenge.userId)
 
         val userNowMaxConsecutiveParticipationDayCount: Long = user.nowMaxConsecutiveParticipationDayCount
 

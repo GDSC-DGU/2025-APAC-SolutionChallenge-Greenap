@@ -21,14 +21,15 @@ class UserChallengeEventListener(
     private val reportWaiter: ReportWaiter,
 ) {
 
+    val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
+
     @EventListener
     fun handleCertificationSucceededEvent(certificationSucceededEvent: CertificationSucceededEvent) {
         try {
-            CoroutineScope(Dispatchers.Default + SupervisorJob()).launch {
+            scope.launch {
                 processWhenReceive(certificationSucceededEvent)
             }
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             // TODO : 실패 시 보상 트랜잭션 이벤트 제공 필요
             throw e
         }
@@ -48,11 +49,10 @@ class UserChallengeEventListener(
     @EventListener
     fun handleReportCreatedEvent(reportCreatedEvent: ReportCreatedEvent) {
         try {
-            CoroutineScope(Dispatchers.Default).launch {
+            scope.launch {
                 processWhenReceive(reportCreatedEvent)
             }
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             // TODO : 실패 시 보상 트랜잭션 이벤트 제공 필요
             throw e
         }

@@ -2,18 +2,17 @@ package com.app.server.feed.application
 
 import com.app.server.IntegrationTestContainer
 import com.app.server.challenge.application.service.ChallengeService
-import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
 import com.app.server.challenge_certification.domain.event.CertificationSucceededEvent
+import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
 import com.app.server.challenge_certification.infra.CertificationInfraService
 import com.app.server.challenge_certification.ui.dto.CertificationRequestDto
 import com.app.server.challenge_certification.ui.dto.SendToCertificationServerRequestDto
-import com.app.server.common.exception.BadRequestException
 import com.app.server.feed.application.service.FeedEventListener
 import com.app.server.feed.application.service.FeedProjectionService
 import com.app.server.feed.application.service.FeedService
+import com.app.server.feed.domain.event.FeedCreatedEvent
 import com.app.server.feed.domain.model.query.FeedProjection
 import com.app.server.feed.enums.EFeedScope
-import com.app.server.feed.domain.event.FeedCreatedEvent
 import com.app.server.feed.exception.FeedException
 import com.app.server.feed.ui.dto.CreateFeedCommand
 import com.app.server.feed.ui.dto.ReadFeedProjectionCommand
@@ -105,7 +104,7 @@ class FeedQueryServiceTest : IntegrationTestContainer() {
 
         savedUserChallenge = makeUserChallengeAndHistory(userId, participantsStartDate)
 
-        notFindUserChallenge = makeUserChallengeAndHistory(notFindUserId, participantsStartDate)
+        notFindUserChallenge = makeUserChallengeAndHistory(secondUserId, participantsStartDate)
 
         certificationRequestDto = CertificationRequestDto(
             userChallengeId = savedUserChallenge!!.id!!,
@@ -162,7 +161,7 @@ class FeedQueryServiceTest : IntegrationTestContainer() {
     fun getAllFeed() = runTest {
         // given
         makeFeedWhenCertificate(userId, savedUserChallenge!!.id!!, participantsStartDate)
-        makeFeedWhenCertificate(notFindUserId, notFindUserChallenge!!.id!!, participantsStartDate)
+        makeFeedWhenCertificate(secondUserId, notFindUserChallenge!!.id!!, participantsStartDate)
         // when
         val feedListResponseDto = readFeedUseCase.execute(
             ReadFeedProjectionCommand(
@@ -185,7 +184,7 @@ class FeedQueryServiceTest : IntegrationTestContainer() {
             participantsStartDate)
         makeFeedWhenCertificate(userId, savedUserChallenge!!.id!!,
             participantsStartDate.plusDays(1))
-        makeFeedWhenCertificate(notFindUserId, notFindUserChallenge!!.id!!, participantsStartDate)
+        makeFeedWhenCertificate(secondUserId, notFindUserChallenge!!.id!!, participantsStartDate)
         // when
         val feedListResponseDto = readFeedUseCase.execute(
             ReadFeedProjectionCommand(
@@ -200,7 +199,7 @@ class FeedQueryServiceTest : IntegrationTestContainer() {
         val firstFeedCreatedAt = feedListResponseDto.feedList.first().createdAt
         val secondFeedCreatedAt = feedListResponseDto.feedList.last().createdAt
         assertThat(feedListResponseDto.feedList.first().user.nickname).isEqualTo(userName)
-        assertThat(feedListResponseDto.feedList.get(1).user.nickname).isEqualTo(notFindUserName)
+        assertThat(feedListResponseDto.feedList.get(1).user.nickname).isEqualTo(secondUserName)
         assertThat(feedListResponseDto.feedList.last().user.nickname).isEqualTo(userName)
         assertThat(firstFeedCreatedAt).isAfter(secondFeedCreatedAt)
     }
@@ -215,10 +214,10 @@ class FeedQueryServiceTest : IntegrationTestContainer() {
         makeFeedWhenCertificate(userId, savedUserChallenge!!.id!!, participantsStartDate.plusDays(3))
         makeFeedWhenCertificate(userId, savedUserChallenge!!.id!!, participantsStartDate.plusDays(4))
 
-        makeFeedWhenCertificate(notFindUserId, notFindUserChallenge!!.id!!, participantsStartDate)
-        makeFeedWhenCertificate(notFindUserId, notFindUserChallenge!!.id!!, participantsStartDate.plusDays(1))
-        makeFeedWhenCertificate(notFindUserId, notFindUserChallenge!!.id!!, participantsStartDate.plusDays(2))
-        makeFeedWhenCertificate(notFindUserId, notFindUserChallenge!!.id!!, participantsStartDate.plusDays(3))
+        makeFeedWhenCertificate(secondUserId, notFindUserChallenge!!.id!!, participantsStartDate)
+        makeFeedWhenCertificate(secondUserId, notFindUserChallenge!!.id!!, participantsStartDate.plusDays(1))
+        makeFeedWhenCertificate(secondUserId, notFindUserChallenge!!.id!!, participantsStartDate.plusDays(2))
+        makeFeedWhenCertificate(secondUserId, notFindUserChallenge!!.id!!, participantsStartDate.plusDays(3))
 
         // when
         val feedListResponseDto = readFeedUseCase.execute(
@@ -246,10 +245,10 @@ class FeedQueryServiceTest : IntegrationTestContainer() {
         makeFeedWhenCertificate(userId, savedUserChallenge!!.id!!, participantsStartDate.plusDays(3))
         makeFeedWhenCertificate(userId, savedUserChallenge!!.id!!, participantsStartDate.plusDays(4))
 
-        makeFeedWhenCertificate(notFindUserId, notFindUserChallenge!!.id!!, participantsStartDate)
-        makeFeedWhenCertificate(notFindUserId, notFindUserChallenge!!.id!!, participantsStartDate.plusDays(1))
-        makeFeedWhenCertificate(notFindUserId, notFindUserChallenge!!.id!!, participantsStartDate.plusDays(2))
-        makeFeedWhenCertificate(notFindUserId, notFindUserChallenge!!.id!!, participantsStartDate.plusDays(3))
+        makeFeedWhenCertificate(secondUserId, notFindUserChallenge!!.id!!, participantsStartDate)
+        makeFeedWhenCertificate(secondUserId, notFindUserChallenge!!.id!!, participantsStartDate.plusDays(1))
+        makeFeedWhenCertificate(secondUserId, notFindUserChallenge!!.id!!, participantsStartDate.plusDays(2))
+        makeFeedWhenCertificate(secondUserId, notFindUserChallenge!!.id!!, participantsStartDate.plusDays(3))
         // when
         val feedListResponseDto = readFeedUseCase.execute(
             ReadFeedProjectionCommand(
@@ -266,24 +265,24 @@ class FeedQueryServiceTest : IntegrationTestContainer() {
     }
 
     @Test
-    @Disabled
-    @DisplayName("피드 조회 시, 페이지는 1부터 시작한다.")
-    fun getFeedWithPageOverLimit() =runTest {
+    @DisplayName("피드 조회 시, 페이지는 1 이상이어야 한다.")
+    fun getFeedWithPageOverLimit() = runTest {
         // given
         makeFeedWhenCertificate(userId, savedUserChallenge!!.id!!, participantsStartDate)
         // when
-        val exception = assertThrows<BadRequestException> {
+        val exception = assertThrows<IllegalArgumentException> {
+            // 컨트롤로에서 들어온 요청은 BadRequest를 뱉도록 Valid를 설정해두었다.
             readFeedUseCase.execute(
                 ReadFeedProjectionCommand(
                     userId = userId,
-                    categoryId = null,
                     page = 0,
+                    categoryId = null,
                     userChallengeId = null
                 )
             )
         }
         // then
-        assertThat(exception.message).isEqualTo(FeedException.PAGE_OVER_LIMIT.message)
+        assertThat(exception.message).isEqualTo("Page index must not be less than zero")
     }
 
     @Test
@@ -296,10 +295,10 @@ class FeedQueryServiceTest : IntegrationTestContainer() {
         makeFeedWhenCertificate(userId, savedUserChallenge!!.id!!, participantsStartDate.plusDays(3))
         makeFeedWhenCertificate(userId, savedUserChallenge!!.id!!, participantsStartDate.plusDays(4))
 
-        makeFeedWhenCertificate(notFindUserId, notFindUserChallenge!!.id!!, participantsStartDate)
-        makeFeedWhenCertificate(notFindUserId, notFindUserChallenge!!.id!!, participantsStartDate.plusDays(1))
-        makeFeedWhenCertificate(notFindUserId, notFindUserChallenge!!.id!!, participantsStartDate.plusDays(2))
-        makeFeedWhenCertificate(notFindUserId, notFindUserChallenge!!.id!!, participantsStartDate.plusDays(3))
+        makeFeedWhenCertificate(secondUserId, notFindUserChallenge!!.id!!, participantsStartDate)
+        makeFeedWhenCertificate(secondUserId, notFindUserChallenge!!.id!!, participantsStartDate.plusDays(1))
+        makeFeedWhenCertificate(secondUserId, notFindUserChallenge!!.id!!, participantsStartDate.plusDays(2))
+        makeFeedWhenCertificate(secondUserId, notFindUserChallenge!!.id!!, participantsStartDate.plusDays(3))
 
         // when
         val feedListResponseDto = readFeedUseCase.execute(
@@ -325,10 +324,10 @@ class FeedQueryServiceTest : IntegrationTestContainer() {
         makeFeedWhenCertificate(userId, savedUserChallenge!!.id!!, participantsStartDate.plusDays(3))
         makeFeedWhenCertificate(userId, savedUserChallenge!!.id!!, participantsStartDate.plusDays(4))
 
-        makeFeedWhenCertificate(notFindUserId, notFindUserChallenge!!.id!!, participantsStartDate)
-        makeFeedWhenCertificate(notFindUserId, notFindUserChallenge!!.id!!, participantsStartDate.plusDays(1))
-        makeFeedWhenCertificate(notFindUserId, notFindUserChallenge!!.id!!, participantsStartDate.plusDays(2))
-        makeFeedWhenCertificate(notFindUserId, notFindUserChallenge!!.id!!, participantsStartDate.plusDays(3))
+        makeFeedWhenCertificate(secondUserId, notFindUserChallenge!!.id!!, participantsStartDate)
+        makeFeedWhenCertificate(secondUserId, notFindUserChallenge!!.id!!, participantsStartDate.plusDays(1))
+        makeFeedWhenCertificate(secondUserId, notFindUserChallenge!!.id!!, participantsStartDate.plusDays(2))
+        makeFeedWhenCertificate(secondUserId, notFindUserChallenge!!.id!!, participantsStartDate.plusDays(3))
         // when
         val feedListResponseDto = readFeedUseCase.execute(
             ReadFeedProjectionCommand(
@@ -343,13 +342,13 @@ class FeedQueryServiceTest : IntegrationTestContainer() {
     }
 
     @Test
-    @Disabled
     @DisplayName("피드 조회 시, 페이지 size는 1 이상이어야 한다.")
     fun getFeedWithSizeOverLimit() = runTest {
         // given
         makeFeedWhenCertificate(userId, savedUserChallenge!!.id!!, participantsStartDate)
         // when
-        val exception = assertThrows<BadRequestException> {
+        val exception = assertThrows<IllegalArgumentException> {
+            // 컨트롤로에서 들어온 요청은 BadRequest를 뱉도록 Valid를 설정해두었다.
             readFeedUseCase.execute(
                 ReadFeedProjectionCommand(
                     userId = userId,
@@ -360,7 +359,7 @@ class FeedQueryServiceTest : IntegrationTestContainer() {
             )
         }
         // then
-        assertThat(exception.message).isEqualTo(FeedException.SIZE_OVER_LIMIT.message)
+        assertThat(exception.message).isEqualTo("Page size must not be less than one")
     }
 
     @Test
@@ -369,7 +368,7 @@ class FeedQueryServiceTest : IntegrationTestContainer() {
         // given
         makeFeedWhenCertificate(userId, savedUserChallenge!!.id!!, participantsStartDate)
         makeFeedWhenCertificate(userId, savedUserChallenge!!.id!!, participantsStartDate.plusDays(1))
-        makeFeedWhenCertificate(notFindUserId, notFindUserChallenge!!.id!!, participantsStartDate)
+        makeFeedWhenCertificate(secondUserId, notFindUserChallenge!!.id!!, participantsStartDate)
         // when
         val feedListResponseDto = readFeedUseCase.execute(
             ReadFeedProjectionCommand(
@@ -392,7 +391,7 @@ class FeedQueryServiceTest : IntegrationTestContainer() {
         // given
         makeFeedWhenCertificate(userId, savedUserChallenge!!.id!!, participantsStartDate)
         makeFeedWhenCertificate(userId, savedUserChallenge!!.id!!, participantsStartDate.plusDays(1))
-        makeFeedWhenCertificate(notFindUserId, notFindUserChallenge!!.id!!, participantsStartDate)
+        makeFeedWhenCertificate(secondUserId, notFindUserChallenge!!.id!!, participantsStartDate)
         // when
         val feedListResponseDto = readFeedUseCase.execute(
             ReadFeedProjectionCommand(
@@ -413,7 +412,7 @@ class FeedQueryServiceTest : IntegrationTestContainer() {
         // given
         makeFeedWhenCertificate(userId, savedUserChallenge!!.id!!, participantsStartDate)
         makeFeedWhenCertificate(userId, savedUserChallenge!!.id!!, participantsStartDate.plusDays(1))
-        makeFeedWhenCertificate(notFindUserId, notFindUserChallenge!!.id!!, participantsStartDate)
+        makeFeedWhenCertificate(secondUserId, notFindUserChallenge!!.id!!, participantsStartDate)
         // when
         val feedListResponseDto = readFeedUseCase.execute(
             ReadFeedProjectionCommand(

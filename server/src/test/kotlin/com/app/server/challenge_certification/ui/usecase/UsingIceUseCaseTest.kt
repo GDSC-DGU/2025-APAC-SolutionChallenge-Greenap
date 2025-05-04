@@ -1,4 +1,4 @@
-package com.app.server.challenge_certification.application.usecase
+package com.app.server.challenge_certification.ui.usecase
 
 import com.app.server.IntegrationTestContainer
 import com.app.server.challenge.application.service.ChallengeService
@@ -229,7 +229,7 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
     // Legacy
     @Test
     @Disabled
-    @DisplayName("얼리기를 사용하면 전체 참여일은 올라가지 않는다.")
+    @DisplayName("얼리기를 사용하면 전체 참여일은 올라가지 않는다. (Legacy) ")
     fun skipChallengeWithoutIncreasingParticipationDays() = runTest {
         // given
         given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(

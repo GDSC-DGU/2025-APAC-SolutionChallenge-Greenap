@@ -7,6 +7,7 @@ import org.hibernate.annotations.DynamicUpdate
 @Entity
 @Table(name = "users")
 @DynamicUpdate
+// TODO : Index 설정 고려
 class User(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

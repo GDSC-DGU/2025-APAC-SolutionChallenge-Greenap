@@ -2,6 +2,9 @@ package com.app.server
 
 import com.app.server.core.security.util.JwtUtil
 import org.jasypt.encryption.StringEncryptor
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -11,6 +14,7 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.springframework.test.web.servlet.MockMvc
+import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.MySQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
@@ -35,8 +39,8 @@ abstract class IntegrationTestContainer {
     private lateinit var jwtUtil: JwtUtil
 
     protected val userId: Long = 1L
-    protected val notFindUserId = 2L
-    protected val notFindUserName = "testUser2"
+    protected val secondUserId = 2L
+    protected val secondUserName = "testUser2"
     protected val userName: String = "testUser"
     protected val challengeId: Long = 1L
     protected var userChallengeId: Long = 1L
@@ -53,8 +57,13 @@ abstract class IntegrationTestContainer {
     }
 
     companion object {
+
         @Container
         var mySQLContainer = KMySQLContainer(DockerImageName.parse("mysql:8.0.40"))
+            .withReuse(true)
+
+        @Container
+        var redisContainer = KRedisContainer(DockerImageName.parse("redis:7.0.11"))
             .withReuse(true)
 
         @DynamicPropertySource
@@ -65,9 +74,18 @@ abstract class IntegrationTestContainer {
             registry.add("spring.datasource.url") { mySQLContainer.jdbcUrl }
             registry.add("spring.datasource.username") { mySQLContainer.username }
             registry.add("spring.datasource.password") { mySQLContainer.password }
+            
+            registry.add("spring.data.redis.host") { redisContainer.host }
+            registry.add("spring.data.redis.port") { redisContainer.getMappedPort(6379) }
         }
     }
 
 }
 
 class KMySQLContainer(dockerImageName: DockerImageName) : MySQLContainer<KMySQLContainer>(dockerImageName)
+
+class KRedisContainer(dockerImageName: DockerImageName) : GenericContainer<KRedisContainer>(dockerImageName) {
+    init {
+        withExposedPorts(6379)
+    }
+}

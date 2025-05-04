@@ -12,7 +12,7 @@ class UserEventListener (
     @EventListener
     fun handleUserCreatedEvent(event: SavedTodayUserChallengeCertificationEvent) {
         userCommandService.verifyUserCanUpdateNowMaxConsecutiveParticipantsDayCount(
-            event.userId,
+            event.userChallengeId,
             event.maxConsecutiveParticipationDayCount
         )
     }

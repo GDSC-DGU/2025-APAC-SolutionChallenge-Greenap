@@ -1,4 +1,4 @@
-package com.app.server.challenge_certification.application.usecase
+package com.app.server.challenge_certification.ui.usecase
 
 import com.app.server.IntegrationTestContainer
 import com.app.server.challenge.application.service.ChallengeService
@@ -27,6 +27,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.assertThrows
+import org.mockito.ArgumentMatchers
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.any
@@ -203,13 +204,13 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
             certificationDate = participantsStartDate
         )
         verify(applicationEventPublisher).publishEvent(
-            makeevent(
+            makeEvent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate
             )
         )
         userChallengeEventListener.processWhenReceive(
-            makeevent(
+            makeEvent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate
             )
@@ -236,13 +237,13 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
             certificationDate = participantsStartDate
         )
         verify(applicationEventPublisher).publishEvent(
-            makeevent(
+            makeEvent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate
             )
         )
         userChallengeEventListener.processWhenReceive(
-            makeevent(
+            makeEvent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate
             )
@@ -270,13 +271,13 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
             certificationDate = participantsStartDate
         )
         verify(applicationEventPublisher).publishEvent(
-            makeevent(
+            makeEvent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate
             )
         )
         userChallengeEventListener.processWhenReceive(
-            makeevent(
+            makeEvent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate
             )
@@ -305,13 +306,13 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
             certificationDate = participantsStartDate
         )
         verify(applicationEventPublisher).publishEvent(
-            makeevent(
+            makeEvent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate
             )
         )
         userChallengeEventListener.processWhenReceive(
-            makeevent(
+            makeEvent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate
             )
@@ -326,13 +327,13 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
             certificationDate = participantsStartDate.plusDays(1)
         )
         verify(applicationEventPublisher).publishEvent(
-            makeevent(
+            makeEvent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate
             )
         )
         userChallengeEventListener.processWhenReceive(
-            makeevent(
+            makeEvent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate.plusDays(1)
             )
@@ -359,13 +360,13 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
             certificationDate = participantsStartDate
         )
         verify(applicationEventPublisher).publishEvent(
-            makeevent(
+            makeEvent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate
             )
         )
         userChallengeEventListener.processWhenReceive(
-            makeevent(
+            makeEvent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate
             )
@@ -379,13 +380,13 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
             certificationDate = participantsStartDate.plusDays(2)
         )
         verify(applicationEventPublisher).publishEvent(
-            makeevent(
+            makeEvent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate.plusDays(2)
             )
         )
         userChallengeEventListener.processWhenReceive(
-            makeevent(
+            makeEvent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate.plusDays(2)
             )
@@ -427,13 +428,13 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
             certificationDate = participantsStartDate
         )
         verify(applicationEventPublisher).publishEvent(
-            makeevent(
+            makeEvent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate
             )
         )
         userChallengeEventListener.processWhenReceive(
-            makeevent(
+            makeEvent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate
             )
@@ -447,13 +448,13 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
             )
             verify(applicationEventPublisher, times(2))
                 .publishEvent(
-                    makeevent(
+                    makeEvent(
                         savedUserChallenge!!.id!!,
                         participantsStartDate
                     )
                 )
             userChallengeEventListener.processWhenReceive(
-                makeevent(
+                makeEvent(
                     savedUserChallenge!!.id!!,
                     participantsStartDate
                 )
@@ -475,13 +476,13 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
             certificationDate = participantsStartDate
         )
         verify(applicationEventPublisher).publishEvent(
-            makeevent(
+            makeEvent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate
             )
         )
         userChallengeEventListener.processWhenReceive(
-            makeevent(
+            makeEvent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate
             )
@@ -515,42 +516,45 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
         )
 
         userChallengeEventListener.processWhenReceive(
-            event = makeevent(
+            event = makeEvent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate
             )
         )
         userChallengeEventListener.processWhenReceive(
-            event = makeevent(
+            event = makeEvent(
                 savedUserChallenge!!.id!!,
                 participantsStartDate.plusDays(1)
             )
         )
         userChallengeEventListener.processWhenReceive(
-            event = makeevent(
+            event = makeEvent(
                 secondSavedUserChallenge!!.id!!,
                 participantsStartDate
             )
         )
         verify(applicationEventPublisher, times(3)).publishEvent(
-            org.mockito.ArgumentMatchers.any(SavedTodayUserChallengeCertificationEvent::class.java)
+            ArgumentMatchers.any(SavedTodayUserChallengeCertificationEvent::class.java)
         )
         userEventListener.handleUserCreatedEvent(
             makeSavedUserChallengeCertificationEvent(
-                userId = userId,
-                maxConsecutiveParticipationDayCount = savedUserChallenge!!.maxConsecutiveParticipationDayCount
+                userChallengeId = savedUserChallenge!!.id!!,
+                maxConsecutiveParticipationDayCount = savedUserChallenge!!.maxConsecutiveParticipationDayCount,
+                totalParticipationDayCount = savedUserChallenge!!.totalParticipationDayCount
             )
         )
         userEventListener.handleUserCreatedEvent(
             makeSavedUserChallengeCertificationEvent(
-                userId = userId,
-                maxConsecutiveParticipationDayCount = savedUserChallenge!!.maxConsecutiveParticipationDayCount
+                userChallengeId = savedUserChallenge!!.id!!,
+                maxConsecutiveParticipationDayCount = savedUserChallenge!!.maxConsecutiveParticipationDayCount,
+                totalParticipationDayCount = savedUserChallenge!!.totalParticipationDayCount
             )
         )
         userEventListener.handleUserCreatedEvent(
             makeSavedUserChallengeCertificationEvent(
-                userId = userId,
-                maxConsecutiveParticipationDayCount = secondSavedUserChallenge!!.maxConsecutiveParticipationDayCount
+                userChallengeId = savedUserChallenge!!.id!!,
+                maxConsecutiveParticipationDayCount = secondSavedUserChallenge!!.maxConsecutiveParticipationDayCount,
+                totalParticipationDayCount = secondSavedUserChallenge!!.totalParticipationDayCount
             )
         )
         // then
@@ -564,7 +568,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
             .isEqualTo(2)
     }
 
-    private fun makeevent(userChallengeId: Long, certificateDate: LocalDate)
+    private fun makeEvent(userChallengeId: Long, certificateDate: LocalDate)
             : CertificationSucceededEvent {
         return CertificationSucceededEvent(
             userChallengeId = userChallengeId,
@@ -574,12 +578,14 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
     }
 
     private fun makeSavedUserChallengeCertificationEvent(
-        userId: Long,
-        maxConsecutiveParticipationDayCount: Long
+        userChallengeId: Long,
+        maxConsecutiveParticipationDayCount: Long,
+        totalParticipationDayCount: Long
     ): SavedTodayUserChallengeCertificationEvent {
         return SavedTodayUserChallengeCertificationEvent(
-            userId = userId,
-            maxConsecutiveParticipationDayCount = maxConsecutiveParticipationDayCount
+            userChallengeId = userChallengeId,
+            maxConsecutiveParticipationDayCount = maxConsecutiveParticipationDayCount,
+            totalParticipationDayCount = totalParticipationDayCount
         )
     }
 
