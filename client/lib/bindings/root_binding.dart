@@ -1,9 +1,0 @@
-import 'package:get/get.dart';
-import 'package:greenap/views_model/root_view_model.dart';
-
-class RootBinding extends Bindings {
-  @override
-  void dependencies() {
-    Get.lazyPut<RootViewModel>(() => RootViewModel());
-  }
-}

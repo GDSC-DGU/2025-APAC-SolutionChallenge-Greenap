@@ -26,8 +26,8 @@ final categories = [
   },
 ];
 
-class ChallengeCategoryGrid extends StatelessWidget {
-  const ChallengeCategoryGrid({super.key});
+class AllChallengeView extends StatelessWidget {
+  const AllChallengeView({super.key});
   @override
   Widget build(BuildContext context) {
     return GridView.count(

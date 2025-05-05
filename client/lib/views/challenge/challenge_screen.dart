@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:greenap/config/color_system.dart';
 import 'package:greenap/widgets/app_bar/default_app_bar.dart';
 import 'package:greenap/views_model/challenge_view_model.dart';
-import './widgets/all_challenge/challenge_category_grid.dart';
+import 'widgets/all_challenge/all_challenge_view.dart';
+import 'widgets/my_challenge/my_challenge_view.dart';
 import 'package:greenap/widgets/common/custom_toggle_button.dart';
 import 'package:get/get.dart';
 
 class ChallengeScreen extends GetView<ChallengeViewModel> {
   const ChallengeScreen({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -20,9 +20,20 @@ class ChallengeScreen extends GetView<ChallengeViewModel> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 24),
-            CustomToggleButton(leftText: "둘러보기", rightText: "나의 챌린지"),
+            CustomToggleButton(
+              leftText: "둘러보기",
+              rightText: "나의 챌린지",
+              onToggle: (isLeftSelected) {
+                controller.toggleView(isLeftSelected);
+              },
+            ),
             const SizedBox(height: 24),
-            Expanded(child: ChallengeCategoryGrid()),
+            Expanded(
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 300),
+                child: AllChallengeView(),
+              ),
+            ),
           ],
         ),
       ),

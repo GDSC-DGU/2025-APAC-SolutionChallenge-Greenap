@@ -5,11 +5,13 @@ import 'package:greenap/config/font_system.dart';
 class CustomToggleButton extends StatefulWidget {
   final String leftText;
   final String rightText;
+  final Function(bool isLeftSelected) onToggle;
 
   const CustomToggleButton({
     super.key,
     required this.leftText,
     required this.rightText,
+    required this.onToggle,
   });
 
   @override
@@ -34,12 +36,18 @@ class _CustomToggleButtonState extends State<CustomToggleButton> {
             _buildToggleButton(
               text: widget.leftText,
               isSelected: isLeftSelected,
-              onTap: () => setState(() => isLeftSelected = true),
+              onTap: () {
+                setState(() => isLeftSelected = true);
+                widget.onToggle(true);
+              },
             ),
             _buildToggleButton(
               text: widget.rightText,
               isSelected: !isLeftSelected,
-              onTap: () => setState(() => isLeftSelected = false),
+              onTap: () {
+                setState(() => isLeftSelected = false);
+                widget.onToggle(false);
+              },
             ),
           ],
         ),

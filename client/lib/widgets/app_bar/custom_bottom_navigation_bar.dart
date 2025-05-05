@@ -10,10 +10,10 @@ class CustomBottomNavigationBar extends StatelessWidget {
   final Function(int) onTap;
 
   const CustomBottomNavigationBar({
-    Key? key,
+    super.key,
     required this.currentIndex,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,77 +21,40 @@ class CustomBottomNavigationBar extends StatelessWidget {
     final unselectedColor = ColorSystem.gray[500]!;
 
     return BottomNavigationBar(
-      backgroundColor: ColorSystem.white,
-      type: BottomNavigationBarType.fixed,
       currentIndex: currentIndex,
       onTap: onTap,
+      type: BottomNavigationBarType.fixed,
       selectedItemColor: selectedColor,
       unselectedItemColor: unselectedColor,
-      showUnselectedLabels: true,
       selectedLabelStyle: FontSystem.NavigationLabel,
       unselectedLabelStyle: FontSystem.NavigationLabel,
       items: [
-        BottomNavigationBarItem(
-          icon: SvgPicture.asset(
-            'assets/icons/challenge.svg',
-            colorFilter: ColorFilter.mode(
-              currentIndex == 0 ? selectedColor : unselectedColor,
-              BlendMode.srcIn,
-            ),
-            width: 24,
-            height: 24,
-          ),
-          label: '챌린지',
-        ),
-        BottomNavigationBarItem(
-          icon: SvgPicture.asset(
-            'assets/icons/feed.svg',
-            colorFilter: ColorFilter.mode(
-              currentIndex == 1 ? selectedColor : unselectedColor,
-              BlendMode.srcIn,
-            ),
-            width: 24,
-            height: 24,
-          ),
-          label: "피드",
-        ),
-        BottomNavigationBarItem(
-          icon: SvgPicture.asset(
-            'assets/icons/home.svg',
-            colorFilter: ColorFilter.mode(
-              currentIndex == 2 ? selectedColor : unselectedColor,
-              BlendMode.srcIn,
-            ),
-            width: 24,
-            height: 24,
-          ),
-          label: "홈",
-        ),
-        BottomNavigationBarItem(
-          icon: SvgPicture.asset(
-            'assets/icons/verification.svg',
-            colorFilter: ColorFilter.mode(
-              currentIndex == 3 ? selectedColor : unselectedColor,
-              BlendMode.srcIn,
-            ),
-            width: 24,
-            height: 24,
-          ),
-          label: "인증",
-        ),
-        BottomNavigationBarItem(
-          icon: SvgPicture.asset(
-            'assets/icons/mypage.svg',
-            colorFilter: ColorFilter.mode(
-              currentIndex == 4 ? selectedColor : unselectedColor,
-              BlendMode.srcIn,
-            ),
-            width: 24,
-            height: 24,
-          ),
-          label: "마이페이지",
-        ),
+        _buildBarItem("챌린지", "assets/icons/challenge.svg", 0),
+        _buildBarItem("피드", "assets/icons/feed.svg", 1),
+        _buildBarItem("홈", "assets/icons/home.svg", 2),
+        _buildBarItem("인증", "assets/icons/verification.svg", 3),
+        _buildBarItem("마이페이지", "assets/icons/mypage.svg", 4),
       ],
+    );
+  }
+
+  BottomNavigationBarItem _buildBarItem(
+    String label,
+    String iconPath,
+    int index,
+  ) {
+    return BottomNavigationBarItem(
+      backgroundColor: ColorSystem.white,
+      icon: SvgPicture.asset(
+        iconPath,
+        colorFilter: ColorFilter.mode(
+          currentIndex == index ? ColorSystem.mint! : ColorSystem.gray[500]!,
+          BlendMode.srcIn,
+        ),
+        width: 24,
+        height: 24,
+      ),
+      label: label,
     );
   }
 }
