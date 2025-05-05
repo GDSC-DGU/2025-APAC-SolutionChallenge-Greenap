@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:greenap/config/color_system.dart';
 import 'package:greenap/config/font_system.dart';
-import 'package:greenap/config/app_routes.dart';
 
 class CustomBottomNavigationBar extends StatelessWidget {
   final int currentIndex;
@@ -17,7 +15,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final selectedColor = ColorSystem.mint!;
+    final selectedColor = ColorSystem.mint;
     final unselectedColor = ColorSystem.gray[500]!;
 
     return BottomNavigationBar(

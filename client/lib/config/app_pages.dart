@@ -8,7 +8,6 @@ import 'package:greenap/views/verification/verification_screen.dart';
 
 import 'package:greenap/bindings/home_binding.dart' as home;
 import 'package:greenap/bindings/feed_binding.dart' as feed;
-import 'package:greenap/bindings/challenge_binding.dart' as challenge;
 import 'package:greenap/bindings/mypage_binding.dart' as mypage;
 import 'package:greenap/bindings/verification_binding.dart' as verification;
 import 'app_routes.dart';
@@ -21,11 +20,7 @@ abstract class AppPages {
       page: () => HomeScreen(),
       binding: home.HomeBinding(),
     ),
-    GetPage(
-      name: AppRoutes.CHALLENGE,
-      page: () => ChallengeScreen(),
-      binding: challenge.ChallengeBinding(),
-    ),
+    GetPage(name: AppRoutes.CHALLENGE, page: () => ChallengeScreen()),
     GetPage(
       name: AppRoutes.MYPAGE,
       page: () => MypageScreen(),

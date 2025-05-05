@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:greenap/config/color_system.dart';
-import 'package:greenap/config/font_system.dart';
 import '../../../../widgets/common/challenge_category_item.dart';
 
 class ChallengeCategoryGrid extends StatelessWidget {

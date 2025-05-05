@@ -94,9 +94,12 @@ class ChallengeCategoryItem extends StatelessWidget {
         ],
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(category['name'], style: FontSystem.Body1Bold),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(category['name'], style: FontSystem.Body1Bold),
+          ),
           Expanded(child: Image.asset(category['image'], fit: BoxFit.contain)),
         ],
       ),
