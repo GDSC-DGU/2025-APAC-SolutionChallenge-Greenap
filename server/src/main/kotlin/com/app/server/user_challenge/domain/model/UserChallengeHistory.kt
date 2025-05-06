@@ -9,6 +9,7 @@ import java.time.LocalDate
 
 @Entity
 @Table(name = "user_challenge_histories")
+// TODO : Index 적용 고려
 class UserChallengeHistory(
 
     @Id

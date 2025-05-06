@@ -11,6 +11,7 @@ import com.app.server.user_challenge.domain.enums.EUserChallengeStatus
 import com.app.server.user_challenge.domain.model.UserChallenge
 import jakarta.transaction.Transactional
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -23,13 +24,21 @@ import org.springframework.test.annotation.Rollback
 class UserChallengeQueryServiceTest : IntegrationTestContainer() {
 
     @Autowired
-    private lateinit var userChallengeQueryService : UserChallengeQueryService
+    private lateinit var userChallengeQueryService: UserChallengeQueryService
+
     @Autowired
     private lateinit var challengeService: ChallengeService
+
     @Autowired
-    private lateinit var userChallengeRepository: UserChallengeRepository
+    private lateinit var userChallengeService: UserChallengeService
+
     @Autowired
     private lateinit var userRepository: UserRepository
+
+    @AfterEach
+    fun tearDown() {
+        userChallengeService.deleteAll()
+    }
 
     @Test
     @DisplayName("특정 챌린지를 완료한 참가자의 퍼센트를 확인할 수 있다.")
@@ -71,11 +80,10 @@ class UserChallengeQueryServiceTest : IntegrationTestContainer() {
                 status = EUserChallengeStatus.RUNNING
             )
         )
-        userChallengeRepository.saveAll(listOf(completedUserChallenge, unCompletedUserChallenge))
+        userChallengeService.saveAll(listOf(completedUserChallenge, unCompletedUserChallenge))
         // when
-        val completedUserPercent : Double = userChallengeQueryService.getChallengeCompletedUserPercent(challengeId)
+        val completedUserPercent: Double = userChallengeQueryService.getChallengeCompletedUserPercent(challengeId)
         // then
         assertThat(completedUserPercent).isEqualTo(0.50)
-
     }
 }

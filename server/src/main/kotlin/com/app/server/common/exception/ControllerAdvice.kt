@@ -3,6 +3,7 @@ package com.app.server.common.exception
 import com.app.server.common.enums.CommonResultCode
 import com.app.server.common.response.ApiResponse
 import org.springframework.http.HttpStatus
+import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestControllerAdvice
@@ -46,6 +47,13 @@ class ControllerAdvice {
             CommonResultCode.INTERNAL_SERVER_ERROR,
             CommonResultCode.INTERNAL_SERVER_ERROR.message
         )
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException::class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    fun handleMethodArgumentNotValidException(e: MethodArgumentNotValidException): ApiResponse<*> {
+        val errorMessage = e.bindingResult.fieldErrors.joinToString(", ") { "${it.field}: ${it.defaultMessage}" }
+        return ApiResponse.failure<Any>(CommonResultCode.BAD_REQUEST, errorMessage)
     }
 
     @ExceptionHandler(Exception::class)

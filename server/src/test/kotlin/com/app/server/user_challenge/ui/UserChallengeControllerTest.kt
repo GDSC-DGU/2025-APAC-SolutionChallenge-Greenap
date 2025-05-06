@@ -1,7 +1,7 @@
 package com.app.server.user_challenge.ui
 
 import com.app.server.IntegrationTestContainer
-import com.app.server.common.security.info.CustomUserDetails
+import com.app.server.core.security.info.CustomUserDetails
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.springframework.boot.test.context.SpringBootTest
@@ -28,7 +28,7 @@ class UserChallengeControllerTest : IntegrationTestContainer() {
         SecurityContextHolder.setContext(context)
 
         // when & then
-        mockMvc.post("/api/v1/challenge") {
+        mockMvc.post("/api/v1/challenges") {
             contentType = MediaType.APPLICATION_JSON
             header("Authorization", "Bearer $token")
             content = """
@@ -41,6 +41,5 @@ class UserChallengeControllerTest : IntegrationTestContainer() {
         .andExpect {
             status { isOk() }
         }
-
     }
 }

@@ -1,7 +1,7 @@
 package com.app.server.challenge.application.service
 
-import com.app.server.challenge.application.usecase.GetChallengeUseCase
-import com.app.server.challenge.application.usecase.dto.response.ChallengeDetailResponseDto
+import com.app.server.challenge.ui.usecase.GetChallengeUseCase
+import com.app.server.challenge.ui.usecase.dto.response.ChallengeDetailResponseDto
 import com.app.server.user_challenge.application.service.UserChallengeQueryService
 import org.springframework.stereotype.Service
 

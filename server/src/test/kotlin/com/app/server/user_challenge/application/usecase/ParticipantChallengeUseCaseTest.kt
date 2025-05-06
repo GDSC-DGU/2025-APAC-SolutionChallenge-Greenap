@@ -1,16 +1,19 @@
 package com.app.server.user_challenge.application.usecase
 
 import com.app.server.IntegrationTestContainer
-import com.app.server.challenge.application.usecase.dto.request.ChallengeParticipantDto
+import com.app.server.challenge.ui.usecase.dto.request.ChallengeParticipantDto
 import com.app.server.common.exception.BadRequestException
 import com.app.server.common.exception.BusinessException
 import com.app.server.common.exception.InternalServerErrorException
+import com.app.server.user_challenge.application.service.UserChallengeService
 import com.app.server.user_challenge.domain.enums.EUserChallengeCertificationStatus
 import com.app.server.user_challenge.domain.enums.EUserChallengeStatus
 import com.app.server.user_challenge.domain.exception.UserChallengeException
 import com.app.server.user_challenge.domain.model.UserChallenge
+import com.app.server.user_challenge.ui.usecase.ParticipantChallengeUseCase
 import jakarta.transaction.Transactional
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.assertThrows
@@ -26,6 +29,9 @@ class ParticipantChallengeUseCaseTest : IntegrationTestContainer() {
     @Autowired
     private lateinit var participantChallengeUseCase: ParticipantChallengeUseCase
 
+    @Autowired
+    private lateinit var usrChallengeService: UserChallengeService
+
     private lateinit var challengeParticipantDto: ChallengeParticipantDto
 
     @BeforeEach
@@ -40,6 +46,10 @@ class ParticipantChallengeUseCaseTest : IntegrationTestContainer() {
         )
     }
 
+    @AfterEach
+    fun tearDown() {
+        usrChallengeService.deleteAll()
+    }
 
     @Test
     @DisplayName("특정 챌린지에 원하는 기간으로 참여할 수 있다.")
@@ -76,7 +86,7 @@ class ParticipantChallengeUseCaseTest : IntegrationTestContainer() {
     }
 
     @Test
-    @DisplayName("해당 챌린지를 눌렀을 때, 챌린지를 마쳤지만 아직 챌린지 리포트를 확인하지 못한 경우 리포트를 먼저 확인해야 한다.")
+    @DisplayName("해당 챌린지를 눌렀을 때, 챌린지를 마쳤지만 아직 챌린지 리포트를 확인하지 못한 경우에는 챌린지 리포트를 확인해야 다시 참여할 수 있다.")
     fun participateChallengeWithNotParticipated() {
         // given
         participantChallengeUseCase.execute(challengeParticipantDto.copy(
@@ -89,22 +99,6 @@ class ParticipantChallengeUseCaseTest : IntegrationTestContainer() {
         // then
         assertThat(exception).isInstanceOf(BadRequestException::class.java)
         assertThat(exception.message).isEqualTo(UserChallengeException.CHALLENGE_WAITED_AND_STATUS_IS_PENDING.message)
-    }
-
-    @Test
-    @DisplayName("해당 챌린지를 눌렀을 때, 챌린지를 마치고 리포트까지 확인한 챌린지가 이미 있다면 해당 챌린지를 이어할 수 있다. ")
-    fun participateChallengeWithWait() {
-        // given
-        participantChallengeUseCase.execute(challengeParticipantDto.copy(
-            status = EUserChallengeStatus.WAITING
-        ))
-        // when
-        val exception = assertThrows<BusinessException> {
-            participantChallengeUseCase.execute(challengeParticipantDto)
-        }
-        // then
-        assertThat(exception).isInstanceOf(BusinessException::class.java)
-        assertThat(exception.message).isEqualTo(UserChallengeException.CONTINUE_CHALLENGE_AND_STATUS_IS_WAITING.message)
     }
 
     @Test

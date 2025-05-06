@@ -7,6 +7,7 @@ import org.hibernate.annotations.DynamicUpdate
 @Entity
 @Table(name = "users")
 @DynamicUpdate
+// TODO : Index 설정 고려
 class User(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,16 +15,30 @@ class User(
     val id: Long? = null,
     val email: String,
     @Column(name = "profile_image_url")
-    val profileImageUrl: String?,
-    val nickname: String,
+    var profileImageUrl: String?,
+    var nickname: String,
     @Column(name = "now_max_consecutive_participation_day_count")
-    val nowMaxConsecutiveParticipationDayCount: Long,
+    var nowMaxConsecutiveParticipationDayCount: Long,
     @Column(name = "refresh_token")
-    val refreshToken: String?
+    var refreshToken: String?
 ) : BaseEntity() {
 
-
 // TODO: Auth 도메인에서 refreshToken 업데이트 로직 추가
-// TODO: UserService에서 바로 접근할 수 있는 nickname, profileImageUrl update 메서드 추가
-// TODO: User 도메인에서 nowMaxConsecutiveParticipantionDayCount update 메서드 추가
+    fun updateRefreshToken(refreshToken: String?) {
+        this.refreshToken = refreshToken
+    }
+
+    fun updateProfileImageUrl(profileImageUrl: String?) {
+        this.profileImageUrl = profileImageUrl
+    }
+
+    fun updateNickname(nickname: String) {
+        this.nickname = nickname
+    }
+
+    fun updateNowMaxConsecutiveParticipationDayCount(
+        maxConsecutiveParticipationDayCount: Long
+    ) {
+        this.nowMaxConsecutiveParticipationDayCount = maxConsecutiveParticipationDayCount
+    }
 }

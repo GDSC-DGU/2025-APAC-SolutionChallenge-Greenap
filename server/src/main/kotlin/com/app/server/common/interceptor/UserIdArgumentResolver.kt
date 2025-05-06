@@ -2,8 +2,7 @@ package com.app.server.common.interceptor
 
 import com.app.server.common.annotation.UserId
 import com.app.server.common.exception.UnauthorizedException
-import com.app.server.common.security.enums.SecurityExceptionCode
-import lombok.extern.slf4j.Slf4j
+import com.app.server.core.security.enums.SecurityExceptionCode
 import org.springframework.core.MethodParameter
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.support.WebDataBinderFactory

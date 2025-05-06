@@ -1,6 +1,6 @@
 package com.app.server.user_challenge.ui.dto
 
-import com.app.server.challenge.application.usecase.dto.request.ChallengeParticipantDto
+import com.app.server.challenge.ui.usecase.dto.request.ChallengeParticipantDto
 import com.app.server.user_challenge.domain.enums.EUserChallengeStatus
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.LocalDate
