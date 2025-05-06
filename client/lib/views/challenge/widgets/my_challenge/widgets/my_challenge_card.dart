@@ -8,23 +8,28 @@ import 'package:get/get.dart';
 
 class MyChallengeCard extends StatelessWidget {
   final MyChallengeModel myChallenge;
+  final List<ChallengeCategoryModel> allChallenges;
 
-  const MyChallengeCard({super.key, required this.myChallenge});
+  const MyChallengeCard({
+    super.key,
+    required this.myChallenge,
+    required this.allChallenges,
+  });
 
   Color getStatusColor(ChallengeStatus status) {
     switch (status) {
-      case ChallengeStatus.RUNNING:
+      case ChallengeStatus.running:
         return ColorSystem.mint!;
-      case ChallengeStatus.COMPLETED:
+      case ChallengeStatus.completed:
         return Colors.grey;
     }
   }
 
   String getStatusLabel(ChallengeStatus status) {
     switch (status) {
-      case ChallengeStatus.RUNNING:
+      case ChallengeStatus.running:
         return "진행중";
-      case ChallengeStatus.COMPLETED:
+      case ChallengeStatus.completed:
         return "진행완료";
     }
   }
@@ -45,7 +50,6 @@ class MyChallengeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final allChallenges = Get.find<List<ChallengeCategoryModel>>();
     final imageUrl = getImageUrlByChallengeId(
       myChallenge.challengeId,
       allChallenges,
@@ -99,23 +103,47 @@ class MyChallengeCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
 
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: Text(
-                      '${myChallenge.progress}%',
-                      style: FontSystem.Body3Blod.copyWith(
-                        color: ColorSystem.mint,
+                  myChallenge.status == ChallengeStatus.running
+                      ? Column(
+                        children: [
+                          Align(
+                            alignment: Alignment.topRight,
+                            child: Text(
+                              '${myChallenge.progress}%',
+                              style: FontSystem.Body3Blod.copyWith(
+                                color: ColorSystem.mint,
+                              ),
+                            ),
+                          ),
+                          LinearProgressIndicator(
+                            minHeight: 8,
+                            borderRadius: BorderRadius.circular(8),
+                            value:
+                                myChallenge.elapsedDays / myChallenge.totalDays,
+                            backgroundColor: ColorSystem.mint.withOpacity(0.2),
+                            color: ColorSystem.mint,
+                          ),
+                        ],
+                      )
+                      : Align(
+                        alignment: Alignment.topRight,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 4,
+                            horizontal: 12,
+                          ),
+                          decoration: BoxDecoration(
+                            color: ColorSystem.mint,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            '리포트 보기',
+                            style: FontSystem.Button3.copyWith(
+                              color: ColorSystem.white,
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-
-                  LinearProgressIndicator(
-                    minHeight: 8,
-                    borderRadius: BorderRadius.circular(8),
-                    value: myChallenge.elapsedDays / myChallenge.totalDays,
-                    backgroundColor: ColorSystem.mint.withOpacity(0.2),
-                    color: ColorSystem.mint,
-                  ),
                 ],
               ),
             ),

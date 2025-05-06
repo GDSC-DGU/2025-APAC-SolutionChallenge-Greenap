@@ -1,5 +1,5 @@
-enum ChallengeStatus { RUNNING, COMPLETED }
+enum ChallengeStatus { running, completed }
 
-enum ChallengeFilterStatus { all, inProgress, completed }
+enum ChallengeFilterStatus { all, running, completed }
 
 enum ChallengeCertificated { FAILED, SUCESSED }

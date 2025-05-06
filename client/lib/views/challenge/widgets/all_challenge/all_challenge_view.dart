@@ -6,22 +6,22 @@ import 'package:greenap/widgets/common/challenge_category_item.dart';
 final categories = [
   {
     'name': '자원절약',
-    'image': 'assets/images/resource.png',
+    'image': 'assets/images/resource/resource.png',
     'color': ColorSystem.pinkGradient,
   },
   {
     'name': '친환경',
-    'image': 'assets/images/eco.png',
+    'image': 'assets/images/eco/eco.png',
     'color': ColorSystem.blueGradient,
   },
   {
     'name': '교통절감',
-    'image': 'assets/images/transport.png',
+    'image': 'assets/images/transport/transport.png',
     'color': ColorSystem.yellowGradient,
   },
   {
     'name': '재사용',
-    'image': 'assets/images/reuse.png',
+    'image': 'assets/images/reuse/reuse.png',
     'color': ColorSystem.greenGradient,
   },
 ];

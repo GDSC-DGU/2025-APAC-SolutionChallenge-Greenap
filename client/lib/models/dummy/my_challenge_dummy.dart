@@ -12,7 +12,7 @@ final List<MyChallengeModel> dummyMyChallenges = [
     progress: 33,
     iceCount: 2,
     isCerficatedInToday: ChallengeCertificated.SUCESSED,
-    status: ChallengeStatus.RUNNING,
+    status: ChallengeStatus.running,
     certificationDataList: [
       {'date': '2025-04-01', 'image': 'assets/images/cert1.png'},
       {'date': '2025-04-02', 'image': 'assets/images/cert2.png'},
@@ -28,7 +28,7 @@ final List<MyChallengeModel> dummyMyChallenges = [
     progress: 100,
     iceCount: 4,
     isCerficatedInToday: ChallengeCertificated.FAILED,
-    status: ChallengeStatus.COMPLETED,
+    status: ChallengeStatus.completed,
     certificationDataList: [
       {'date': '2025-03-28', 'image': 'assets/images/veg1.png'},
       {'date': '2025-03-29', 'image': 'assets/images/veg2.png'},
@@ -44,7 +44,7 @@ final List<MyChallengeModel> dummyMyChallenges = [
     progress: 28,
     iceCount: 1,
     isCerficatedInToday: ChallengeCertificated.FAILED,
-    status: ChallengeStatus.RUNNING,
+    status: ChallengeStatus.running,
     certificationDataList: [
       {'date': '2025-04-01', 'image': 'assets/images/transport1.png'},
     ],

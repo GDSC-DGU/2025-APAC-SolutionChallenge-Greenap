@@ -5,10 +5,10 @@ import 'package:get/get.dart';
 import 'package:greenap/enums/challenge.dart';
 import 'package:greenap/views_model/challenge/my_challenge_view_model.dart';
 
-class CategoryFilter extends StatelessWidget {
-  CategoryFilter({super.key});
-
-  final controller = Get.find<MyChallengeViewModel>();
+class CategoryFilter extends GetView<MyChallengeViewModel> {
+  CategoryFilter({super.key}) {
+    Get.put(MyChallengeViewModel());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +54,7 @@ class CategoryFilter extends StatelessWidget {
     switch (status) {
       case ChallengeFilterStatus.all:
         return '전체';
-      case ChallengeFilterStatus.inProgress:
+      case ChallengeFilterStatus.running:
         return '진행중';
       case ChallengeFilterStatus.completed:
         return '완료';

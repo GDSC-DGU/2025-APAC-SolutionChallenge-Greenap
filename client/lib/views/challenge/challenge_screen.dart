@@ -6,43 +6,46 @@ import 'widgets/all_challenge/all_challenge_view.dart';
 import 'widgets/my_challenge/my_challenge_view.dart';
 import 'package:greenap/widgets/common/custom_toggle_button.dart';
 import 'package:get/get.dart';
+import 'package:greenap/views/base/base_screen.dart';
 
-class ChallengeScreen extends GetView<ChallengeViewModel> {
+class ChallengeScreen extends BaseScreen<ChallengeViewModel> {
   ChallengeScreen({super.key}) {
     Get.put(ChallengeViewModel(), permanent: false);
   }
+
   @override
-  Widget build(BuildContext context) {
+  PreferredSizeWidget buildAppBar(BuildContext context) {
+    return DefaultAppBar(title: '챌린지');
+  }
+
+  @override
+  Widget buildBody(BuildContext context) {
     final controller = Get.find<ChallengeViewModel>();
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Scaffold(
-        backgroundColor: ColorSystem.white,
-        appBar: DefaultAppBar(title: '챌린지'),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 24),
-            CustomToggleButton(
-              leftText: "둘러보기",
-              rightText: "나의 챌린지",
-              onToggle: (isLeftSelected) {
-                controller.toggleView(isLeftSelected);
-              },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 24),
+          CustomToggleButton(
+            leftText: "둘러보기",
+            rightText: "나의 챌린지",
+            onToggle: (isLeftSelected) {
+              controller.toggleView(isLeftSelected);
+            },
+          ),
+          const SizedBox(height: 24),
+          Expanded(
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              child:
+                  controller.isLeftSelected.value
+                      ? AllChallengeView()
+                      : MyChallengeView(),
             ),
-            const SizedBox(height: 24),
-            Expanded(
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 300),
-                child:
-                    controller.isLeftSelected.value
-                        ? AllChallengeView()
-                        : MyChallengeView(),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
