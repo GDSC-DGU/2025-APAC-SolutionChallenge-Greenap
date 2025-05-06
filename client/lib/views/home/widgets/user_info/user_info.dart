@@ -13,7 +13,10 @@ class UserInfo extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text("지속 가능한 하루, OOO님과 함께", style: FontSystem.Head3),
+          Text(
+            "지속 가능한 하루, OOO님과 함께",
+            style: FontSystem.Head3.copyWith(color: ColorSystem.gray[700]),
+          ),
           Row(
             children: [
               SvgPicture.asset('assets/icons/earth.svg', width: 24, height: 24),

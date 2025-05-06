@@ -45,7 +45,10 @@ class ChallengeItem extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 6),
-          Text('$challengeName', style: FontSystem.Body3),
+          Text(
+            '$challengeName',
+            style: FontSystem.Body3.copyWith(color: ColorSystem.gray[700]),
+          ),
         ],
       ),
     );

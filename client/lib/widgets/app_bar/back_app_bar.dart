@@ -11,13 +11,17 @@ class BackAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onBackPress;
 
   @override
-  Size get preferredSize => const Size.fromHeight(50);
+  Size get preferredSize => const Size.fromHeight(45);
 
   Widget build(BuildContext context) {
     return AppBar(
+      toolbarHeight: preferredSize.height,
       title: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Text(title, style: FontSystem.Head2),
+        padding: const EdgeInsets.all(10),
+        child: Text(
+          title,
+          style: FontSystem.Head2.copyWith(color: ColorSystem.gray[700]),
+        ),
       ),
       centerTitle: true,
       backgroundColor: ColorSystem.white,

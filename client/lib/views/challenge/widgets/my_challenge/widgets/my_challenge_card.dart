@@ -55,13 +55,22 @@ class MyChallengeCard extends StatelessWidget {
       allChallenges,
     );
 
-    return Card(
-      elevation: 2,
-      color: ColorSystem.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: ColorSystem.white,
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: ColorSystem.black.withOpacity(0.08),
+            spreadRadius: 2, // 그림자 퍼지는 정도
+            blurRadius: 4, // 그림자 흐림 정도
+            offset: Offset(0, 0), // 그림자 위치 (x축, y축)
+          ),
+        ],
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
-
         child: Row(
           children: [
             imageUrl != null

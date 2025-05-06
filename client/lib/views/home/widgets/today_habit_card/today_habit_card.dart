@@ -49,11 +49,16 @@ class TodayHabitCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text("2025.4.10 (목)", style: FontSystem.Caption),
+              Text(
+                "2025.4.10 (목)",
+                style: FontSystem.Caption.copyWith(
+                  color: ColorSystem.gray[700],
+                ),
+              ),
               const SizedBox(height: 4),
               Text(
                 '${challenges.length}개의 챌린지 중 ${completedCount}개의 챌린지를 완료했어요!',
-                style: FontSystem.Head3,
+                style: FontSystem.Head3.copyWith(color: ColorSystem.gray[800]),
               ),
               const SizedBox(height: 12),
               Row(
@@ -106,11 +111,18 @@ class TodayHabitCard extends StatelessWidget {
               ),
               Column(
                 children: [
-                  Text('Completed', style: FontSystem.Body3),
+                  Text(
+                    'Completed',
+                    style: FontSystem.Body3.copyWith(
+                      color: ColorSystem.gray[700],
+                    ),
+                  ),
 
                   Text(
                     '${(completionRate * 100).toInt()}%',
-                    style: FontSystem.Body1Bold,
+                    style: FontSystem.Body1Bold.copyWith(
+                      color: ColorSystem.gray[800],
+                    ),
                   ),
                 ],
               ),

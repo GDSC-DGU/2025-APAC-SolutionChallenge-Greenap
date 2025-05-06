@@ -26,7 +26,7 @@ class MyChallengeView extends BaseScreen<MyChallengeViewModel> {
             final filtered =
                 dummyMyChallenges
                     .where(
-                      (item) => isStatusMatch(item, controller.status.value),
+                      (item) => isStatusMatch(item, viewModel.status.value),
                     )
                     .toList();
 

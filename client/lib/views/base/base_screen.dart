@@ -8,18 +8,21 @@ abstract class BaseScreen<T extends GetxController> extends GetView<T> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: useGradientBackground ? gradientBackground : null,
-      color: useGradientBackground ? null : ColorSystem.white,
-      child: SafeArea(
-        top: applyTopSafeArea,
-        bottom: applyBottomSafeArea,
-        child: Column(
-          children: [
-            if (buildAppBar(context) != null) buildAppBar(context)!,
-            Expanded(child: buildBody(context)),
-            if (buildBottomWidget(context) != null) buildBottomWidget(context)!,
-          ],
+    return Scaffold(
+      body: Container(
+        decoration: useGradientBackground ? gradientBackground : null,
+        color: useGradientBackground ? null : ColorSystem.white,
+        child: SafeArea(
+          top: applyTopSafeArea,
+          bottom: applyBottomSafeArea,
+          child: Column(
+            children: [
+              if (buildAppBar(context) != null) buildAppBar(context)!,
+              Expanded(child: buildBody(context)),
+              if (buildBottomWidget(context) != null)
+                buildBottomWidget(context)!,
+            ],
+          ),
         ),
       ),
     );

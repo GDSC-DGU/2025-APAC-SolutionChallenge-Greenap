@@ -19,6 +19,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
     final unselectedColor = ColorSystem.gray[500]!;
 
     return BottomNavigationBar(
+      backgroundColor: ColorSystem.white,
       currentIndex: currentIndex,
       onTap: onTap,
       type: BottomNavigationBarType.fixed,
@@ -42,7 +43,6 @@ class CustomBottomNavigationBar extends StatelessWidget {
     int index,
   ) {
     return BottomNavigationBarItem(
-      backgroundColor: ColorSystem.white,
       icon: SvgPicture.asset(
         iconPath,
         colorFilter: ColorFilter.mode(

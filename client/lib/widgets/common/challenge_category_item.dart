@@ -44,7 +44,10 @@ class ChallengeCategoryItem extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(category['name'], style: FontSystem.Body1Bold),
+          Text(
+            category['name'],
+            style: FontSystem.Body1Bold.copyWith(color: ColorSystem.gray[800]),
+          ),
           Expanded(child: Image.asset(category['image'], fit: BoxFit.contain)),
         ],
       ),
@@ -70,7 +73,10 @@ class ChallengeCategoryItem extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
 
         children: [
-          Text(category['name'], style: FontSystem.Body1Bold),
+          Text(
+            category['name'],
+            style: FontSystem.Body1Bold.copyWith(color: ColorSystem.gray[800]),
+          ),
 
           Expanded(child: Image.asset(category['image'], fit: BoxFit.contain)),
         ],
@@ -98,7 +104,12 @@ class ChallengeCategoryItem extends StatelessWidget {
         children: [
           Align(
             alignment: Alignment.centerLeft,
-            child: Text(category['name'], style: FontSystem.Body1Bold),
+            child: Text(
+              category['name'],
+              style: FontSystem.Body1Bold.copyWith(
+                color: ColorSystem.gray[800],
+              ),
+            ),
           ),
           Expanded(child: Image.asset(category['image'], fit: BoxFit.contain)),
         ],

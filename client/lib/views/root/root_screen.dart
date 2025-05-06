@@ -5,18 +5,14 @@ import 'package:greenap/views/home/home_screen.dart';
 import 'package:greenap/views/mypage/mypage_screen.dart';
 import 'package:greenap/views/verification/verification_screen.dart';
 import 'package:greenap/widgets/app_bar/custom_bottom_navigation_bar.dart';
+import 'package:greenap/views/base/base_screen.dart';
+import 'package:greenap/views_model/root/root_view_model.dart';
+import 'package:get/get.dart';
 
-class RootScreen extends StatefulWidget {
-  const RootScreen({super.key});
+class RootScreen extends BaseScreen<RootViewModel> {
+  RootScreen({super.key});
 
-  @override
-  State<RootScreen> createState() => _RootScreenState();
-}
-
-class _RootScreenState extends State<RootScreen> {
-  int _selectedIndex = 2; // 기본 홈
-
-  List<Widget> get _pages => [
+  final List<Widget> screens = [
     ChallengeScreen(),
     FeedScreen(),
     HomeScreen(),
@@ -25,18 +21,16 @@ class _RootScreenState extends State<RootScreen> {
   ];
 
   @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: IndexedStack(index: _selectedIndex, children: _pages),
-        bottomNavigationBar: CustomBottomNavigationBar(
-          currentIndex: _selectedIndex,
-          onTap: (index) {
-            setState(() {
-              _selectedIndex = index;
-            });
-          },
-        ),
+  Widget buildBody(BuildContext context) {
+    return Obx(() => screens[viewModel.selectedIndex]);
+  }
+
+  @override
+  Widget? buildBottomWidget(BuildContext context) {
+    return Obx(
+      () => CustomBottomNavigationBar(
+        currentIndex: viewModel.selectedIndex,
+        onTap: viewModel.changeIndex,
       ),
     );
   }
