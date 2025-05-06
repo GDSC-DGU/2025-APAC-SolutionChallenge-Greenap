@@ -27,7 +27,9 @@ class ChallengeScreen extends GetView<ChallengeViewModel> {
             CustomToggleButton(
               leftText: "둘러보기",
               rightText: "나의 챌린지",
-              onToggle: controller.toggleView,
+              onToggle: (isLeftSelected) {
+                controller.toggleView(isLeftSelected);
+              },
             ),
             const SizedBox(height: 24),
             Expanded(

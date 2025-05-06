@@ -55,6 +55,10 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
   assets:
+    - assets/images/eco/
+    - assets/images/reuse/
+    - assets/images/resource/
+    - assets/images/transport/
     - assets/images/
     - assets/icons/
     - assets/fonts/
