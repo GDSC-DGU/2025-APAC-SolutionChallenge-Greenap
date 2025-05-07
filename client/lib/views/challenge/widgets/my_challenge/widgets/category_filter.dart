@@ -57,7 +57,7 @@ class CategoryFilter extends GetView<MyChallengeViewModel> {
       case ChallengeFilterStatus.running:
         return '진행중';
       case ChallengeFilterStatus.completed:
-        return '완료';
+        return '진행완료';
     }
   }
 }

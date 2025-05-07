@@ -26,7 +26,7 @@ class RootScreen extends BaseScreen<RootViewModel> {
   }
 
   @override
-  Widget? buildBottomWidget(BuildContext context) {
+  Widget? buildBottomNavigationBar(BuildContext context) {
     return Obx(
       () => CustomBottomNavigationBar(
         currentIndex: viewModel.selectedIndex,

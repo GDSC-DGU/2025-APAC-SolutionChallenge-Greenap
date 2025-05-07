@@ -55,7 +55,7 @@ class MyChallengeView extends BaseScreen<MyChallengeViewModel> {
     final allChallenges = dummyChallengeCategory;
     return ListView.separated(
       itemCount: filtered.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 12),
+      separatorBuilder: (_, __) => const SizedBox(height: 20),
       itemBuilder: (context, index) {
         return MyChallengeCard(
           myChallenge: filtered[index],

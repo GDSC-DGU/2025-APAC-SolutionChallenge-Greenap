@@ -56,7 +56,6 @@ class MyChallengeCard extends StatelessWidget {
     );
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: ColorSystem.white,
         borderRadius: BorderRadius.circular(8),
@@ -70,7 +69,7 @@ class MyChallengeCard extends StatelessWidget {
         ],
       ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(20),
         child: Row(
           children: [
             imageUrl != null

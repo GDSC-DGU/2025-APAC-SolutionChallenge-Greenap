@@ -1,21 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:greenap/config/color_system.dart';
 import 'package:greenap/config/Font_system.dart';
+import 'package:greenap/models/challenge_category.dart';
+import 'package:get/get.dart';
 
 enum CategorySize { large, medium, small }
 
 class ChallengeCategoryItem extends StatelessWidget {
   final CategorySize size;
-  final Map<String, dynamic> category;
+  final ChallengeCategoryModel category;
+  final Gradient backgroundGradient;
 
   ChallengeCategoryItem({
     super.key,
     required this.category,
     required this.size,
+    required this.backgroundGradient,
   });
 
   @override
   Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => Get.toNamed('/category', arguments: category),
+      child: _buildLayoutBySize(),
+    );
+  }
+
+  Widget _buildLayoutBySize() {
     switch (size) {
       case CategorySize.large:
         return _buildLargeLayout();
@@ -30,7 +41,7 @@ class ChallengeCategoryItem extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 0, vertical: 12),
       decoration: BoxDecoration(
-        gradient: category['color'],
+        gradient: backgroundGradient,
         borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
@@ -45,10 +56,10 @@ class ChallengeCategoryItem extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            category['name'],
+            category.title,
             style: FontSystem.Body1Bold.copyWith(color: ColorSystem.gray[800]),
           ),
-          Expanded(child: Image.asset(category['image'], fit: BoxFit.contain)),
+          Expanded(child: Image.asset(category.imageUrl, fit: BoxFit.contain)),
         ],
       ),
     );
@@ -58,7 +69,7 @@ class ChallengeCategoryItem extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 14),
       decoration: BoxDecoration(
-        gradient: category['color'],
+        gradient: backgroundGradient,
         borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
@@ -74,11 +85,11 @@ class ChallengeCategoryItem extends StatelessWidget {
 
         children: [
           Text(
-            category['name'],
+            category.title,
             style: FontSystem.Body1Bold.copyWith(color: ColorSystem.gray[800]),
           ),
 
-          Expanded(child: Image.asset(category['image'], fit: BoxFit.contain)),
+          Expanded(child: Image.asset(category.imageUrl, fit: BoxFit.contain)),
         ],
       ),
     );
@@ -88,7 +99,7 @@ class ChallengeCategoryItem extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       decoration: BoxDecoration(
-        gradient: category['color'],
+        gradient: backgroundGradient,
         borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
@@ -105,13 +116,13 @@ class ChallengeCategoryItem extends StatelessWidget {
           Align(
             alignment: Alignment.centerLeft,
             child: Text(
-              category['name'],
+              category.title,
               style: FontSystem.Body1Bold.copyWith(
                 color: ColorSystem.gray[800],
               ),
             ),
           ),
-          Expanded(child: Image.asset(category['image'], fit: BoxFit.contain)),
+          Expanded(child: Image.asset(category.imageUrl, fit: BoxFit.contain)),
         ],
       ),
     );

@@ -2,28 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:greenap/config/color_system.dart';
 import 'package:greenap/config/font_system.dart';
 import 'package:greenap/widgets/common/challenge_category_item.dart';
+import 'package:greenap/models/dummy/challenge_dummy.dart';
 
-final categories = [
-  {
-    'name': '자원절약',
-    'image': 'assets/images/resource/resource.png',
-    'color': ColorSystem.pinkGradient,
-  },
-  {
-    'name': '친환경',
-    'image': 'assets/images/eco/eco.png',
-    'color': ColorSystem.blueGradient,
-  },
-  {
-    'name': '교통절감',
-    'image': 'assets/images/transport/transport.png',
-    'color': ColorSystem.yellowGradient,
-  },
-  {
-    'name': '재사용',
-    'image': 'assets/images/reuse/reuse.png',
-    'color': ColorSystem.greenGradient,
-  },
+final backgroundColors = [
+  ColorSystem.pinkGradient,
+  ColorSystem.blueGradient,
+  ColorSystem.yellowGradient,
+  ColorSystem.greenGradient,
 ];
 
 class AllChallengeView extends StatelessWidget {
@@ -36,21 +21,25 @@ class AllChallengeView extends StatelessWidget {
       crossAxisSpacing: 12,
       children: [
         ChallengeCategoryItem(
-          category: categories[0],
+          category: dummyChallengeCategory[0],
           size: CategorySize.large,
+          backgroundGradient: backgroundColors[0],
         ),
         ChallengeCategoryItem(
-          category: categories[1],
+          category: dummyChallengeCategory[1],
           size: CategorySize.large,
+          backgroundGradient: backgroundColors[1],
         ),
 
         ChallengeCategoryItem(
-          category: categories[2],
+          category: dummyChallengeCategory[2],
           size: CategorySize.large,
+          backgroundGradient: backgroundColors[2],
         ),
         ChallengeCategoryItem(
-          category: categories[3],
+          category: dummyChallengeCategory[3],
           size: CategorySize.large,
+          backgroundGradient: backgroundColors[3],
         ),
       ],
     );
