@@ -14,6 +14,7 @@ spring:
       schema-locations: classpath:db/schema.sql
       mode: always
 
+
   security:
     oauth2:
       client:
@@ -21,6 +22,7 @@ spring:
           google:
             client-id: ENC(CWgkr/ek7FmtMfVCDTYiXKo56J+fGmfiQiqI8RnUKg+shRNRE0mk9qeGIVvifj7Vz57mAffzUaU4GGjarYZp16CPJYOwPALVxQcomOQaD38vT8prF84vtg==)
             client-secret: ENC(wJvlJnBXkjQRa6A8e/wYMjlhwh46J3x6lV5Tz9UOKNh7W039BRl62To+W0+Hill5)
+            authorization-grant-type: authorization_code
             scope:
               - email
               - profile
@@ -40,3 +42,6 @@ jwt:
   secret: ENC(NjIWxjCj+OYhKxPp5rdLnA5m3XGrhU/iN9x198OteRtHPuhVLgNoHn/3qsSVcFu4JgYmJ4/b43m5lGNgIRHPrvpl318zik0D5RQv236Ni8Fe8Ue10YagCHWUo5mWrgkZdKRQ/2Tbs62UftkKfklM07EOZPI1LuPxPiWRxC1CT4sf5+7wJY5i4piDWWlPhyjs)
   access-token-validity-in-milli-seconds: 3600000
   refresh-token-validity-in-milli-seconds: 86400000
+logging:
+  level:
+    root: debug

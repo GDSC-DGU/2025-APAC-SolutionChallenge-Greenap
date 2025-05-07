@@ -10,10 +10,23 @@ import org.springframework.stereotype.Service
 class UserService(
     private val userRepository: UserRepository
 ) {
-    fun updateRefreshToken(userId: Long?, refreshToken: String?) {
+    fun updateRefreshToken(userId: Long, refreshToken: String?) {
+
+        userRepository.findById(userId)
+            .orElseThrow { NotFoundException(UserExceptionCode.NOT_FOUND_USER) }
+            .updateRefreshToken(
+                refreshToken = refreshToken
+            )
+
     }
 
     fun findById(userId: Long): User =
         userRepository.findById(userId)
             .orElseThrow { NotFoundException(UserExceptionCode.NOT_FOUND_USER) }
+
+    fun findByEmail(email: String): User? =
+        userRepository.findByEmail(email)
+
+    fun save(user: User): User =
+        userRepository.save(user)
 }

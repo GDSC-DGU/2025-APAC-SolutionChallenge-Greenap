@@ -55,6 +55,16 @@ class JwtUtil(
         )
     }
 
+    fun validateToken(token: String?): Boolean {
+        val jwtParser = Jwts.parserBuilder().setSigningKey(key).build()
+        return try {
+            jwtParser.parseClaimsJws(token)
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
+
     fun validateAndGetClaimsFromToken(token: String?): Claims {
         val jwtParser = Jwts.parserBuilder().setSigningKey(key).build()
         return jwtParser.parseClaimsJws(token).body

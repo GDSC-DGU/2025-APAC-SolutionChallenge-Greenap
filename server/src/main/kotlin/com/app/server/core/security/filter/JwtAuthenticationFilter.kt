@@ -7,18 +7,14 @@ import com.app.server.core.security.provider.JwtAuthenticationProvider
 import com.app.server.core.security.util.JwtUtil
 import io.jsonwebtoken.JwtException
 import jakarta.servlet.FilterChain
-import jakarta.servlet.ServletException
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import lombok.RequiredArgsConstructor
-import lombok.extern.slf4j.Slf4j
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
 import org.springframework.util.AntPathMatcher
 import org.springframework.util.StringUtils
 import org.springframework.web.filter.OncePerRequestFilter
-import java.io.IOException
 
 class JwtAuthenticationFilter(
     private val jwtUtil: JwtUtil,
@@ -45,7 +41,7 @@ class JwtAuthenticationFilter(
 
             if (StringUtils.hasText(token)) {
                 val claims = jwtUtil.validateAndGetClaimsFromToken(token)
-                val jwtUserInfo = JwtUserInfo(id = claims.get(Constants.USER_ID_CLAIM_NAME, Long::class.java))
+                val jwtUserInfo = JwtUserInfo(id = claims["uid"].toString().toLong())
 
                 val beforeAuthentication =
                     JwtAuthenticationToken(null, jwtUserInfo.id)

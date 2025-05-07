@@ -5,14 +5,19 @@ import com.app.server.core.security.JwtAuthEntryPoint
 import com.app.server.core.security.filter.CustomLogoutFilter
 import com.app.server.core.security.filter.JwtAuthenticationFilter
 import com.app.server.core.security.filter.JwtExceptionFilter
+import com.app.server.core.security.handler.CustomOAuth2FailureHandler
+import com.app.server.core.security.handler.CustomOAuth2SuccessHandler
+import com.app.server.core.security.service.CustomOAuth2UserService
 import com.app.server.core.security.handler.CustomSignOutProcessHandler
 import com.app.server.core.security.handler.CustomSignOutResultHandler
 import com.app.server.core.security.handler.JwtAccessDeniedHandler
 import com.app.server.core.security.provider.JwtAuthenticationProvider
 import com.app.server.core.security.service.CustomUserDetailsService
 import com.app.server.core.security.util.JwtUtil
+import org.springframework.aot.generate.ValueCodeGenerator.withDefaults
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.security.config.Customizer
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
@@ -30,7 +35,10 @@ class SecurityConfig(
     private val customSignOutProcessHandler: CustomSignOutProcessHandler,
     private val customSignOutResultHandler: CustomSignOutResultHandler,
     private val jwtAuthEntryPoint: JwtAuthEntryPoint,
-    private val jwtAccessDeniedHandler: JwtAccessDeniedHandler
+    private val jwtAccessDeniedHandler: JwtAccessDeniedHandler,
+    private val customOAuth2UserService: CustomOAuth2UserService,
+    private val customOAuth2SuccessHandler: CustomOAuth2SuccessHandler,
+    private val customOAuth2failureHandler: CustomOAuth2FailureHandler,
 ) {
 
     @Bean
@@ -47,6 +55,18 @@ class SecurityConfig(
                     .anyRequest().authenticated()
             }
             .formLogin { it.disable() }
+            .oauth2Client { Customizer.withDefaults<Any>() }
+            .oauth2Login { oauth ->
+                oauth.userInfoEndpoint { userInfo ->
+                        userInfo.userService(customOAuth2UserService)
+                    }
+                    .successHandler{ request, response, authentication ->
+                        customOAuth2SuccessHandler.onAuthenticationSuccess(request, response, authentication)
+                    }
+                    .failureHandler { request, response, exception ->
+                        customOAuth2failureHandler.onAuthenticationFailure(request, response, exception)
+                    }
+            }
             .exceptionHandling { exceptions ->
                 exceptions.authenticationEntryPoint(jwtAuthEntryPoint)
                     .accessDeniedHandler(jwtAccessDeniedHandler)
@@ -57,12 +77,12 @@ class SecurityConfig(
                     .logoutSuccessHandler(customSignOutResultHandler)
                     .deleteCookies(Constants.AUTHORIZATION_HEADER, Constants.REAUTHORIZATION)
             }
-            .addFilterBefore(CustomLogoutFilter(), LogoutFilter::class.java)
             .addFilterBefore(
                 JwtAuthenticationFilter(jwtUtil, JwtAuthenticationProvider(customUserDetailsService)),
-                CustomLogoutFilter::class.java
+                LogoutFilter::class.java
             )
-            .addFilterBefore(JwtExceptionFilter(), JwtAuthenticationFilter::class.java)
+            .addFilterBefore(CustomLogoutFilter(), JwtAuthenticationFilter::class.java)
+            .addFilterBefore(JwtExceptionFilter(), CustomLogoutFilter::class.java)
 
         return http.build()
     }

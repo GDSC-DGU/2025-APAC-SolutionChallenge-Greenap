@@ -19,6 +19,7 @@ enum class CommonResultCode(
 
     // domain
     AUTH_EXCEPTION("AUT000", "Auth Exception"),
+    OAUTH2_EXCEPTION("OAU000", "OAuth2 Exception"),
     USER_EXCEPTION("USR000", "User Exception"),
     NOTIFICATION_EXCEPTION("NOT000", "Notification Exception"),
     ;
