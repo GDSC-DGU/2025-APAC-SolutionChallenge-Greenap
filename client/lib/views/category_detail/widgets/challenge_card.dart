@@ -6,17 +6,13 @@ import 'package:greenap/domain/models/dummy/challenge_detail_dummy.dart';
 import 'challenge_detail_popup.dart';
 import 'package:greenap/domain/models/challenge_detail.dart';
 import 'package:get/get.dart';
+import 'challenge_start_popup.dart';
 
 class ChallengeCard extends StatelessWidget {
   final ChallengeItemModel challenge;
   ChallengeCard({super.key, required this.challenge});
 
   void _showDetailPopup(BuildContext context) {
-    print('현재 챌린지 ID: ${challenge.id}');
-    print(
-      'dummyChallengeDetails ID 목록: ${dummyChallengeDetails.map((e) => e.id).toList()}',
-    );
-
     final ChallengeDetailModel detail = dummyChallengeDetails.firstWhere(
       (e) => e.id == challenge.id,
       orElse: () => throw Exception('해당 챌린지의 상세 정보를 찾을 수 없습니다.'),
@@ -28,9 +24,25 @@ class ChallengeCard extends StatelessWidget {
           (_) => ChallengeDetailPopup(
             challenge: detail,
             onCancel: () => Navigator.pop(context),
-            onJoin: () {
-              // 참여 처리 로직 추가 가능
+            onJoin: (duration) {
               Navigator.pop(context);
+
+              // 다음 프레임에서 실행되도록 함
+              Future.delayed(Duration.zero, () {
+                showDialog(
+                  context: context,
+                  builder:
+                      (_) => ChallengeStartPopup(
+                        challenge: detail,
+                        selectedDuration: duration,
+                        onChecked: () => Navigator.pop(context),
+                        goVerification: () {
+                          Navigator.pop(context);
+                          // 인증 화면 이동
+                        },
+                      ),
+                );
+              });
             },
           ),
     );
