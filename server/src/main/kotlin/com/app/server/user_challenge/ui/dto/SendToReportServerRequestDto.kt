@@ -14,7 +14,7 @@ data class SendToReportServerRequestDto (
     companion object {
         fun from(challengeTitle: String, progress: Int, totalDay: Int) = SendToReportServerRequestDto(
             challengeTitle = challengeTitle,
-            progress = progress,
+            progress = progress * 100,
             totalDay = totalDay
         )
     }
