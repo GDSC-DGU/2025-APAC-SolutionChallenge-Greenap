@@ -1,4 +1,4 @@
-import 'package:greenap/enums/challenge.dart';
+import 'package:greenap/domain/enums/challenge.dart';
 
 class MyChallengeModel {
   final int id;
@@ -30,16 +30,16 @@ class MyChallengeModel {
   factory MyChallengeModel.fromJson(Map<String, dynamic> json) {
     return MyChallengeModel(
       id: json['id'],
-      challengeId: json['challengeId'],
+      challengeId: json['challenge_id'],
       title: json['title'],
       category: json['category'],
-      totalDays: json['totalDays'],
-      elapsedDays: json['elapsedDays'],
+      totalDays: json['total_days'],
+      elapsedDays: json['elapsed_days'],
       progress: json['progress'],
-      iceCount: json['iceCount'],
-      isCerficatedInToday: json['isCerficatedInToday'],
+      iceCount: json['ice_count'],
+      isCerficatedInToday: json['is_cerficated_in_today'],
       status: json['status'],
-      certificationDataList: json['certificationDataList'],
+      certificationDataList: json['certification_data_list'],
     );
   }
 }

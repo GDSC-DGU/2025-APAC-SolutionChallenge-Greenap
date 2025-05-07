@@ -6,7 +6,7 @@ import 'package:greenap/views/mypage/mypage_screen.dart';
 import 'package:greenap/views/root/root_screen.dart';
 import 'package:greenap/views/verification/verification_screen.dart';
 import 'package:greenap/views/category_detail/category_detail_screen.dart';
-import 'package:greenap/models/challenge_category.dart';
+import 'package:greenap/domain/models/challenge_category.dart';
 import 'package:greenap/bindings/root_binding.dart';
 import 'package:greenap/bindings/category_detail_binding.dart';
 import 'app_routes.dart';

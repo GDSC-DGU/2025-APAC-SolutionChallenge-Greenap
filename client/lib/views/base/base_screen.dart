@@ -14,7 +14,6 @@ abstract class BaseScreen<T extends GetxController> extends GetView<T> {
       body: Container(
         decoration: useGradientBackground ? gradientBackground : null,
         color: useGradientBackground ? null : ColorSystem.white,
-
         child: SafeArea(
           top: applyTopSafeArea,
           bottom: applyBottomSafeArea,

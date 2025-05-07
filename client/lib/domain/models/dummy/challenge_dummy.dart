@@ -1,5 +1,5 @@
-import 'package:greenap/models/challenge_category.dart';
-import 'package:greenap/models/challenge_item.dart';
+import 'package:greenap/domain/models/challenge_category.dart';
+import 'package:greenap/domain/models/challenge_item.dart';
 
 final List<ChallengeCategoryModel> dummyChallengeCategory = [
   ChallengeCategoryModel(

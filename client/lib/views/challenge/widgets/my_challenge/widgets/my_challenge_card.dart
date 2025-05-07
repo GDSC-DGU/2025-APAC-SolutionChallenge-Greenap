@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:greenap/models/my_challenge.dart';
-import 'package:greenap/enums/challenge.dart';
+import 'package:greenap/domain/models/my_challenge.dart';
+import 'package:greenap/domain/enums/challenge.dart';
 import 'package:greenap/config/color_system.dart';
 import 'package:greenap/config/font_system.dart';
-import 'package:greenap/models/challenge_category.dart';
-import 'package:get/get.dart';
+import 'package:greenap/domain/models/challenge_category.dart';
 
 class MyChallengeCard extends StatelessWidget {
   final MyChallengeModel myChallenge;

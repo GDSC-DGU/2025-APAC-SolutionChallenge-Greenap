@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:greenap/config/color_system.dart';
 import 'package:greenap/config/Font_system.dart';
-import 'package:greenap/models/challenge_category.dart';
+import 'package:greenap/domain/models/challenge_category.dart';
 import 'package:get/get.dart';
 
 enum CategorySize { large, medium, small }

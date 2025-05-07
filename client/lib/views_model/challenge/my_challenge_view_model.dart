@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:greenap/enums/challenge.dart';
+import 'package:greenap/domain/enums/challenge.dart';
 
 class MyChallengeViewModel extends GetxController {
   final status = ChallengeFilterStatus.all.obs;

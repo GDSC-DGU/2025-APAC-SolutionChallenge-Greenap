@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:greenap/models/my_challenge.dart';
+import 'package:greenap/domain/models/my_challenge.dart';
 import './widgets/category_filter.dart';
 import 'package:get/get.dart';
 import 'package:greenap/views_model/challenge/my_challenge_view_model.dart';
-import 'package:greenap/models/dummy/my_challenge_dummy.dart';
+import 'package:greenap/domain/models/dummy/my_challenge_dummy.dart';
 import './widgets//my_challenge_card.dart';
-import 'package:greenap/enums/challenge.dart';
+import 'package:greenap/domain/enums/challenge.dart';
 import 'package:greenap/views/base/base_screen.dart';
-import 'package:greenap/models/dummy/challenge_dummy.dart';
+import 'package:greenap/domain/models/dummy/challenge_dummy.dart';
 
 class MyChallengeView extends BaseScreen<MyChallengeViewModel> {
   MyChallengeView({super.key});

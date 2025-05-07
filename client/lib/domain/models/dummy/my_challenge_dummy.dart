@@ -1,5 +1,5 @@
-import 'package:greenap/models/my_challenge.dart';
-import 'package:greenap/enums/challenge.dart';
+import 'package:greenap/domain/models/my_challenge.dart';
+import 'package:greenap/domain/enums/challenge.dart';
 
 final List<MyChallengeModel> dummyMyChallenges = [
   MyChallengeModel(

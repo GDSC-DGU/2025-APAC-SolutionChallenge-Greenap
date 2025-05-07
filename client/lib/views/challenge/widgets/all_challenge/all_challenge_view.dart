@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:greenap/config/color_system.dart';
 import 'package:greenap/config/font_system.dart';
 import 'package:greenap/widgets/common/challenge_category_item.dart';
-import 'package:greenap/models/dummy/challenge_dummy.dart';
+import 'package:greenap/domain/models/dummy/challenge_dummy.dart';
 
 final backgroundColors = [
   ColorSystem.pinkGradient,

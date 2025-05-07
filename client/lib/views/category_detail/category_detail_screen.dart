@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:greenap/views_model/category_detail/category_detail_view_model.dart';
 import 'package:greenap/views/base/base_screen.dart';
 import 'package:greenap/widgets/app_bar/back_app_bar.dart';
-import 'package:greenap/models/challenge_category.dart';
+import 'package:greenap/domain/models/challenge_category.dart';
 import './widgets/challenge_card.dart';
 
 class CategoryDetailScreen extends BaseScreen<CategoryDetailViewModel> {

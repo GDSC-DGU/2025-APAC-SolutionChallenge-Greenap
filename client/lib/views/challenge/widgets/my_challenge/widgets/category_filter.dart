@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:greenap/config/color_system.dart';
 import 'package:greenap/config/font_system.dart';
 import 'package:get/get.dart';
-import 'package:greenap/enums/challenge.dart';
+import 'package:greenap/domain/enums/challenge.dart';
 import 'package:greenap/views_model/challenge/my_challenge_view_model.dart';
 
 class CategoryFilter extends GetView<MyChallengeViewModel> {
