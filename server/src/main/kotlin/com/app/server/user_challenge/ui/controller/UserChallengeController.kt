@@ -1,6 +1,6 @@
 package com.app.server.user_challenge.ui.controller
 
-import com.app.server.challenge_certification.ui.dto.UserChallengeIceRequestDto
+import com.app.server.challenge_certification.ui.dto.request.UserChallengeIceRequestDto
 import com.app.server.common.annotation.UserId
 import com.app.server.common.enums.CommonResultCode
 import com.app.server.common.enums.ResultCode
@@ -37,6 +37,7 @@ class UserChallengeController(
     ): ApiResponse<ResultCode> {
         val challengeParticipantDto = requestBody.toChallengeParticipantDto(userId)
         participantChallengeUseCase.execute(challengeParticipantDto)
+        // TODO: userCHallengeId 리턴하기
         return ApiResponse.success(CommonResultCode.SUCCESS)
     }
 

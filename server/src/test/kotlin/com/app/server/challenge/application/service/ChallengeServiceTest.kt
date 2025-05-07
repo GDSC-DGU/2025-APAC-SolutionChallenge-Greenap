@@ -31,19 +31,18 @@ class ChallengeServiceTest : IntegrationTestContainer() {
         // then
         assertThat(categories.first().title).isEqualTo("자원 절약")
         assertThat(categories.last().title).isEqualTo("교통 절감")
-        assertThat(categories.first().challenges.first().title).isEqualTo("유휴 전원 / 대기 전력 OFF")
+        assertThat(categories.first().challenges.first().title).isEqualTo(challengeTitle)
 
         assertThat(challenges).size().isEqualTo(19)
-        assertThat(challenges.first().title).isEqualTo("유휴 전원 / 대기 전력 OFF")
-        assertThat(challenges.last().title).isEqualTo("플로깅 실천하기 챌린지")
+        assertThat(challenges.first().title).isEqualTo(challengeTitle)
+        assertThat(challenges.last().title).isEqualTo("플로깅 실천하기")
     }
 
     @Test
     @DisplayName("특정 챌린지를 챌린지명으로 검색해서 가져올 수 있다.")
     fun getChallengeByTitle() {
         // given
-        val categoryTitle: String = "자원 절약"
-        val challengeTitle: String = "유휴 전원 / 대기 전력 OFF"
+        val categoryTitle = "자원 절약"
         // when
         val foundChallenge = challengeService.findByTitle(challengeTitle)
 

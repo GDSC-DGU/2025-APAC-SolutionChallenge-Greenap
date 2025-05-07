@@ -26,6 +26,13 @@ spring:
             scope:
               - email
               - profile
+  cloud:
+    gcp:
+      storage:
+        credentials:
+          location: classpath:storage/credentials.json
+        project-id : ENC(HbMzdTcgXp1XGuBK82QEAImUvfRQjdgu)
+        bucket: ENC(mK2lM6LFaxvy3UcM8qIKlAf69MhR3bYfX455cqx6i2K8R4JpGuUL2Q==)
 
 certification-server:
   url: ENC(Xnj5O9qpb+DUt2FguNbMIMXCB3lSMsAOnYTOQ8MRR7uMDFe0R3su3p9tVBwlWAYXYZDYJeb5BgV2lU14ZWhssGkykeVts+ioBTXtle6ga8s=)

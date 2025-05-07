@@ -13,39 +13,39 @@ class ControllerAdvice {
     @ExceptionHandler(IllegalArgumentException::class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     fun handleIllegalArgumentException(e: IllegalArgumentException): ApiResponse<*> {
-        return ApiResponse.failure<Any>(CommonResultCode.ILLEGAL_ARGUMENT, CommonResultCode.ILLEGAL_ARGUMENT.message)
+        return ApiResponse.failure<Any>(CommonResultCode.ILLEGAL_ARGUMENT, e.message?:CommonResultCode.ILLEGAL_ARGUMENT.message)
     }
 
     @ExceptionHandler(BadRequestException::class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     fun handleBadRequestException(e: BadRequestException): ApiResponse<*> {
-        return ApiResponse.failure<Any>(CommonResultCode.BAD_REQUEST, CommonResultCode.BAD_REQUEST.message)
+        return ApiResponse.failure<Any>(e.resultCode, e.message?:CommonResultCode.BAD_REQUEST.message)
     }
 
     @ExceptionHandler(NotFoundException::class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     fun handleNotFoundException(e: NotFoundException): ApiResponse<*> {
-        return ApiResponse.failure<Any>(CommonResultCode.NOT_FOUND, CommonResultCode.NOT_FOUND.message)
+        return ApiResponse.failure<Any>(e.resultCode, e.message?:CommonResultCode.NOT_FOUND.message)
     }
 
     @ExceptionHandler(UnauthorizedException::class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     fun handleUnauthorizedException(e: UnauthorizedException): ApiResponse<*> {
-        return ApiResponse.failure<Any>(CommonResultCode.UNAUTHORIZED, CommonResultCode.UNAUTHORIZED.message)
+        return ApiResponse.failure<Any>(e.resultCode, e.message?:CommonResultCode.UNAUTHORIZED.message)
     }
 
     @ExceptionHandler(ForbiddenException::class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     fun handleForbiddenException(e: ForbiddenException): ApiResponse<*> {
-        return ApiResponse.failure<Any>(CommonResultCode.FORBIDDEN, CommonResultCode.FORBIDDEN.message)
+        return ApiResponse.failure<Any>(e.resultCode, e.message?:CommonResultCode.FORBIDDEN.message)
     }
 
     @ExceptionHandler(InternalServerErrorException::class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     fun handleInternalServerErrorException(e: InternalServerErrorException): ApiResponse<*> {
         return ApiResponse.failure<Any>(
-            CommonResultCode.INTERNAL_SERVER_ERROR,
-            CommonResultCode.INTERNAL_SERVER_ERROR.message
+            e.resultCode,
+            e.message?:CommonResultCode.INTERNAL_SERVER_ERROR.message
         )
     }
 
@@ -61,7 +61,7 @@ class ControllerAdvice {
     fun handleException(e: Exception): ApiResponse<*> {
         return ApiResponse.failure<Any>(
             CommonResultCode.INTERNAL_SERVER_ERROR,
-            CommonResultCode.INTERNAL_SERVER_ERROR.message
+            e.message?:CommonResultCode.INTERNAL_SERVER_ERROR.message
         )
     }
 }

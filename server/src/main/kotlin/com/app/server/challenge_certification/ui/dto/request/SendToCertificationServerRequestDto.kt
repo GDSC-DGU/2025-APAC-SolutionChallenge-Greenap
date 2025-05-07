@@ -1,15 +1,14 @@
-package com.app.server.challenge_certification.ui.dto
+package com.app.server.challenge_certification.ui.dto.request
 
 import com.fasterxml.jackson.annotation.JsonProperty
 
 data class SendToCertificationServerRequestDto (
 
-    @JsonProperty("image_url")
-    val imageUrl: String,
+    val image_url: String,
     @JsonProperty("challenge_id")
     val challengeId: Long = 0,
     @JsonProperty("challenge_title")
-    val challengeName: String,
+    val challenge_title: String,
     @JsonProperty("challenge_description")
-    val challengeDescription: String
+    val challenge_description: String
 )
