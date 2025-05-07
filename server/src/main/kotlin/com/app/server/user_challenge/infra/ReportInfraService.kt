@@ -59,21 +59,23 @@ class ReportInfraService {
         )
         val jsonResponseObject = objectMapper.readTree(body.message)
 
-        if (jsonResponseObject.get("status_code").toString() != "200") {
-            return ReceiveReportResponseDto(
-                status = EUserReportResultCode.ERROR_IN_RECEIVE_REPORT_SERVER,
-                message = EUserReportResultCode.ERROR_IN_RECEIVE_REPORT_SERVER.message
-            )
-        } else if (jsonResponseObject.get("success").toString() == "True") {
+        if (jsonResponseObject.get("success").toString().lowercase() == "true") {
             return ReceiveReportResponseDto(
                 status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS,
                 message = jsonResponseObject.get("result_text").toString()
             )
+        } else if (jsonResponseObject.get("success").toString().lowercase() == "false") {
+            return ReceiveReportResponseDto(
+                status = EUserReportResultCode.RECEIVE_REPORT_FAILED,
+                message = EUserReportResultCode.RECEIVE_REPORT_FAILED.message
+            )
         }
-        return ReceiveReportResponseDto(
-            status = EUserReportResultCode.RECEIVE_REPORT_FAILED,
-            message = EUserReportResultCode.RECEIVE_REPORT_FAILED.message
-        )
+        else {
+            return ReceiveReportResponseDto(
+                status = EUserReportResultCode.ERROR_IN_RECEIVE_REPORT_SERVER,
+                message = EUserReportResultCode.ERROR_IN_RECEIVE_REPORT_SERVER.message
+            )
+        }
     }
 
 }

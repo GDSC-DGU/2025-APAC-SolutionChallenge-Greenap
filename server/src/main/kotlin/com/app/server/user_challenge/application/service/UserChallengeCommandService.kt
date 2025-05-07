@@ -123,9 +123,9 @@ class UserChallengeCommandService(
     private fun makeReport(userChallenge: UserChallenge) {
         val sendToReportServerRequestDto = SendToReportServerRequestDto.from(
             challengeTitle = userChallenge.challenge.title,
-            progress = userChallenge.totalParticipationDayCount.floorDiv(
-                userChallenge.participantDays.toLong()
-            ).toInt(),
+            progress = (userChallenge.totalParticipationDayCount * 100)
+                .floorDiv(userChallenge.participantDays)
+                .toInt(),
             totalDay = userChallenge.participantDays
         )
 
