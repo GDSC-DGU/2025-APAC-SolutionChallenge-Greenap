@@ -107,7 +107,7 @@ class UserChallengeQueryService(
             elapsedDays = elapsedDays,
             progress = progress,
             isCertificatedInToday = certificationToday,
-            mainImageUrl = userChallenge.challenge.mainImageUrl,
+            mainImageUrl = userChallenge.challenge.mainImageUrl!!,
             certificationDataList = certificationDataList
         )
     }

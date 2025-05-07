@@ -7,8 +7,8 @@ data class SendToCertificationServerRequestDto (
     @JsonProperty("image_url")
     val imageUrl: String,
     @JsonProperty("challenge_id")
-    val challengeId: Long?,
-    @JsonProperty("challenge_name")
+    val challengeId: Long = 0,
+    @JsonProperty("challenge_title")
     val challengeName: String,
     @JsonProperty("challenge_description")
     val challengeDescription: String

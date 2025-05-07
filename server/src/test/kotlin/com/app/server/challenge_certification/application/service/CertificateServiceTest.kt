@@ -68,7 +68,6 @@ class CertificateServiceTest : IntegrationTestContainer() {
     )
     var sendToCertificationServerRequestDto = SendToCertificationServerRequestDto(
         imageUrl = imageUrl,
-        challengeId = challengeId,
         challengeName = challengeTitle,
         challengeDescription = challengeDescription
     )

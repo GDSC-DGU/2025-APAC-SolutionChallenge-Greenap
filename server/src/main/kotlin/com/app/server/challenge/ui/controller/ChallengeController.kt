@@ -20,13 +20,13 @@ class ChallengeController(
     private val getListChallengesUseCase: GetListChallengesUseCase,
 ) {
 
-    @GetMapping("challenges")
+    @GetMapping("/challenges")
     fun getChallenges() : ApiResponse<GetAllChallengesResponseDto> {
         val challenges : List<CategoryDto> = getListChallengesUseCase.execute()
         return ApiResponse.Companion.success(GetAllChallengesResponseDto.Companion.of(challenges))
     }
 
-    @GetMapping("challenges/{id}")
+    @GetMapping("/challenges/{id}")
     fun getChallenge(@Valid @PathVariable id: Long) : ApiResponse<GetChallengeResponseDto> {
         val challenge : ChallengeDetailResponseDto = getChallengeUseCase.execute(id)
         return ApiResponse.Companion.success(GetChallengeResponseDto.Companion.of(challenge))

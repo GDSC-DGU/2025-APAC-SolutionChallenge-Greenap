@@ -11,7 +11,7 @@ data class CertificationRequestDto(
 ){
     fun toSendToCertificationServerRequestDto(challenge: Challenge) = SendToCertificationServerRequestDto(
         imageUrl = imageUrl,
-        challengeId = challenge.id,
+        challengeId = challenge.id!!,
         challengeName = challenge.title,
         challengeDescription = challenge.description
     )

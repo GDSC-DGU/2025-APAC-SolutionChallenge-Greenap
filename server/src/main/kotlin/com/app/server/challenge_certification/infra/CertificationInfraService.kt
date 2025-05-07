@@ -51,11 +51,15 @@ class CertificationInfraService {
     }
 
     private fun fromResponseToResultCode(response: ResponseEntity<String>): EUserCertificatedResultCode {
-        if (response.statusCode.isError || response.body == null) {
+        val body = response.body ?: return EUserCertificatedResultCode.ERROR_IN_CERTIFICATED_SERVER
+
+        val jsonResponseObject = objectMapper.readTree(body)
+
+        if (response.statusCode.isError) {
             return EUserCertificatedResultCode.ERROR_IN_CERTIFICATED_SERVER
-        } else if (response.body == EUserCertificatedResultCode.CERTIFICATED_FAILED.message) {
-            return EUserCertificatedResultCode.CERTIFICATED_FAILED
+        } else if (jsonResponseObject.get("success").toString() == "True") {
+            return EUserCertificatedResultCode.SUCCESS_CERTIFICATED
         }
-        return EUserCertificatedResultCode.SUCCESS_CERTIFICATED
+        return EUserCertificatedResultCode.CERTIFICATED_FAILED
     }
 }
