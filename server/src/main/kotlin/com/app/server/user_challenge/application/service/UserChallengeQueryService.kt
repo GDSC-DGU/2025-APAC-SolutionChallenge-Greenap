@@ -98,6 +98,7 @@ class UserChallengeQueryService(
 
         return UserChallengeQuery(
             id = userChallenge.id!!,
+            challengeId = userChallenge.challenge.id!!,
             title = userChallenge.challenge.title,
             category = userChallenge.challenge.challengeCategory.title, // TODO: 캐싱 필요
             status = userChallenge.status.content,
@@ -106,6 +107,7 @@ class UserChallengeQueryService(
             elapsedDays = elapsedDays,
             progress = progress,
             isCertificatedInToday = certificationToday,
+            mainImageUrl = userChallenge.challenge.mainImageUrl,
             certificationDataList = certificationDataList
         )
     }

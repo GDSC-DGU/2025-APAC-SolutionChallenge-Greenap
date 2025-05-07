@@ -11,6 +11,8 @@ data class GetTotalUserChallengeResponseDto (
 
 data class UserChallengeQuery(
     var id: Long,
+    @JsonProperty("challenge_id")
+    val challengeId: Long,
     var title: String,
     val category: String,
     val status: String,
@@ -23,6 +25,8 @@ data class UserChallengeQuery(
     val iceCount: Int,
     @JsonProperty("is_certificated_in_today")
     val isCertificatedInToday: EUserChallengeCertificationStatus,
+    @JsonProperty("main_image_url")
+    val mainImageUrl: String,
     @JsonProperty("certification_data_list")
     val certificationDataList: List<CertificationData>
 )
