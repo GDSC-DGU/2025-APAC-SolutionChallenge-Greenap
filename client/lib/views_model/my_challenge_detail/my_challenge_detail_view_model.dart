@@ -5,6 +5,8 @@ import 'package:greenap/domain/models/feed_item.dart';
 import 'package:greenap/domain/models/dummy/feed_item_dummy.dart';
 import 'package:greenap/domain/models/challenge_report.dart';
 import 'package:greenap/domain/models/dummy/challenge_report_dummy.dart';
+import 'package:greenap/domain/models/dummy/challenge_detail_dummy.dart';
+import 'package:greenap/domain/models/challenge_detail.dart';
 
 class MyChallengeDetailViewModel extends GetxController {
   late final MyChallengeModel challenge;
@@ -36,4 +38,16 @@ class MyChallengeDetailViewModel extends GetxController {
   }
 
   bool get isCompleted => challenge.status == ChallengeStatus.completed;
+
+  Future<ChallengeDetailModel?> fetchChallengeDetail(int challengeId) async {
+    final result = dummyChallengeDetails.firstWhereOrNull(
+      (challenge) => challenge.id == challengeId,
+    );
+
+    if (result == null) {
+      print("해당 ID의 챌린지를 찾을 수 없습니다.");
+    }
+
+    return result;
+  }
 }

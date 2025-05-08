@@ -10,7 +10,7 @@ final List<MyChallengeModel> dummyMyChallenges = [
     totalDays: 30,
     elapsedDays: 10,
     progress: 33,
-    iceCount: 2,
+    iceCount: 0,
     isCerficatedInToday: ChallengeCertificated.SUCESSED,
     status: ChallengeStatus.running,
     certificationDataList: [

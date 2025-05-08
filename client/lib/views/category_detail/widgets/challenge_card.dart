@@ -35,7 +35,9 @@ class ChallengeCard extends StatelessWidget {
                       (_) => ChallengeStartPopup(
                         challenge: detail,
                         selectedDuration: duration,
-                        onChecked: () => Navigator.pop(context),
+                        onChecked: () {
+                          Navigator.pop(context);
+                        },
                         goVerification: () {
                           Navigator.pop(context);
                           // 인증 화면 이동

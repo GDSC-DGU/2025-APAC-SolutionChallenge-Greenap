@@ -8,8 +8,8 @@ class RootViewModel extends GetxController {
   @override
   void onInit() async {
     super.onInit();
-
-    _selectedBottomNavigationIndex.value = 2;
+    final initial = Get.arguments?['initialTab'] ?? 2;
+    _selectedBottomNavigationIndex.value = initial;
   }
 
   void changeIndex(int index) async {

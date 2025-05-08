@@ -3,7 +3,7 @@ import '../challenge_report.dart';
 final dummyChallengeReport = ChallengeReportModel(
   userChallengeId: 13,
   totalDays: 14,
-  status: 'COMPLETED',
+  status: 'PENDING',
   successDays: 11,
   reportMessage: 'AI 생성 메시지',
   maxConsecutiveDays: 10,

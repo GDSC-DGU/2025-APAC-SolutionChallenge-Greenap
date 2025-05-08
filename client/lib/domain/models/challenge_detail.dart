@@ -2,6 +2,7 @@ import 'challenge_item.dart';
 
 class ChallengeDetailModel extends ChallengeItemModel {
   final String preDescription;
+  final String certificationExampleImageUrl;
   final String certificationMethodDescription;
   final List<int> participationDates;
   final double percentOfCompletedUser;
@@ -12,6 +13,7 @@ class ChallengeDetailModel extends ChallengeItemModel {
     required String description,
     required String mainImageUrl,
     required this.preDescription,
+    required this.certificationExampleImageUrl,
     required this.certificationMethodDescription,
     required this.participationDates,
     required this.percentOfCompletedUser,
@@ -27,9 +29,9 @@ class ChallengeDetailModel extends ChallengeItemModel {
       id: json['id'],
       title: json['title'],
       description: json['description'],
-      mainImageUrl:
-          json['image_url'], // 상세 API는 `mainImageUrl` 대신 `image_url`을 쓰므로 여기에 맞춤
+      mainImageUrl: json['main_image_url'],
       preDescription: json['pre_description'],
+      certificationExampleImageUrl: json['certification_example_image_url'],
       certificationMethodDescription: json['certification_method_description'],
       participationDates:
           (json['participation_dates'] as List)
