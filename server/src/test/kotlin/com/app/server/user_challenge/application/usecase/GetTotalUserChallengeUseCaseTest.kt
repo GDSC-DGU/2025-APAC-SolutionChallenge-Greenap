@@ -2,6 +2,7 @@ package com.app.server.user_challenge.application.usecase
 
 import com.app.server.IntegrationTestContainer
 import com.app.server.challenge.application.service.ChallengeService
+import com.app.server.challenge_certification.application.service.CertificationService
 import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
 import com.app.server.challenge_certification.infra.CertificationInfraService
 import com.app.server.challenge_certification.ui.dto.request.CertificationRequestDto
@@ -25,6 +26,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.any
+import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.reset
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -32,10 +34,13 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Primary
+import org.springframework.mock.web.MockMultipartFile
 import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.bean.override.mockito.MockitoBean
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean
 import org.springframework.web.multipart.MultipartFile
 import java.time.LocalDate
+import kotlin.text.Charsets.UTF_8
 
 @SpringBootTest
 @Transactional
@@ -44,6 +49,9 @@ class GetTotalUserChallengeUseCaseTest : IntegrationTestContainer() {
 
     @MockitoBean
     private lateinit var cloudStorageUtil: CloudStorageUtil
+
+    @MockitoSpyBean
+    private lateinit var certificationService: CertificationService
 
     @MockitoBean
     private lateinit var applicationEventPublisher: ApplicationEventPublisher
@@ -55,7 +63,7 @@ class GetTotalUserChallengeUseCaseTest : IntegrationTestContainer() {
     private lateinit var userChallengeService: UserChallengeService
 
     @MockitoBean
-    private lateinit var certificationInfraService : CertificationInfraService
+    private lateinit var certificationInfraService: CertificationInfraService
 
     @Autowired
     private lateinit var getTotalUserChallengeUseCase: GetTotalUserChallengeUseCase
@@ -67,32 +75,38 @@ class GetTotalUserChallengeUseCaseTest : IntegrationTestContainer() {
     var completedUserChallenge: UserChallenge? = null
 
     @BeforeEach
-    fun setup(){
+    fun setup() {
         completedUserChallenge = makeUserChallengeAndHistory(challengeId, participantsStartDate)
         val certificationRequestDto = CertificationRequestDto(
             userChallengeId = completedUserChallenge!!.id!!,
-            image = mock(MultipartFile::class.java)
+            image = MockMultipartFile(
+                "image",
+                "test.png",
+                "image/png",
+                "test".toByteArray(UTF_8)
+            )
         )
-        val challenge = challengeService.findById(challengeId)
-        val sendToCertificationServerRequestDto = SendToCertificationServerRequestDto(
-            imageUrl = imageUrl,
-            challengeId = challenge.id!!,
-            challengeName = challenge.title,
-            challengeDescription = challenge.description
+        given(certificationInfraService.certificate(any())).willReturn(
+            mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
+        )
+        given(cloudStorageUtil.uploadImageToCloudStorage(any(), any()))
+            .willReturn(imageUrl)
+
+        doReturn(imageUrl).`when`(certificationService).encodeImageToBase64(
+            MockMultipartFile(
+                "image",
+                "test.png",
+                "image/png",
+                "test".toByteArray(UTF_8)
+            )
         )
 
-        given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
-            EUserCertificatedResultCode.SUCCESS_CERTIFICATED
-        )
-
-        for ( i in 0 until completedUserChallenge!!.participantDays) {
+        for (i in 0 until completedUserChallenge!!.participantDays) {
             certificationUseCase.certificateChallengeWithDate(
                 certificationRequestDto,
                 participantsStartDate.plusDays(i.toLong())
             )
         }
-        given(cloudStorageUtil.uploadImageToCloudStorage(any(), any()))
-            .willReturn(imageUrl)
     }
 
     @AfterEach
@@ -167,12 +181,13 @@ class GetTotalUserChallengeUseCaseTest : IntegrationTestContainer() {
         // given
         val newUserChallenge = makeUserChallengeAndHistory(newChallengeId, participantsStartDate)
         // when
-        val getTotalUserChallengeResponseDto : GetTotalUserChallengeResponseDto =
+        val getTotalUserChallengeResponseDto: GetTotalUserChallengeResponseDto =
             getTotalUserChallengeUseCase.execute(userId, participantsStartDate)
         // then
         assertThat(getTotalUserChallengeResponseDto.userChallenges.first().certificationDataList.first().isCertificated)
-            .isEqualTo(completedUserChallenge!!.getUserChallengeHistoriesBeforeToday(LocalDate.now())
-                .first().status.name
+            .isEqualTo(
+                completedUserChallenge!!.getUserChallengeHistoriesBeforeToday(LocalDate.now())
+                    .first().status.name
             )
 //        assertThat(getTotalUserChallengeResponseDto.userChallenges.first().status)
 //            .isEqualTo(completedUserChallenge!!.status.content)

@@ -95,10 +95,10 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
     )
 
     var sendToCertificationServerRequestDto = SendToCertificationServerRequestDto(
-        imageUrl = imageUrl,
-        challengeId = challengeId,
-        challengeName = challengeTitle,
-        challengeDescription = challengeDescription
+        imageUrl,
+        challengeId,
+        challengeTitle,
+        challengeDescription
     )
 
     var savedUserChallenge: UserChallenge? = null
@@ -123,14 +123,14 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
         val challenge = challengeService.findById(challengeId)
 
         sendToCertificationServerRequestDto = SendToCertificationServerRequestDto(
-            imageUrl = imageUrl,
-            challengeId = challenge.id!!,
-            challengeName = challenge.title,
-            challengeDescription = challenge.description
+            imageUrl,
+            challenge.id!!,
+             challenge.title,
+            challenge.description
         )
 
         given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
-            EUserCertificatedResultCode.SUCCESS_CERTIFICATED
+            mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
         )
     }
 

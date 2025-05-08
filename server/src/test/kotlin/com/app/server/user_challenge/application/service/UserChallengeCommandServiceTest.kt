@@ -3,28 +3,33 @@ package com.app.server.user_challenge.application.service
 import com.app.server.IntegrationTestContainer
 import com.app.server.challenge.application.service.ChallengeService
 import com.app.server.challenge.ui.usecase.dto.request.ChallengeParticipantDto
-import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
 import com.app.server.challenge_certification.domain.event.CertificationSucceededEvent
+import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
 import com.app.server.challenge_certification.infra.CertificationInfraService
 import com.app.server.common.exception.BadRequestException
 import com.app.server.common.exception.InternalServerErrorException
+import com.app.server.rank.application.service.RankEventListener
 import com.app.server.user_challenge.application.dto.CreateUserChallengeDto
 import com.app.server.user_challenge.application.dto.ReceiveReportResponseDto
 import com.app.server.user_challenge.domain.enums.EUserChallengeCertificationStatus
 import com.app.server.user_challenge.domain.enums.EUserChallengeStatus
+import com.app.server.user_challenge.domain.event.ReportCreatedEvent
+import com.app.server.user_challenge.domain.event.SavedTodayUserChallengeCertificationEvent
 import com.app.server.user_challenge.domain.exception.UserChallengeException
 import com.app.server.user_challenge.domain.model.UserChallenge
 import com.app.server.user_challenge.domain.model.UserChallengeHistory
 import com.app.server.user_challenge.enums.EUserReportResultCode
-import com.app.server.user_challenge.domain.event.ReportCreatedEvent
 import com.app.server.user_challenge.infra.ReportInfraService
 import com.app.server.user_challenge.ui.usecase.GetUserChallengeReportUseCase
 import com.app.server.user_challenge.ui.usecase.ParticipantChallengeUseCase
 import jakarta.transaction.Transactional
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.*
-import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers.isA
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.mock
@@ -39,15 +44,16 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Primary
 import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.bean.override.mockito.MockitoBean
-import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.time.LocalDate
 import kotlin.test.Test
 
 @SpringBootTest
 @Transactional
 @Rollback
-@ExtendWith(SpringExtension::class)
 class UserChallengeCommandServiceTest : IntegrationTestContainer() {
+
+    @Autowired
+    private lateinit var rankEventListener: RankEventListener
 
     @Autowired
     private lateinit var participantChallengeUseCase: ParticipantChallengeUseCase
@@ -142,17 +148,35 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
         return userChallengeService.save(userChallenge)
     }
 
+    private suspend fun makeSpecificRank(userChallenge: UserChallenge, certificateDate: LocalDate) {
+        userChallengeEventListener.processWhenReceive(
+            event = makeEvent(
+                userChallenge.id!!,
+                certificateDate
+            )
+        )
+        rankEventListener.updateSpecificChallengeRank(
+            userChallengeId = userChallenge.id!!,
+            totalParticipationDayCount = userChallenge.totalParticipationDayCount
+        )
+    }
+
+    private fun makeEvent(userChallengeId: Long, certificateDate: LocalDate)
+            : CertificationSucceededEvent {
+        return CertificationSucceededEvent(
+            userChallengeId = userChallengeId,
+            imageUrl = imageUrl,
+            certificatedDate = certificateDate
+        )
+    }
+
     @Test
     @DisplayName("챌린지 인증에 성공한 날짜가 챌린지 종료일자와 같다면, 리포트 메시지를 AI 서버로부터 받아온다.")
     fun getReportMessage() = runTest {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
         // when
-        userChallengeEventListener.processWhenReceive(
-            CertificationSucceededEvent(
-                savedUserChallenge!!.id!!, imageUrl, endDate
-            )
-        )
+        makeSpecificRank(savedUserChallenge!!, endDate)
         // then
         verify(applicationEventPublisher).publishEvent(isA(ReportCreatedEvent::class.java))
     }
@@ -163,12 +187,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
         // when
-        userChallengeEventListener.processWhenReceive(
-            CertificationSucceededEvent(
-                savedUserChallenge!!.id!!, imageUrl, endDate
-
-            )
-        )
+        makeSpecificRank(savedUserChallenge!!, endDate)
         // then
         assertThat(savedUserChallenge!!.reportMessage).isEqualTo(expectedReportMessage)
         assertThat(savedUserChallenge!!.status).isEqualTo(EUserChallengeStatus.PENDING)
@@ -181,11 +200,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_FAILED)
         // when
         val exception = assertThrows<InternalServerErrorException> {
-            userChallengeEventListener.processWhenReceive(
-                CertificationSucceededEvent(
-                    savedUserChallenge!!.id!!, imageUrl, participantsStartDate.plusDays(participationDays - 1L)
-                )
-            )
+            makeSpecificRank(savedUserChallenge!!, endDate)
         }
         // then
         assertThat(exception.message).isEqualTo(UserChallengeException.CANNOT_MAKE_REPORT.message)
@@ -199,11 +214,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
         settingReceiveReport(status = EUserReportResultCode.ERROR_IN_RECEIVE_REPORT_SERVER)
         // when
         val exception = assertThrows<InternalServerErrorException> {
-            userChallengeEventListener.processWhenReceive(
-                CertificationSucceededEvent(
-                    savedUserChallenge!!.id!!, imageUrl, endDate
-                )
-            )
+            makeSpecificRank(savedUserChallenge!!, endDate)
         }
         // then
         assertThat(exception.message).isEqualTo(UserChallengeException.ERROR_IN_REPORT_SERVER.message)
@@ -216,11 +227,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
         // when
-        userChallengeEventListener.processWhenReceive(
-            CertificationSucceededEvent(
-                savedUserChallenge!!.id!!, imageUrl, endDate
-            )
-        )
+        makeSpecificRank(savedUserChallenge!!, endDate)
         // then
         assertThat(savedUserChallenge!!.status).isEqualTo(EUserChallengeStatus.PENDING)
     }
@@ -242,11 +249,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
         // when
-        userChallengeEventListener.processWhenReceive(
-            CertificationSucceededEvent(
-                savedUserChallenge!!.id!!, imageUrl, endDate
-            )
-        )
+        makeSpecificRank(savedUserChallenge!!, endDate)
         // then
         assertThat(savedUserChallenge!!.status).isEqualTo(EUserChallengeStatus.PENDING)
         assertThat(savedUserChallenge!!.reportMessage).isEqualTo(expectedReportMessage)
@@ -257,11 +260,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
     fun checkReport() = runTest {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
-        userChallengeEventListener.processWhenReceive(
-            CertificationSucceededEvent(
-                savedUserChallenge!!.id!!, imageUrl, endDate
-            )
-        )
+        makeSpecificRank(savedUserChallenge!!, endDate)
         assertThat(savedUserChallenge!!.status).isEqualTo(EUserChallengeStatus.PENDING)
         // when
         getUserChallengeReportUseCase.getReport(savedUserChallenge!!.id!!, endDate.plusDays(1))
@@ -274,11 +273,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
     fun completeReport() = runTest {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
-        userChallengeEventListener.processWhenReceive(
-            CertificationSucceededEvent(
-                savedUserChallenge!!.id!!, imageUrl, endDate
-            )
-        )
+        makeSpecificRank(savedUserChallenge!!, endDate)
         assertThat(savedUserChallenge!!.status).isEqualTo(EUserChallengeStatus.PENDING)
         // when
         getUserChallengeReportUseCase.getReport(savedUserChallenge!!.id!!, endDate.plusDays(2))
@@ -291,11 +286,8 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
     fun continueChallengeWithSuccess() = runTest {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
-        userChallengeEventListener.processWhenReceive(
-            CertificationSucceededEvent(
-                savedUserChallenge!!.id!!, imageUrl, endDate
-            )
-        )
+        makeSpecificRank(savedUserChallenge!!, endDate)
+
         getUserChallengeReportUseCase.getReport(savedUserChallenge!!.id!!, endDate.plusDays(1))
         assertThat(savedUserChallenge!!.status).isEqualTo(EUserChallengeStatus.WAITING)
         // when
@@ -317,11 +309,8 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
     fun continueChallengeWithPending() = runTest {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
-        userChallengeEventListener.processWhenReceive(
-            CertificationSucceededEvent(
-                savedUserChallenge!!.id!!, imageUrl, endDate
-            )
-        )
+        makeSpecificRank(savedUserChallenge!!, endDate)
+
         assertThat(savedUserChallenge!!.status).isEqualTo(EUserChallengeStatus.PENDING)
         // when
         val exception = assertThrows<BadRequestException> {
@@ -344,11 +333,8 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
     fun continueChallenge() = runTest {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
-        userChallengeEventListener.processWhenReceive(
-            CertificationSucceededEvent(
-                savedUserChallenge!!.id!!, imageUrl, endDate
-            )
-        )
+        makeSpecificRank(savedUserChallenge!!, endDate)
+
         getUserChallengeReportUseCase.getReport(savedUserChallenge!!.id!!, endDate.plusDays(2))
         assertThat(savedUserChallenge!!.status).isEqualTo(EUserChallengeStatus.COMPLETED)
         // when
@@ -373,12 +359,10 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
     fun continueChallengeWithWait() = runTest {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
-        userChallengeEventListener.processWhenReceive(
-            CertificationSucceededEvent(
-                savedUserChallenge!!.id!!, imageUrl, endDate
-            )
-        )
+        makeSpecificRank(savedUserChallenge!!, endDate)
+
         getUserChallengeReportUseCase.getReport(savedUserChallenge!!.id!!, endDate.plusDays(1))
+
         assertThat(savedUserChallenge!!.status).isEqualTo(EUserChallengeStatus.WAITING)
         // when
         participantChallengeUseCase.execute(
@@ -403,11 +387,8 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
     fun continueChallengeWithWaitAndIncreaseTotalParticipationDays() = runTest {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
-        userChallengeEventListener.processWhenReceive(
-            CertificationSucceededEvent(
-                savedUserChallenge!!.id!!, imageUrl, endDate
-            )
-        )
+        makeSpecificRank(savedUserChallenge!!, endDate)
+
         getUserChallengeReportUseCase.getReport(savedUserChallenge!!.id!!, endDate.plusDays(1))
         assertThat(savedUserChallenge!!.status).isEqualTo(EUserChallengeStatus.WAITING)
         // when
@@ -429,11 +410,8 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
     fun continueChallengeWithWaitAndIncreaseParticipationDays() = runTest {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
-        userChallengeEventListener.processWhenReceive(
-            CertificationSucceededEvent(
-                savedUserChallenge!!.id!!, imageUrl, endDate
-            )
-        )
+        makeSpecificRank(savedUserChallenge!!, endDate)
+
         getUserChallengeReportUseCase.getReport(savedUserChallenge!!.id!!, endDate.plusDays(1))
         assertThat(savedUserChallenge!!.status).isEqualTo(EUserChallengeStatus.WAITING)
         // when
@@ -457,11 +435,8 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
     fun continueChallengeWithWaitAndChangeStatusToFail() = runTest {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
-        userChallengeEventListener.processWhenReceive(
-            CertificationSucceededEvent(
-                savedUserChallenge!!.id!!, imageUrl, endDate
-            )
-        )
+        makeSpecificRank(savedUserChallenge!!, endDate)
+
         getUserChallengeReportUseCase.getReport(savedUserChallenge!!.id!!, endDate.plusDays(1))
         assertThat(savedUserChallenge!!.status).isEqualTo(EUserChallengeStatus.WAITING)
         // when
@@ -488,11 +463,8 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
     fun continueChallengeWithWaitAndKeepStatus() = runTest {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
-        userChallengeEventListener.processWhenReceive(
-            CertificationSucceededEvent(
-                savedUserChallenge!!.id!!, imageUrl, endDate
-            )
-        )
+        makeSpecificRank(savedUserChallenge!!, endDate)
+
         getUserChallengeReportUseCase.getReport(savedUserChallenge!!.id!!, endDate.plusDays(1))
         assertThat(savedUserChallenge!!.status).isEqualTo(EUserChallengeStatus.WAITING)
         // when
@@ -519,11 +491,8 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
     fun continueChallengeWithWaitAndDeleteReportMessage() = runTest {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
-        userChallengeEventListener.processWhenReceive(
-            CertificationSucceededEvent(
-                savedUserChallenge!!.id!!, imageUrl, endDate
-            )
-        )
+        makeSpecificRank(savedUserChallenge!!, endDate)
+
         getUserChallengeReportUseCase.getReport(savedUserChallenge!!.id!!, endDate.plusDays(1))
         assertThat(savedUserChallenge!!.status).isEqualTo(EUserChallengeStatus.WAITING)
         assertThat(savedUserChallenge!!.reportMessage).isEqualTo(expectedReportMessage)
@@ -547,11 +516,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
         // given
         settingReceiveReport(status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS)
 
-        userChallengeEventListener.processWhenReceive(
-            CertificationSucceededEvent(
-                savedUserChallenge!!.id!!, imageUrl, endDate
-            )
-        )
+        makeSpecificRank(savedUserChallenge!!, endDate)
 
         val expectedConsecutiveParticipationDays = savedUserChallenge!!.nowConsecutiveParticipationDayCount + 1
 
@@ -609,7 +574,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
 
     private suspend fun settingReceiveReport(status: EUserReportResultCode) {
         given(certificationInfraService.certificate(any())).willReturn(
-            EUserCertificatedResultCode.SUCCESS_CERTIFICATED
+            mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
         )
         given(
             reportInfraService.receiveReportMessage(any())
@@ -618,15 +583,17 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
                 status = status, message = expectedReportMessage
             )
         )
-        for (i in 0 until participationDays - 1)
-            userChallengeEventListener.processWhenReceive(
-                CertificationSucceededEvent(
-                    savedUserChallenge!!.id!!, imageUrl, participantsStartDate.plusDays(i.toLong())
-                )
-            )
+        for (i in 0 until participationDays - 1) {
+            makeSpecificRank(savedUserChallenge!!, participantsStartDate.plusDays(i.toLong()))
+        }
     }
 
-    // TODO: 랭킹 작업 관련 테스트 작성
-    // TODO: 알림 작업 관련 테스트 작성
+    @TestConfiguration
+    class CoroutineTestConfig {
+        @OptIn(ExperimentalCoroutinesApi::class)
+        @Bean
+        fun testScope(): CoroutineScope =
+            CoroutineScope(UnconfinedTestDispatcher() + SupervisorJob())
+    }
 
 }

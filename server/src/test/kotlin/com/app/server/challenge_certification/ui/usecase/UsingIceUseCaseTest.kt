@@ -80,10 +80,10 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
 
     var savedUserChallenge: UserChallenge? = null
     var sendToCertificationServerRequestDto = SendToCertificationServerRequestDto(
-        imageUrl = imageUrl,
-        challengeId = challengeId,
-        challengeName = challengeTitle,
-        challengeDescription = challengeDescription
+        imageUrl,
+        challengeId,
+        challengeTitle,
+        challengeDescription
     )
 
     @BeforeEach
@@ -93,13 +93,13 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
 
         val challenge = challengeService.findById(challengeId)
         sendToCertificationServerRequestDto = SendToCertificationServerRequestDto(
-            imageUrl = imageUrl,
-            challengeId = challenge.id!!,
-            challengeName = challenge.title,
-            challengeDescription = challenge.description
+            imageUrl,
+            challenge.id!!,
+            challenge.title,
+            challenge.description
         )
         given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
-            EUserCertificatedResultCode.SUCCESS_CERTIFICATED
+            mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
         )
         certificationRequestDto = CertificationRequestDto(
             userChallengeId = savedUserChallenge!!.id!!,
@@ -182,7 +182,7 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
     fun skipChallengeWithLimit() = runTest {
         // given
         given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
-            EUserCertificatedResultCode.SUCCESS_CERTIFICATED
+            mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
         )
         for (i in 0 until requiredSuccessfulDaysForIce)
             userChallengeEventListener.processWhenReceive(
@@ -207,7 +207,7 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
     fun skipChallengeWithLimitFailed() = runTest {
         // given
         given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
-            EUserCertificatedResultCode.SUCCESS_CERTIFICATED
+            mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
         )
         for (i in 0 until notSufficientSuccessfulDaysForIce)
             userChallengeEventListener.processWhenReceive(
@@ -233,7 +233,7 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
     fun skipChallengeWithoutIncreasingParticipationDays() = runTest {
         // given
         given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
-            EUserCertificatedResultCode.SUCCESS_CERTIFICATED
+            mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
         )
         for (i in 0 until requiredSuccessfulDaysForIce)
             userChallengeEventListener.processWhenReceive(
@@ -259,7 +259,7 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
     fun skipChallengeWithIncreasingConsecutiveParticipationDays() = runTest {
         // given
         given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
-            EUserCertificatedResultCode.SUCCESS_CERTIFICATED
+            mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
         )
         for (i in 0 until requiredSuccessfulDaysForIce)
             userChallengeEventListener.processWhenReceive(
@@ -289,7 +289,7 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
     fun skipChallengeWithoutIncreasingConsecutiveParticipationDays() = runTest {
         // given
         given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
-            EUserCertificatedResultCode.SUCCESS_CERTIFICATED
+            mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
         )
         for (i in 0 until requiredSuccessfulDaysForIce)
             userChallengeEventListener.processWhenReceive(
@@ -323,7 +323,7 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
     fun skipChallengeWithIceCount() = runTest {
         // given
         given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
-            EUserCertificatedResultCode.SUCCESS_CERTIFICATED
+            mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
         )
 
         for (i in 0 until requiredSuccessfulDaysForIce)

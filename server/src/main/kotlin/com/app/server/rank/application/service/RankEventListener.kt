@@ -9,6 +9,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import org.springframework.context.annotation.Bean
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component
 
@@ -57,14 +58,14 @@ class RankEventListener(
     suspend fun updateSpecificChallengeRank(userChallengeId: Long, totalParticipationDayCount: Long): RankState {
 
         val userChallenge = userChallengeService.findById(userChallengeId)
-        val key = userChallenge.userId
+        val value = userChallenge.userId
         val challenge = userChallenge.challenge
 
-        val slot = "rank:challenge:${challenge.id}"
+        val key = "rank:challenge:${challenge.id}"
 
-        val existScore = rankService.getScore(slot, key)
+        val existScore = rankService.getScore(key, value)
 
-        return updateRankScoreIfNeeded(existScore, totalParticipationDayCount, slot, key)
+        return updateRankScoreIfNeeded(existScore, totalParticipationDayCount, key, value)
     }
 
     suspend fun updateTotalRank(userChallengeId: Long, maxConsecutiveParticipationDayCount: Long): RankState {
@@ -78,7 +79,7 @@ class RankEventListener(
         return updateRankScoreIfNeeded(existScore, maxConsecutiveParticipationDayCount, slot, key)
     }
 
-    private fun updateRankScoreIfNeeded(
+    private suspend fun updateRankScoreIfNeeded(
         existScore: Double,
         score: Long,
         slot: String,
@@ -93,7 +94,7 @@ class RankEventListener(
         return RankState.RANK_NOT_UPDATE
     }
 
-    private fun isUpdatedRankScore(isProcess: Boolean?): RankState {
+    private suspend fun isUpdatedRankScore(isProcess: Boolean?): RankState {
         if (isProcess != null && isProcess)
             return RankState.RANK_UPDATE_SUCCESS
         else if (isProcess != null)
