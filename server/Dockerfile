@@ -15,6 +15,6 @@ RUN ./gradlew clean build -x test
 
 FROM openjdk:21-jdk-slim
 WORKDIR /app
-COPY --from=builder /buildMyApp/build/libs/*.jar greenap.jar
+COPY --from=builder /buildMyApp/build/libs/server-0.0.1-SNAPSHOT.jar greenap.jar
 
 ENTRYPOINT ["java", "-Duser.timezone=Asia/Seoul", "-Dspring.profiles.active=prod", "-jar", "greenap.jar"]
