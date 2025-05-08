@@ -14,7 +14,8 @@ data class GetChallengeResponseDto (
                     title = challenge.title,
                     preDescription = challenge.preDescription,
                     description = challenge.description,
-                    imageUrl = challenge.mainImageUrl,
+                    mainImageUrl = challenge.mainImageUrl,
+                    certificationExampleImageUrl = challenge.certificationExampleImageUrl,
                     certificationMethodDescription = challenge.certificationMethodDescription,
                     percentOfCompletedUser = challenge.percentOfCompletedUser
                 )
@@ -30,7 +31,9 @@ data class ChallengeResponseDto(
     val preDescription: String,
     val description: String,
     @JsonProperty("main_image_url")
-    val imageUrl: String?,
+    val mainImageUrl: String?,
+    @JsonProperty("certification_example_image_url")
+    val certificationExampleImageUrl: String?,
     @JsonProperty("certification_method_description")
     val certificationMethodDescription: String,
     @JsonProperty("participation_dates")
