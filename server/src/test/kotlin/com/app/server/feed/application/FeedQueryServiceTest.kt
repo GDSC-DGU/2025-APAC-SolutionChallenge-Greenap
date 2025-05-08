@@ -5,15 +5,14 @@ import com.app.server.challenge.application.service.ChallengeService
 import com.app.server.challenge_certification.domain.event.CertificationSucceededEvent
 import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
 import com.app.server.challenge_certification.infra.CertificationInfraService
-import com.app.server.challenge_certification.ui.dto.CertificationRequestDto
-import com.app.server.challenge_certification.ui.dto.SendToCertificationServerRequestDto
+import com.app.server.challenge_certification.ui.dto.request.CertificationRequestDto
+import com.app.server.challenge_certification.ui.dto.request.SendToCertificationServerRequestDto
 import com.app.server.feed.application.service.FeedEventListener
 import com.app.server.feed.application.service.FeedProjectionService
 import com.app.server.feed.application.service.FeedService
 import com.app.server.feed.domain.event.FeedCreatedEvent
 import com.app.server.feed.domain.model.query.FeedProjection
 import com.app.server.feed.enums.EFeedScope
-import com.app.server.feed.exception.FeedException
 import com.app.server.feed.ui.dto.CreateFeedCommand
 import com.app.server.feed.ui.dto.ReadFeedProjectionCommand
 import com.app.server.feed.ui.usecase.CreateFeedUseCase
@@ -40,6 +39,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Primary
 import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.bean.override.mockito.MockitoBean
+import org.springframework.web.multipart.MultipartFile
 import java.time.LocalDate
 import kotlin.test.Test
 
@@ -80,12 +80,12 @@ class FeedQueryServiceTest : IntegrationTestContainer() {
 
     var certificationRequestDto = CertificationRequestDto(
         userChallengeId = userChallengeId,
-        imageUrl = imageUrl,
+        image = mock(MultipartFile::class.java)
     )
 
     var notFindCertificationRequestDto = CertificationRequestDto(
         userChallengeId = 1L,
-        imageUrl = imageUrl,
+        image = mock(MultipartFile::class.java)
     )
 
     var sendToCertificationServerRequestDto = SendToCertificationServerRequestDto(
@@ -108,12 +108,12 @@ class FeedQueryServiceTest : IntegrationTestContainer() {
 
         certificationRequestDto = CertificationRequestDto(
             userChallengeId = savedUserChallenge!!.id!!,
-            imageUrl = imageUrl,
+            image = mock(MultipartFile::class.java)
         )
 
         notFindCertificationRequestDto = CertificationRequestDto(
             userChallengeId = notFindUserChallenge!!.id!!,
-            imageUrl = imageUrl,
+            image = mock(MultipartFile::class.java)
         )
 
         val challenge = challengeService.findById(challengeId)

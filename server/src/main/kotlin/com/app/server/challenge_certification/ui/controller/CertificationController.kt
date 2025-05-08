@@ -1,18 +1,15 @@
 package com.app.server.challenge_certification.ui.controller
 
-import com.app.server.challenge_certification.ui.dto.CertificationRequestDto
-import com.app.server.challenge_certification.ui.dto.UserChallengeIceRequestDto
+import com.app.server.challenge_certification.ui.dto.request.CertificationRequestDto
+import com.app.server.challenge_certification.ui.dto.response.GetCertificatedImageUrlResponseDto
 import com.app.server.challenge_certification.ui.usecase.CertificationUseCase
-import com.app.server.common.annotation.UserId
-import com.app.server.common.enums.CommonResultCode
-import com.app.server.common.enums.ResultCode
 import com.app.server.common.response.ApiResponse
-import com.app.server.user_challenge.ui.usecase.UsingIceUseCase
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.multipart.MultipartFile
 import java.time.LocalDate
 
 @RestController
@@ -23,13 +20,20 @@ class CertificationController(
 
     @PostMapping("/certification")
     fun certificateDailyUserChallenge(
-        @RequestBody certificationRequestDto: CertificationRequestDto
-    ): ApiResponse<ResultCode> {
-        certificationUseCase.certificateChallengeWithDate(
-            certificationRequestDto = certificationRequestDto,
-            certificationDate = LocalDate.now()
+        @PathVariable("userChallengeId") userChallengeId: Long,
+        @RequestPart("image") image: MultipartFile
+    ): ApiResponse<GetCertificatedImageUrlResponseDto> {
+
+        val certificationRequestDto = CertificationRequestDto(
+            userChallengeId = userChallengeId,
+            image = image
         )
 
-        return ApiResponse.Companion.success(CommonResultCode.SUCCESS)
+        return ApiResponse.success(
+            certificationUseCase.certificateChallengeWithDate(
+                certificationRequestDto = certificationRequestDto,
+                certificationDate = LocalDate.now()
+            )
+        )
     }
 }

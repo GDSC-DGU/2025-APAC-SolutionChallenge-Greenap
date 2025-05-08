@@ -2,13 +2,13 @@ package com.app.server.challenge_certification.application.service
 
 import com.app.server.IntegrationTestContainer
 import com.app.server.challenge.application.service.ChallengeService
-import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
 import com.app.server.challenge_certification.domain.event.CertificationSucceededEvent
+import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
 import com.app.server.challenge_certification.infra.CertificationInfraService
-import com.app.server.challenge_certification.ui.dto.CertificationRequestDto
-import com.app.server.challenge_certification.ui.dto.SendToCertificationServerRequestDto
-import com.app.server.challenge_certification.ui.usecase.CertificationUseCase
+import com.app.server.challenge_certification.ui.dto.request.CertificationRequestDto
+import com.app.server.challenge_certification.ui.dto.request.SendToCertificationServerRequestDto
 import com.app.server.common.exception.BadRequestException
+import com.app.server.core.infra.cloud_storage.CloudStorageUtil
 import com.app.server.user_challenge.application.dto.CreateUserChallengeDto
 import com.app.server.user_challenge.application.service.UserChallengeService
 import com.app.server.user_challenge.domain.enums.EUserChallengeCertificationStatus
@@ -26,6 +26,8 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers.isA
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.mock
+import org.mockito.kotlin.any
+import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.reset
 import org.mockito.kotlin.verify
 import org.springframework.beans.factory.annotation.Autowired
@@ -34,12 +36,13 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Primary
+import org.springframework.mock.web.MockMultipartFile
 import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.bean.override.mockito.MockitoBean
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.time.LocalDate
 import kotlin.test.Test
-
 
 @SpringBootTest
 @Transactional
@@ -47,8 +50,8 @@ import kotlin.test.Test
 @ExtendWith(SpringExtension::class)
 class CertificateServiceTest : IntegrationTestContainer() {
 
-    @Autowired
-    private lateinit var certificationUseCase: CertificationUseCase
+    @MockitoSpyBean
+    private lateinit var certificationService: CertificationService
 
     @Autowired
     private lateinit var userChallengeService: UserChallengeService
@@ -60,15 +63,20 @@ class CertificateServiceTest : IntegrationTestContainer() {
     private lateinit var certificationInfraService: CertificationInfraService
 
     @MockitoBean
+    private lateinit var cloudStorageUtil: CloudStorageUtil
+
+    @MockitoBean
     private lateinit var applicationEventPublisher: ApplicationEventPublisher
 
     var certificationRequestDto = CertificationRequestDto(
         userChallengeId = userChallengeId,
-        imageUrl = imageUrl,
+        image = MockMultipartFile(
+            "test.png", "test.png",
+            "image/png", ByteArray(1)
+        )
     )
     var sendToCertificationServerRequestDto = SendToCertificationServerRequestDto(
         imageUrl = imageUrl,
-        challengeId = challengeId,
         challengeName = challengeTitle,
         challengeDescription = challengeDescription
     )
@@ -80,8 +88,15 @@ class CertificateServiceTest : IntegrationTestContainer() {
 
         certificationRequestDto = CertificationRequestDto(
             userChallengeId = savedUserChallenge!!.id!!,
-            imageUrl = imageUrl,
+            image = MockMultipartFile(
+                "test.png", "test.png",
+                "image/png", ByteArray(1)
+            )
         )
+        doReturn(imageUrl).`when`(certificationService).encodeImageToBase64(
+            MockMultipartFile("test.png", "test.png", "image/png", ByteArray(1))
+        )
+
         val challenge = challengeService.findById(challengeId)
         sendToCertificationServerRequestDto = SendToCertificationServerRequestDto(
             imageUrl = imageUrl,
@@ -161,12 +176,14 @@ class CertificateServiceTest : IntegrationTestContainer() {
     @DisplayName("챌린지 인증에 실패했다면, 인증에 실패하였음을 클라이언트에게 전달한다.")
     fun failChallengeCertificate() {
         // given
-        given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
+        given(cloudStorageUtil.uploadImageToCloudStorage(any(), any()))
+            .willReturn(imageUrl)
+        given(certificationInfraService.certificate(any())).willReturn(
             EUserCertificatedResultCode.CERTIFICATED_FAILED
         )
         // when
         val exception = assertThrows<BadRequestException> {
-            certificationUseCase.certificateChallengeWithDate(
+            certificationService.certificateChallengeWithDate(
                 certificationRequestDto, participantsStartDate
             )
         }
@@ -178,11 +195,14 @@ class CertificateServiceTest : IntegrationTestContainer() {
     @Test
     @DisplayName("챌린지 인증에 성공했다면, 인증 성공 이벤트를 게시한다.")
     fun publishChallengeImage() {
-        given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
-            EUserCertificatedResultCode.SUCCESS_CERTIFICATED
-        )
+        given(cloudStorageUtil.uploadImageToCloudStorage(any(), any()))
+            .willReturn(imageUrl)
+        given(certificationInfraService.certificate(any()))
+            .willReturn(
+                EUserCertificatedResultCode.SUCCESS_CERTIFICATED
+            )
         // when
-        certificationUseCase.certificateChallengeWithDate(
+        certificationService.certificateChallengeWithDate(
             certificationRequestDto, participantsStartDate
         )
 

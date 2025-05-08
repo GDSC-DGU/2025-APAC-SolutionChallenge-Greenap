@@ -4,7 +4,7 @@ import com.app.server.common.enums.ResultCode
 import lombok.Getter
 
 open class BusinessException : RuntimeException {
-    private val resultCode: ResultCode
+    val resultCode: ResultCode
 
     constructor(resultCode: ResultCode) : super(resultCode.message) {
         this.resultCode = resultCode

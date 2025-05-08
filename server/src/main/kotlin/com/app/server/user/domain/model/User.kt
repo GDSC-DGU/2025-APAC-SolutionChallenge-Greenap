@@ -20,7 +20,7 @@ class User(
     @Column(name = "now_max_consecutive_participation_day_count")
     var nowMaxConsecutiveParticipationDayCount: Long,
     @Column(name = "refresh_token")
-    var refreshToken: String?
+    var refreshToken: String? = null
 ) : BaseEntity() {
 
 // TODO: Auth 도메인에서 refreshToken 업데이트 로직 추가

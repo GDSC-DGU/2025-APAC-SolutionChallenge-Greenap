@@ -17,8 +17,9 @@ class JwtAuthenticationProvider(
 ) : AuthenticationProvider {
 
     override fun authenticate(authentication: Authentication): Authentication {
+
         if (authentication is JwtAuthenticationToken) {
-            val jwtUserInfo: JwtUserInfo = JwtUserInfo(id = authentication.getPrincipal() as Long)
+            val jwtUserInfo = JwtUserInfo(id = authentication.principal as Long)
 
             val userDetails = customUserDetailsService.loadUserByUserId(jwtUserInfo.id) as CustomUserDetails
 

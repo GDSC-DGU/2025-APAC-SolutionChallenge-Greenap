@@ -2,13 +2,14 @@ package com.app.server.challenge_certification.ui.usecase
 
 import com.app.server.IntegrationTestContainer
 import com.app.server.challenge.application.service.ChallengeService
+import com.app.server.challenge_certification.application.service.CertificationService
 import com.app.server.challenge_certification.domain.event.CertificationSucceededEvent
 import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
 import com.app.server.challenge_certification.infra.CertificationInfraService
-import com.app.server.challenge_certification.ui.dto.CertificationRequestDto
-import com.app.server.challenge_certification.ui.dto.SendToCertificationServerRequestDto
-import com.app.server.challenge_certification.ui.usecase.CertificationUseCase
+import com.app.server.challenge_certification.ui.dto.request.CertificationRequestDto
+import com.app.server.challenge_certification.ui.dto.request.SendToCertificationServerRequestDto
 import com.app.server.common.exception.BadRequestException
+import com.app.server.core.infra.cloud_storage.CloudStorageUtil
 import com.app.server.user.application.service.UserEventListener
 import com.app.server.user.application.service.UserService
 import com.app.server.user_challenge.application.dto.CreateUserChallengeDto
@@ -16,10 +17,10 @@ import com.app.server.user_challenge.application.service.UserChallengeEventListe
 import com.app.server.user_challenge.application.service.UserChallengeService
 import com.app.server.user_challenge.domain.enums.EUserChallengeCertificationStatus
 import com.app.server.user_challenge.domain.enums.EUserChallengeStatus
+import com.app.server.user_challenge.domain.event.SavedTodayUserChallengeCertificationEvent
 import com.app.server.user_challenge.domain.exception.UserChallengeException
 import com.app.server.user_challenge.domain.model.UserChallenge
 import com.app.server.user_challenge.domain.model.UserChallengeHistory
-import com.app.server.user_challenge.domain.event.SavedTodayUserChallengeCertificationEvent
 import jakarta.transaction.Transactional
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
@@ -31,6 +32,7 @@ import org.mockito.ArgumentMatchers
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.any
+import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.reset
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
@@ -40,8 +42,11 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Primary
+import org.springframework.mock.web.MockMultipartFile
 import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.bean.override.mockito.MockitoBean
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean
+import org.springframework.web.multipart.MultipartFile
 import java.time.LocalDate
 import kotlin.test.Test
 
@@ -49,6 +54,9 @@ import kotlin.test.Test
 @Transactional
 @Rollback
 class CertificationUseCaseTest : IntegrationTestContainer() {
+
+    @MockitoBean
+    private lateinit var cloudStorageUtil: CloudStorageUtil
 
     @Autowired
     private lateinit var userEventListener: UserEventListener
@@ -74,14 +82,17 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
     @MockitoBean
     private lateinit var certificationInfraService: CertificationInfraService
 
+    @MockitoSpyBean
+    private lateinit var certificationService: CertificationService
+
 
     var certificationRequestDto = CertificationRequestDto(
         userChallengeId = userChallengeId,
-        imageUrl = imageUrl,
+        image = mock(MultipartFile::class.java)
     )
     var secondCertificationRequestDto = CertificationRequestDto(
         userChallengeId = userChallengeId,
-        imageUrl = imageUrl,
+        image = mock(MultipartFile::class.java)
     )
 
     var sendToCertificationServerRequestDto = SendToCertificationServerRequestDto(
@@ -98,12 +109,15 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
     fun setUp() {
 
         savedUserChallenge = makeUserChallengeAndHistory(challengeId, participantsStartDate)
-        secondSavedUserChallenge = makeUserChallengeAndHistory(challengeId+1, participantsStartDate)
+        secondSavedUserChallenge = makeUserChallengeAndHistory(challengeId + 1, participantsStartDate)
 
         fun makeCertificationRequestDto(userChallengeId: Long): CertificationRequestDto {
             return CertificationRequestDto(
                 userChallengeId = userChallengeId,
-                imageUrl = imageUrl,
+                image = MockMultipartFile(
+                    "test.png", "test.png",
+                    "image/png", ByteArray(1)
+                )
             )
         }
 
@@ -119,9 +133,26 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
             challengeDescription = challenge.description
         )
 
-        given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
+        given(
+            certificationInfraService.certificate(
+                org.mockito.kotlin.any()
+            )
+        ).willReturn(
             EUserCertificatedResultCode.SUCCESS_CERTIFICATED
         )
+        given(
+            cloudStorageUtil.uploadImageToCloudStorage(
+                any(), any()
+            )
+        )
+            .willReturn(imageUrl)
+        doReturn(imageUrl).`when`(certificationService).encodeImageToBase64(
+            MockMultipartFile(
+                "test.png", "test.png",
+                "image/png", ByteArray(1)
+            )
+        )
+
     }
 
     @AfterEach
@@ -403,7 +434,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
     @DisplayName("챌린지 인증에 실패하면 인증 실패임을 알린다.")
     fun failCertificated() {
         //given
-        given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
+        given(certificationInfraService.certificate(any())).willReturn(
             EUserCertificatedResultCode.CERTIFICATED_FAILED
         )
         // when & then
@@ -496,10 +527,10 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
     @DisplayName("챌린지 인증에 성공하면 사용자의 현재 최대 연속 참여 일수를 갱신한다.")
     fun updateMaxConsecutiveParticipationDays() = runTest {
         // given
-        given(certificationInfraService.certificate(any()))
+        given(certificationInfraService.certificate(org.mockito.kotlin.any()))
             .willReturn(
-            EUserCertificatedResultCode.SUCCESS_CERTIFICATED
-        )
+                EUserCertificatedResultCode.SUCCESS_CERTIFICATED
+            )
 
         // when
         certificationUseCase.certificateChallengeWithDate(

@@ -1,5 +1,6 @@
 package com.app.server.user_challenge.application.service
 
+import com.app.server.rank.application.service.RankService
 import com.app.server.user_challenge.domain.enums.EUserChallengeCertificationStatus
 import com.app.server.user_challenge.domain.enums.EUserChallengeStatus
 import com.app.server.user_challenge.domain.model.UserChallenge
@@ -12,7 +13,8 @@ import java.time.LocalDate
 
 @Service
 class UserChallengeQueryService(
-    private val userChallengeService: UserChallengeService
+    private val userChallengeService: UserChallengeService,
+    private val rankService: RankService
 ) : GetTotalUserChallengeUseCase, GetUserChallengeReportUseCase {
     fun getChallengeCompletedUserPercent(challengeId: Long): Double {
 
@@ -46,7 +48,10 @@ class UserChallengeQueryService(
         val successDays = userChallenge.getUserChallengeHistories()
             .count { it.status != EUserChallengeCertificationStatus.FAILED }
 
-        val userRank = 1L // TODO: UserChallenge에서 랭킹을 가져오는 로직 추가 필요
+        val key = "rank:challenge:${userChallenge.challenge.id}"
+        val value = userChallenge.userId
+
+        val userRank = rankService.getRank(key, value)
 
         updateUserChallengeStatus(userChallenge, todayDate)
 
@@ -98,6 +103,7 @@ class UserChallengeQueryService(
 
         return UserChallengeQuery(
             id = userChallenge.id!!,
+            challengeId = userChallenge.challenge.id!!,
             title = userChallenge.challenge.title,
             category = userChallenge.challenge.challengeCategory.title, // TODO: 캐싱 필요
             status = userChallenge.status.content,
@@ -106,6 +112,7 @@ class UserChallengeQueryService(
             elapsedDays = elapsedDays,
             progress = progress,
             isCertificatedInToday = certificationToday,
+            mainImageUrl = userChallenge.challenge.mainImageUrl!!,
             certificationDataList = certificationDataList
         )
     }

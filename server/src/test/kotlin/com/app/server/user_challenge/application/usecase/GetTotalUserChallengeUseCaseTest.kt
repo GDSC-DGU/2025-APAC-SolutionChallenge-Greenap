@@ -4,9 +4,10 @@ import com.app.server.IntegrationTestContainer
 import com.app.server.challenge.application.service.ChallengeService
 import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
 import com.app.server.challenge_certification.infra.CertificationInfraService
-import com.app.server.challenge_certification.ui.dto.CertificationRequestDto
-import com.app.server.challenge_certification.ui.dto.SendToCertificationServerRequestDto
+import com.app.server.challenge_certification.ui.dto.request.CertificationRequestDto
+import com.app.server.challenge_certification.ui.dto.request.SendToCertificationServerRequestDto
 import com.app.server.challenge_certification.ui.usecase.CertificationUseCase
+import com.app.server.core.infra.cloud_storage.CloudStorageUtil
 import com.app.server.user_challenge.application.dto.CreateUserChallengeDto
 import com.app.server.user_challenge.application.service.UserChallengeService
 import com.app.server.user_challenge.domain.enums.EUserChallengeCertificationStatus
@@ -21,12 +22,11 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.mock
+import org.mockito.kotlin.any
 import org.mockito.kotlin.reset
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.ApplicationEventPublisher
@@ -34,13 +34,16 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Primary
 import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.bean.override.mockito.MockitoBean
-import org.springframework.test.context.junit.jupiter.SpringExtension
+import org.springframework.web.multipart.MultipartFile
 import java.time.LocalDate
 
 @SpringBootTest
 @Transactional
 @Rollback
 class GetTotalUserChallengeUseCaseTest : IntegrationTestContainer() {
+
+    @MockitoBean
+    private lateinit var cloudStorageUtil: CloudStorageUtil
 
     @MockitoBean
     private lateinit var applicationEventPublisher: ApplicationEventPublisher
@@ -68,7 +71,7 @@ class GetTotalUserChallengeUseCaseTest : IntegrationTestContainer() {
         completedUserChallenge = makeUserChallengeAndHistory(challengeId, participantsStartDate)
         val certificationRequestDto = CertificationRequestDto(
             userChallengeId = completedUserChallenge!!.id!!,
-            imageUrl = imageUrl,
+            image = mock(MultipartFile::class.java)
         )
         val challenge = challengeService.findById(challengeId)
         val sendToCertificationServerRequestDto = SendToCertificationServerRequestDto(
@@ -88,6 +91,8 @@ class GetTotalUserChallengeUseCaseTest : IntegrationTestContainer() {
                 participantsStartDate.plusDays(i.toLong())
             )
         }
+        given(cloudStorageUtil.uploadImageToCloudStorage(any(), any()))
+            .willReturn(imageUrl)
     }
 
     @AfterEach

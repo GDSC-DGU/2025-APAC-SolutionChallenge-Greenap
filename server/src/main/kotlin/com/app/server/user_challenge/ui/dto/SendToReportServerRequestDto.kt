@@ -5,17 +5,17 @@ import com.fasterxml.jackson.annotation.JsonProperty
 data class SendToReportServerRequestDto (
 
     @JsonProperty("challenge_title")
-    val challengeTitle: String,
+    val challenge_title: String,
     @JsonProperty("progress")
     val progress: Int,
     @JsonProperty("total_day")
-    val totalDay: Int
+    val total_day: Int
 ){
     companion object {
         fun from(challengeTitle: String, progress: Int, totalDay: Int) = SendToReportServerRequestDto(
-            challengeTitle = challengeTitle,
-            progress = progress,
-            totalDay = totalDay
+            challengeTitle,
+            progress,
+            totalDay
         )
     }
 }

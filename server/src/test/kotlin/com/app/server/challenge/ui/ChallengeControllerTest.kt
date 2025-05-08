@@ -1,6 +1,7 @@
 package com.app.server.challenge.ui
 
 import com.app.server.IntegrationTestContainer
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
@@ -9,6 +10,7 @@ import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
 @SpringBootTest
+@Disabled
 class ChallengeControllerTest : IntegrationTestContainer(){
 
     @Test

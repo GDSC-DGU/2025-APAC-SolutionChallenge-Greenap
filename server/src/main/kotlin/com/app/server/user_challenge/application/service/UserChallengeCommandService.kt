@@ -4,7 +4,7 @@ import com.app.server.challenge.application.service.ChallengeService
 import com.app.server.challenge.ui.usecase.dto.request.ChallengeParticipantDto
 import com.app.server.challenge_certification.application.dto.CertificationDataDto
 import com.app.server.challenge_certification.application.service.constant.EConsecutiveState
-import com.app.server.challenge_certification.ui.dto.UserChallengeIceRequestDto
+import com.app.server.challenge_certification.ui.dto.request.UserChallengeIceRequestDto
 import com.app.server.common.exception.InternalServerErrorException
 import com.app.server.user_challenge.application.dto.CreateUserChallengeDto
 import com.app.server.user_challenge.application.dto.ReceiveReportResponseDto
@@ -123,9 +123,9 @@ class UserChallengeCommandService(
     private fun makeReport(userChallenge: UserChallenge) {
         val sendToReportServerRequestDto = SendToReportServerRequestDto.from(
             challengeTitle = userChallenge.challenge.title,
-            progress = userChallenge.totalParticipationDayCount.floorDiv(
-                userChallenge.participantDays.toLong()
-            ).toInt(),
+            progress = (userChallenge.totalParticipationDayCount * 100)
+                .floorDiv(userChallenge.participantDays)
+                .toInt(),
             totalDay = userChallenge.participantDays
         )
 

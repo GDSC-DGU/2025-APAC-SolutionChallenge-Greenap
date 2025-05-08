@@ -1,6 +1,7 @@
 package com.app.server.challenge.ui.dto.response
 
 import com.app.server.challenge.ui.usecase.dto.response.ChallengeDetailResponseDto
+import com.fasterxml.jackson.annotation.JsonProperty
 
 data class GetChallengeResponseDto (
     val challenge: ChallengeResponseDto
@@ -11,11 +12,12 @@ data class GetChallengeResponseDto (
                 challenge = ChallengeResponseDto(
                     id = challenge.id,
                     title = challenge.title,
-                    pre_description = challenge.preDescription,
+                    preDescription = challenge.preDescription,
                     description = challenge.description,
-                    image_url = challenge.mainImageUrl,
-                    certification_method_description = challenge.certificationMethodDescription,
-                    percent_of_completed_user = challenge.percentOfCompletedUser
+                    mainImageUrl = challenge.mainImageUrl,
+                    certificationExampleImageUrl = challenge.certificationExampleImageUrl,
+                    certificationMethodDescription = challenge.certificationMethodDescription,
+                    percentOfCompletedUser = challenge.percentOfCompletedUser
                 )
             )
         }
@@ -25,10 +27,17 @@ data class GetChallengeResponseDto (
 data class ChallengeResponseDto(
     val id: Long?,
     val title: String,
-    val pre_description: String,
+    @JsonProperty("pre_description")
+    val preDescription: String,
     val description: String,
-    val image_url: String?,
-    val certification_method_description: String,
-    val participation_dates: List<Int> = listOf(7, 10, 15, 30),
-    val percent_of_completed_user: Double
+    @JsonProperty("main_image_url")
+    val mainImageUrl: String?,
+    @JsonProperty("certification_example_image_url")
+    val certificationExampleImageUrl: String?,
+    @JsonProperty("certification_method_description")
+    val certificationMethodDescription: String,
+    @JsonProperty("participation_dates")
+    val participationDates: List<Int> = listOf(7, 10, 15, 30),
+    @JsonProperty("percent_of_completed_user")
+    val percentOfCompletedUser: Double
 )

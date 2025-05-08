@@ -14,6 +14,8 @@ interface UserRepository : JpaRepository<User, Long> {
             "AND u.deletedAt IS NULL")
     override fun findById(userId: Long): Optional<User>
 
+    @Query("SELECT u FROM User u WHERE u.email = :email " +
+            "AND u.deletedAt IS NULL")
     fun findByEmail(email: String): User?
 
     @Query("SELECT u FROM User u " +

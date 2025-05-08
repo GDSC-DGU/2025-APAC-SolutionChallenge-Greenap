@@ -2,9 +2,6 @@ package com.app.server
 
 import com.app.server.core.security.util.JwtUtil
 import org.jasypt.encryption.StringEncryptor
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -49,7 +46,7 @@ abstract class IntegrationTestContainer {
     protected val testEmail = "testEmail@email.com"
     protected val categoryId = 1L
     protected val imageUrl = "testImageUrl"
-    protected val challengeTitle = "유휴 전원 / 대기 전력 OFF"
+    protected val challengeTitle = "멀티탭, 안 쓰는 조명 끄기"
     protected val challengeDescription = "사용하지 않는 전자기기의 전원을 끄거나, 플러그를 뽑는 챌린지입니다. TV, 컴퓨터 등의 대기 전력을 차단함으로써 불필요한 전기 낭비를 줄이고 온실가스 배출을 저감할 수 있습니다."
     protected val accessTokenValidationTime = 360000L
     protected val token : String by lazy {

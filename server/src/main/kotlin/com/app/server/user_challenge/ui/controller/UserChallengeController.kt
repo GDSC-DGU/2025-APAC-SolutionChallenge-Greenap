@@ -1,6 +1,6 @@
 package com.app.server.user_challenge.ui.controller
 
-import com.app.server.challenge_certification.ui.dto.UserChallengeIceRequestDto
+import com.app.server.challenge_certification.ui.dto.request.UserChallengeIceRequestDto
 import com.app.server.common.annotation.UserId
 import com.app.server.common.enums.CommonResultCode
 import com.app.server.common.enums.ResultCode
@@ -37,7 +37,8 @@ class UserChallengeController(
     ): ApiResponse<ResultCode> {
         val challengeParticipantDto = requestBody.toChallengeParticipantDto(userId)
         participantChallengeUseCase.execute(challengeParticipantDto)
-        return ApiResponse.Companion.success(CommonResultCode.SUCCESS)
+        // TODO: userCHallengeId 리턴하기
+        return ApiResponse.success(CommonResultCode.SUCCESS)
     }
 
     @GetMapping("/challenges/user")
@@ -47,10 +48,10 @@ class UserChallengeController(
                 userId,
                 LocalDate.now()
             )
-        return ApiResponse.Companion.success(totalUserChallenge)
+        return ApiResponse.success(totalUserChallenge)
     }
 
-    @PostMapping("/ice")
+    @PostMapping("/challenges/user/{userChallengeId}/ice")
     fun iceDailyUserChallenge(
         @PathVariable userChallengeId: Long
     ): ApiResponse<ResultCode> {
@@ -62,7 +63,7 @@ class UserChallengeController(
             certificationDate = LocalDate.now()
         )
 
-        return ApiResponse.Companion.success(CommonResultCode.SUCCESS)
+        return ApiResponse.success(CommonResultCode.SUCCESS)
     }
 
 }
