@@ -23,7 +23,7 @@ extension VerificationStatusExtension on VerificationStatus {
       case VerificationStatus.success:
         return ColorSystem.mint;
       case VerificationStatus.failed:
-        return Colors.redAccent;
+        return ColorSystem.red;
       case VerificationStatus.ice:
         return Colors.blueAccent;
       case VerificationStatus.upcoming:
@@ -43,11 +43,17 @@ extension VerificationStatusExtension on VerificationStatus {
       case VerificationStatus.failed:
         return SvgPicture.asset(
           'assets/icons/failed.svg',
+          width: 39,
+          height: 39,
+          fit: BoxFit.contain,
+        );
+      case VerificationStatus.ice:
+        return SvgPicture.asset(
+          'assets/icons/iced.svg',
           width: 40,
           height: 40,
           fit: BoxFit.contain,
         );
-      case VerificationStatus.ice:
       case VerificationStatus.upcoming:
         return Stack(
           alignment: Alignment.center,

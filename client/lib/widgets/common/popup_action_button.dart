@@ -73,9 +73,9 @@ class PopupActionButton extends StatelessWidget {
       case ButtonStyleType.danger:
         return {
           'background': ColorSystem.white,
-          'text': Colors.red,
+          'text': ColorSystem.red,
           'border': MaterialStateProperty.all(
-            const BorderSide(color: Colors.red),
+            const BorderSide(color: ColorSystem.red),
           ),
         };
     }

@@ -4,6 +4,7 @@ abstract class ColorSystem {
   static const white = Color(0xFFFFFFFF);
   static const black = Color(0xFF151515);
   static const mint = Color(0xFF00D6A5);
+  static const red = Color(0xFFF62C2C);
   static const MaterialColor gray = MaterialColor(_grayValue, <int, Color>{
     900: Color(0xFF1D1D26),
     800: Color(0xFF35363F),
