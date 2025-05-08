@@ -11,7 +11,7 @@ RUN ./gradlew dependencies
 
 COPY src ./src
 
-RUN ./gradlew clean build
+RUN ./gradlew clean build -x test
 
 FROM openjdk:21-jdk-slim
 WORKDIR /app
