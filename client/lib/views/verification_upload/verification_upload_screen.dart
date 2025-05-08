@@ -64,14 +64,15 @@ class VerificationUploadScreen extends BaseScreen<VerificationUploadViewModel> {
 
     await Future.delayed(const Duration(seconds: 2));
 
-    if (Get.isDialogOpen ?? false) Get.back();
+    // 무조건 루트 다이얼로그 팝
+    Navigator.of(Get.context!, rootNavigator: true).pop();
 
     await Future.delayed(const Duration(milliseconds: 100));
 
     final isSuccess = DateTime.now().second % 2 == 0;
 
     if (isSuccess) {
-      showDialog(
+      await showDialog(
         context: Get.context!,
         builder:
             (_) => VerificationSuccessPopup(
@@ -86,7 +87,7 @@ class VerificationUploadScreen extends BaseScreen<VerificationUploadViewModel> {
             ),
       );
     } else {
-      showDialog(
+      await showDialog(
         context: Get.context!,
         builder:
             (_) => VerificationFailPopup(
@@ -95,10 +96,7 @@ class VerificationUploadScreen extends BaseScreen<VerificationUploadViewModel> {
                 Get.offAllNamed('/root', arguments: {'initialTab': 1});
               },
               onRetry: () {
-                final challengeId = viewModel.challengeId;
-                Navigator.pop(Get.context!);
-                // 현재 페이지를 새로 다시 push → challengeId는 유지
-                Get.offAllNamed('/verification-upload', arguments: challengeId);
+                Navigator.pop(Get.context!); // 실패 팝업 닫기
               },
             ),
       );

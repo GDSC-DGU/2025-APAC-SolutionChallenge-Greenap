@@ -7,6 +7,7 @@ import 'package:greenap/domain/models/my_challenge.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:greenap/views_model/verification/verification_view_model.dart';
 import 'package:greenap/widgets/common/common_button.dart';
+import 'use_ice_popup.dart';
 
 class ChallengeVerificationCard extends StatelessWidget {
   final MyChallengeModel challenge;
@@ -99,7 +100,22 @@ class ChallengeVerificationCard extends StatelessWidget {
                         challenge.iceCount > 0
                             ? CommonButton.outlined(
                               text: "얼리기",
-                              onPressed: () {},
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder:
+                                      (_) => UseIcePopup(
+                                        onClose: () {
+                                          Navigator.pop(context);
+                                        },
+                                        onUse: () {
+                                          // 얼리기 사용 로직
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                );
+                              },
                             )
                             : const SizedBox.shrink(),
                         const SizedBox(width: 4),
