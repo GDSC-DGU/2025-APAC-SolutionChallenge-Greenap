@@ -4,6 +4,7 @@ import 'package:greenap/domain/enums/challenge.dart';
 import 'package:greenap/config/color_system.dart';
 import 'package:greenap/config/font_system.dart';
 import 'package:greenap/domain/models/challenge_category.dart';
+import 'package:get/get.dart';
 
 class MyChallengeCard extends StatelessWidget {
   final MyChallengeModel myChallenge;
@@ -22,6 +23,10 @@ class MyChallengeCard extends StatelessWidget {
       case ChallengeStatus.completed:
         return Colors.grey;
     }
+  }
+
+  void _navigateToDetail() {
+    Get.toNamed('/my-challenge-detail', arguments: myChallenge);
   }
 
   String getStatusLabel(ChallengeStatus status) {
@@ -54,7 +59,7 @@ class MyChallengeCard extends StatelessWidget {
       allChallenges,
     );
 
-    return Container(
+    final cardContent = Container(
       decoration: BoxDecoration(
         color: ColorSystem.white,
         borderRadius: BorderRadius.circular(8),
@@ -134,19 +139,22 @@ class MyChallengeCard extends StatelessWidget {
                       )
                       : Align(
                         alignment: Alignment.topRight,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 4,
-                            horizontal: 12,
-                          ),
-                          decoration: BoxDecoration(
-                            color: ColorSystem.mint,
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Text(
-                            '리포트 보기',
-                            style: FontSystem.Button3.copyWith(
-                              color: ColorSystem.white,
+                        child: GestureDetector(
+                          onTap: _navigateToDetail,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 4,
+                              horizontal: 12,
+                            ),
+                            decoration: BoxDecoration(
+                              color: ColorSystem.mint,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              '리포트 보기',
+                              style: FontSystem.Button3.copyWith(
+                                color: ColorSystem.white,
+                              ),
                             ),
                           ),
                         ),
@@ -158,5 +166,11 @@ class MyChallengeCard extends StatelessWidget {
         ),
       ),
     );
+
+    if (myChallenge.status == ChallengeStatus.running) {
+      return GestureDetector(onTap: _navigateToDetail, child: cardContent);
+    } else {
+      return cardContent;
+    }
   }
 }

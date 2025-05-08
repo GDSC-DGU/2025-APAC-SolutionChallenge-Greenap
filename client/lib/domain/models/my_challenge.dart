@@ -11,7 +11,7 @@ class MyChallengeModel {
   final int iceCount;
   final ChallengeCertificated isCerficatedInToday;
   final ChallengeStatus status;
-  final List certificationDataList;
+  final List<Map<String, String>> certificationDataList;
 
   MyChallengeModel({
     required this.id,
@@ -37,9 +37,20 @@ class MyChallengeModel {
       elapsedDays: json['elapsed_days'],
       progress: json['progress'],
       iceCount: json['ice_count'],
-      isCerficatedInToday: json['is_cerficated_in_today'],
-      status: json['status'],
-      certificationDataList: json['certification_data_list'],
+      isCerficatedInToday: ChallengeCertificated.values.firstWhere(
+        (e) =>
+            e.name == json['is_cerficated_in_today'].toString().toLowerCase(),
+        orElse: () => ChallengeCertificated.FAILED,
+      ),
+      status: ChallengeStatus.values.firstWhere(
+        (e) => e.name == json['status'].toString().toLowerCase(),
+        orElse: () => ChallengeStatus.running,
+      ),
+      certificationDataList: List<Map<String, String>>.from(
+        (json['certification_data_list'] as List).map(
+          (item) => Map<String, String>.from(item),
+        ),
+      ),
     );
   }
 }

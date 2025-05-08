@@ -6,7 +6,8 @@ import 'package:greenap/views/mypage/mypage_screen.dart';
 import 'package:greenap/views/root/root_screen.dart';
 import 'package:greenap/views/verification/verification_screen.dart';
 import 'package:greenap/views/category_detail/category_detail_screen.dart';
-import 'package:greenap/domain/models/challenge_category.dart';
+import 'package:greenap/views/my_challenge_detail/my_challenge_detail_screen.dart';
+import 'package:greenap/bindings/my_challenge_detail_binding.dart';
 import 'package:greenap/bindings/root_binding.dart';
 import 'package:greenap/bindings/category_detail_binding.dart';
 import 'app_routes.dart';
@@ -24,6 +25,11 @@ abstract class AppPages {
       name: AppRoutes.CATEGORY,
       page: () => CategoryDetailScreen(),
       binding: CategoryDetailBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.MYCHALLENGE,
+      page: () => MyChallengeDetailScreen(),
+      binding: MyChallengeDetailBinding(),
     ),
     GetPage(name: AppRoutes.MYPAGE, page: () => MypageScreen()),
     GetPage(name: AppRoutes.FEED, page: () => FeedScreen()),

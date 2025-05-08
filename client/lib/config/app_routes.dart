@@ -6,4 +6,5 @@ abstract class AppRoutes {
   static const String CATEGORY = '/category';
   static const String MYPAGE = '/mypage';
   static const String VERIFICATION = '/verification';
+  static const String MYCHALLENGE = '/my-challenge-detail';
 }
