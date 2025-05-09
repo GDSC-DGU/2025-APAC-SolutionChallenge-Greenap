@@ -41,6 +41,8 @@ object Constants {
     val BYPASS_URLS: List<String> = listOf( //
         "/hello",  // 모니터링
         "/actuator/**",  // 피드백 데이터 조회
+        "/swagger-ui/**",
+        "/v3/api-docs/**",
     )
 
     const val CONTENT_TYPE: String = "Content-Type"

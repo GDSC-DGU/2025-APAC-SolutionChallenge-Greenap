@@ -52,3 +52,15 @@ jwt:
 logging:
   level:
     root: debug
+
+springdoc:
+  swagger-ui:
+    operations-sorter: method
+    path: /
+    groups-order: desc
+    tags-sorter: alpha
+    disable-swagger-default-url: true
+    display-request-duration: true
+  api-docs:
+    groups:
+      enabled: true
