@@ -28,16 +28,20 @@ repositories {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("org.springframework.boot:spring-boot-starter-data-redis")
-    implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
-    implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
-    implementation("org.springframework.boot:spring-boot-starter-security")
-    implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation("com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("io.github.oshai:kotlin-logging-jvm:5.1.1")
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+
+    // Redis
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
+
+    // OAuth2 Client & Security
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
+    implementation("org.springframework.boot:spring-boot-starter-security")
+
+    // Jasypt encryption
+    implementation("com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5")
 
     // jwt
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -45,13 +49,19 @@ dependencies {
     implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.0")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
+
     // json
     implementation("com.google.code.gson:gson:2.10.1")
-    //
 
+    // Lombok
     compileOnly("org.projectlombok:lombok")
+
+    // DB
     runtimeOnly("com.h2database:h2")
     runtimeOnly("com.mysql:mysql-connector-j")
+
+    // Test & Testcontainers
+    implementation("org.springframework.boot:spring-boot-starter-validation")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-testcontainers")
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.0.0")
@@ -60,12 +70,19 @@ dependencies {
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:mysql")
+
+    // Coroutines
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-slf4j")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
+
+    // GCP
     implementation("com.google.cloud:spring-cloud-gcp-storage:6.1.1")
     implementation("com.google.cloud.sql:mysql-socket-factory-connector-j-8:1.18.0")
+
+    // Swagger
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0")
 }
 
 kotlin {
