@@ -84,7 +84,7 @@ class UserChallengeCommandService(
 
     suspend fun processAfterCertificateSuccess(
         userChallengeId: Long, certificationDto: CertificationDataDto
-    ): UserChallenge {
+    ): SavedTodayUserChallengeCertificationEvent {
         val userChallenge = userChallengeService.findById(userChallengeId)
 
         // 날짜 인증 상태 Success로 변경
@@ -109,15 +109,14 @@ class UserChallengeCommandService(
             makeReport(userChallenge)
         }
 
-        eventPublisher.publishEvent(
-            SavedTodayUserChallengeCertificationEvent(
-                userChallengeId = userChallenge.id!!,
-                maxConsecutiveParticipationDayCount = userChallenge.maxConsecutiveParticipationDayCount,
-                totalParticipationDayCount = userChallenge.totalParticipationDayCount
-            )
+        val event = SavedTodayUserChallengeCertificationEvent(
+            userChallengeId = userChallenge.id!!,
+            maxConsecutiveParticipationDayCount = userChallenge.maxConsecutiveParticipationDayCount,
+            totalParticipationDayCount = userChallenge.totalParticipationDayCount
         )
+        eventPublisher.publishEvent(event)
 
-        return userChallenge
+        return event
     }
 
     private fun makeReport(userChallenge: UserChallenge) {

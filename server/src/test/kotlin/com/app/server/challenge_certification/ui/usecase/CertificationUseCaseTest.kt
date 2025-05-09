@@ -96,10 +96,10 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
     )
 
     var sendToCertificationServerRequestDto = SendToCertificationServerRequestDto(
-        imageUrl = imageUrl,
-        challengeId = challengeId,
-        challengeName = challengeTitle,
-        challengeDescription = challengeDescription
+        imageUrl,
+        challengeId,
+        challengeTitle,
+        challengeDescription
     )
 
     var savedUserChallenge: UserChallenge? = null
@@ -127,10 +127,10 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
         val challenge = challengeService.findById(challengeId)
 
         sendToCertificationServerRequestDto = SendToCertificationServerRequestDto(
-            imageUrl = imageUrl,
-            challengeId = challenge.id!!,
-            challengeName = challenge.title,
-            challengeDescription = challenge.description
+            imageUrl,
+            challenge.id!!,
+            challenge.title,
+            challenge.description
         )
 
         given(
@@ -138,7 +138,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
                 org.mockito.kotlin.any()
             )
         ).willReturn(
-            EUserCertificatedResultCode.SUCCESS_CERTIFICATED
+            mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
         )
         given(
             cloudStorageUtil.uploadImageToCloudStorage(
@@ -226,7 +226,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
     fun completeChallenge() = runTest {
         // given
         given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
-            EUserCertificatedResultCode.SUCCESS_CERTIFICATED
+            mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
         )
 
         // when
@@ -257,7 +257,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
     fun completeChallengeWithIncreasingParticipationDays() = runTest {
         // given
         given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
-            EUserCertificatedResultCode.SUCCESS_CERTIFICATED
+            mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
         )
 
         val pastUserChallengeTotalParticipationDayCount = savedUserChallenge!!.totalParticipationDayCount
@@ -292,7 +292,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
     fun completeChallengeFirstTryWithIncreasingConsecutiveParticipationDays() = runTest {
         // given
         given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
-            EUserCertificatedResultCode.SUCCESS_CERTIFICATED
+            mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
         )
         val pastUserChallengeNowConsecutiveParticipationDayCount =
             savedUserChallenge!!.nowConsecutiveParticipationDayCount
@@ -329,7 +329,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
     fun completeChallengeWithIncreasingConsecutiveParticipationDays() = runTest {
         // given
         given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
-            EUserCertificatedResultCode.SUCCESS_CERTIFICATED
+            mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
         )
 
         certificationUseCase.certificateChallengeWithDate(
@@ -384,7 +384,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
     fun completeChallengeWithResettingConsecutiveParticipationDays() = runTest {
         // given
         given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
-            EUserCertificatedResultCode.SUCCESS_CERTIFICATED
+            mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
         )
         certificationUseCase.certificateChallengeWithDate(
             certificationRequestDto = certificationRequestDto,
@@ -434,8 +434,9 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
     @DisplayName("챌린지 인증에 실패하면 인증 실패임을 알린다.")
     fun failCertificated() {
         //given
+        val errorMessageFromExternalAPI = "testMessage"
         given(certificationInfraService.certificate(any())).willReturn(
-            EUserCertificatedResultCode.CERTIFICATED_FAILED
+            mapOf(EUserCertificatedResultCode.CERTIFICATED_FAILED to errorMessageFromExternalAPI)
         )
         // when & then
         val exception = assertThrows<BadRequestException> {
@@ -444,7 +445,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
                 certificationDate = participantsStartDate
             )
         }
-        assertThat(exception.message).isEqualTo(UserChallengeException.FAILED_CERTIFICATION.message)
+        assertThat(exception.message).isEqualTo(errorMessageFromExternalAPI)
     }
 
     @Test
@@ -452,7 +453,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
     fun alreadyCertificatedToday() = runTest {
         // given
         given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
-            EUserCertificatedResultCode.SUCCESS_CERTIFICATED
+            mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
         )
         certificationUseCase.certificateChallengeWithDate(
             certificationRequestDto = certificationRequestDto,
@@ -499,7 +500,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
     fun saveChallengeImage() = runTest {
         // given
         given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
-            EUserCertificatedResultCode.SUCCESS_CERTIFICATED
+            mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
         )
         // when
         certificationUseCase.certificateChallengeWithDate(
@@ -529,7 +530,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
         // given
         given(certificationInfraService.certificate(org.mockito.kotlin.any()))
             .willReturn(
-                EUserCertificatedResultCode.SUCCESS_CERTIFICATED
+                mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
             )
 
         // when

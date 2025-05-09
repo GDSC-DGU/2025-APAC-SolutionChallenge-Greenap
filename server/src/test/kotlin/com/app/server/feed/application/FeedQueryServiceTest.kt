@@ -37,6 +37,7 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Primary
+import org.springframework.mock.web.MockMultipartFile
 import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.web.multipart.MultipartFile
@@ -80,19 +81,19 @@ class FeedQueryServiceTest : IntegrationTestContainer() {
 
     var certificationRequestDto = CertificationRequestDto(
         userChallengeId = userChallengeId,
-        image = mock(MultipartFile::class.java)
+        image = MockMultipartFile("image", "test.png", "image/png", "test".toByteArray())
     )
 
     var notFindCertificationRequestDto = CertificationRequestDto(
         userChallengeId = 1L,
-        image = mock(MultipartFile::class.java)
+        image = MockMultipartFile("image", "test.png", "image/png", "test".toByteArray())
     )
 
     var sendToCertificationServerRequestDto = SendToCertificationServerRequestDto(
-        imageUrl = imageUrl,
-        challengeId = challengeId,
-        challengeName = challengeTitle,
-        challengeDescription = challengeDescription
+        imageUrl,
+        challengeId,
+        challengeTitle,
+        challengeDescription
     )
 
     var savedUserChallenge: UserChallenge? = null
@@ -119,14 +120,14 @@ class FeedQueryServiceTest : IntegrationTestContainer() {
         val challenge = challengeService.findById(challengeId)
 
         sendToCertificationServerRequestDto = SendToCertificationServerRequestDto(
-            imageUrl = imageUrl,
-            challengeId = challenge.id!!,
-            challengeName = challenge.title,
-            challengeDescription = challenge.description
+            imageUrl,
+            challenge.id!!,
+            challenge.title,
+            challenge.description
         )
 
         given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
-            EUserCertificatedResultCode.SUCCESS_CERTIFICATED
+            mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
         )
     }
 

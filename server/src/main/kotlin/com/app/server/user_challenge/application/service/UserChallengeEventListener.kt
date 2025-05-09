@@ -3,6 +3,7 @@ package com.app.server.user_challenge.application.service
 import com.app.server.challenge_certification.application.dto.CertificationDataDto
 import com.app.server.challenge_certification.domain.event.CertificationSucceededEvent
 import com.app.server.user_challenge.domain.event.ReportCreatedEvent
+import com.app.server.user_challenge.domain.event.SavedTodayUserChallengeCertificationEvent
 import com.app.server.user_challenge.domain.model.UserChallengeHistory
 import com.app.server.user_challenge.ui.controller.ReportWaiter
 import com.app.server.user_challenge.ui.dto.CertificationReportDataDto
@@ -35,8 +36,8 @@ class UserChallengeEventListener(
         }
     }
 
-    suspend fun processWhenReceive(event: CertificationSucceededEvent) {
-        userChallengeCommandService.processAfterCertificateSuccess(
+    suspend fun processWhenReceive(event: CertificationSucceededEvent): SavedTodayUserChallengeCertificationEvent {
+        return userChallengeCommandService.processAfterCertificateSuccess(
             userChallengeId = event.userChallengeId,
             certificationDto = CertificationDataDto(
                 imageUrl = event.imageUrl,

@@ -1,6 +1,13 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url:
-    username:
-    password:
+    url: jdbc:mysql://google/${DB_NAME}?socketFactory=com.google.cloud.sql.mysql.SocketFactory&cloudSqlInstance=${INSTANCE_CONNECTION_NAME}
+    username: ${DB_USER}
+    password: ${DB_PASS}
+  jpa:
+    show-sql: true
+
+  data:
+    redis:
+      host: ENC(lHdZ2eBPAjSOpK5sxo5K7KhsoaoxqqLz)
+      port: 6379

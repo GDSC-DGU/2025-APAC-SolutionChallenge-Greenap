@@ -65,6 +65,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-slf4j")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
     implementation("com.google.cloud:spring-cloud-gcp-storage:6.1.1")
+    implementation("com.google.cloud.sql:mysql-socket-factory-connector-j-8:1.18.0")
 }
 
 kotlin {

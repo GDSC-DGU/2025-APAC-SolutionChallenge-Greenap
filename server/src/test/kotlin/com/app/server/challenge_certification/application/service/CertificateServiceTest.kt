@@ -76,9 +76,10 @@ class CertificateServiceTest : IntegrationTestContainer() {
         )
     )
     var sendToCertificationServerRequestDto = SendToCertificationServerRequestDto(
-        imageUrl = imageUrl,
-        challengeName = challengeTitle,
-        challengeDescription = challengeDescription
+        imageUrl,
+        challengeId,
+        challengeTitle,
+        challengeDescription
     )
     var savedUserChallenge: UserChallenge? = null
 
@@ -99,10 +100,10 @@ class CertificateServiceTest : IntegrationTestContainer() {
 
         val challenge = challengeService.findById(challengeId)
         sendToCertificationServerRequestDto = SendToCertificationServerRequestDto(
-            imageUrl = imageUrl,
-            challengeId = challenge.id!!,
-            challengeName = challenge.title,
-            challengeDescription = challenge.description
+            imageUrl,
+            challenge.id!!,
+            challenge.title,
+            challenge.description
         )
     }
 
@@ -176,10 +177,11 @@ class CertificateServiceTest : IntegrationTestContainer() {
     @DisplayName("챌린지 인증에 실패했다면, 인증에 실패하였음을 클라이언트에게 전달한다.")
     fun failChallengeCertificate() {
         // given
+        val errorMessage = "testMessage"
         given(cloudStorageUtil.uploadImageToCloudStorage(any(), any()))
             .willReturn(imageUrl)
         given(certificationInfraService.certificate(any())).willReturn(
-            EUserCertificatedResultCode.CERTIFICATED_FAILED
+            mapOf(EUserCertificatedResultCode.CERTIFICATED_FAILED to errorMessage)
         )
         // when
         val exception = assertThrows<BadRequestException> {
@@ -189,7 +191,7 @@ class CertificateServiceTest : IntegrationTestContainer() {
         }
         // then
         assertThat(exception).isInstanceOf(BadRequestException::class.java)
-        assertThat(exception.message).isEqualTo(UserChallengeException.FAILED_CERTIFICATION.message)
+        assertThat(exception.message).isEqualTo(errorMessage)
     }
 
     @Test
@@ -199,7 +201,7 @@ class CertificateServiceTest : IntegrationTestContainer() {
             .willReturn(imageUrl)
         given(certificationInfraService.certificate(any()))
             .willReturn(
-                EUserCertificatedResultCode.SUCCESS_CERTIFICATED
+                mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
             )
         // when
         certificationService.certificateChallengeWithDate(
