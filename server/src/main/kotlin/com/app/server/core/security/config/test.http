@@ -1,2 +1,0 @@
-GET http://localhost:8080/api/v1/challenges
-Authorization : Bearer eyJhbGciOiJIUzUxMiJ9.eyJ1aWQiOjMsImVtYWlsIjoib2hoczEwMTBAZ21haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NDY2MTMyMDYsImV4cCI6MTc0NjYxNjgwNn0.-wPd6ZdXDhRTNGx9UMu2SDyZfp6OTh759fdVK2x2vChn3NF7l1rWCmL9tVHGoQYP0cRCMeN2OvzCKSlnz-ZqEw
