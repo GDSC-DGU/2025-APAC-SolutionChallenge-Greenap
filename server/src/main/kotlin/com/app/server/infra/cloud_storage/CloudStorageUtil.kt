@@ -1,4 +1,4 @@
-package com.app.server.core.infra.cloud_storage
+package com.app.server.infra.cloud_storage
 
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.cloud.storage.BlobInfo

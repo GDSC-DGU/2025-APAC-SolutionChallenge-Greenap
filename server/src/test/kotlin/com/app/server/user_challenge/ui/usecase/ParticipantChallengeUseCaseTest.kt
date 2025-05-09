@@ -1,4 +1,4 @@
-package com.app.server.user_challenge.application.usecase
+package com.app.server.user_challenge.ui.usecase
 
 import com.app.server.IntegrationTestContainer
 import com.app.server.challenge.ui.usecase.dto.request.ChallengeParticipantDto

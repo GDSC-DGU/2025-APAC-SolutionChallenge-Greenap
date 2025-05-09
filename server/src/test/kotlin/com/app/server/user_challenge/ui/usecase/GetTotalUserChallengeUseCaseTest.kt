@@ -1,4 +1,4 @@
-package com.app.server.user_challenge.application.usecase
+package com.app.server.user_challenge.ui.usecase
 
 import com.app.server.IntegrationTestContainer
 import com.app.server.challenge.application.service.ChallengeService
@@ -6,9 +6,8 @@ import com.app.server.challenge_certification.application.service.CertificationS
 import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
 import com.app.server.challenge_certification.infra.CertificationInfraService
 import com.app.server.challenge_certification.ui.dto.request.CertificationRequestDto
-import com.app.server.challenge_certification.ui.dto.request.SendToCertificationServerRequestDto
 import com.app.server.challenge_certification.ui.usecase.CertificationUseCase
-import com.app.server.core.infra.cloud_storage.CloudStorageUtil
+import com.app.server.infra.cloud_storage.CloudStorageUtil
 import com.app.server.user_challenge.application.dto.CreateUserChallengeDto
 import com.app.server.user_challenge.application.service.UserChallengeService
 import com.app.server.user_challenge.domain.enums.EUserChallengeCertificationStatus
@@ -38,7 +37,6 @@ import org.springframework.mock.web.MockMultipartFile
 import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean
-import org.springframework.web.multipart.MultipartFile
 import java.time.LocalDate
 import kotlin.text.Charsets.UTF_8
 

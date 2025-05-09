@@ -40,7 +40,7 @@ certification-server:
 report-server:
   url: ENC(l5GHgDH/bebNDUs5fOUknnLYXsXd8CCVCo+f4t0vPOdU4ahV8+TKIwnYouB9Fxtzm1noFDj0IrLuN8Ib1oUfav4nDdcEM7HFtv1rIagiqXnNqzV8fKWafw==)
 
-get-motivate-message-server:
+encourage-message-server:
   url: ENC(zQqQI20tvLC+cE9MMFguOTrrHrxy87MMVALZ7jWPdJzlF7DoKzPUf89GOXfNCcdvmGCZIEzwbzCc/4lbAorBnah0bvbqvuGEhr8dsIs/W1s=)
 
 # Jasypt

@@ -1,4 +1,4 @@
-package com.app.server.user_challenge.ui
+package com.app.server.user_challenge.ui.controller
 
 import com.app.server.IntegrationTestContainer
 import com.app.server.core.security.info.CustomUserDetails

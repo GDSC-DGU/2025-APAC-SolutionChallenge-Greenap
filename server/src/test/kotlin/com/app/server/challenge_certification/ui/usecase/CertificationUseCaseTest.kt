@@ -9,7 +9,7 @@ import com.app.server.challenge_certification.infra.CertificationInfraService
 import com.app.server.challenge_certification.ui.dto.request.CertificationRequestDto
 import com.app.server.challenge_certification.ui.dto.request.SendToCertificationServerRequestDto
 import com.app.server.common.exception.BadRequestException
-import com.app.server.core.infra.cloud_storage.CloudStorageUtil
+import com.app.server.infra.cloud_storage.CloudStorageUtil
 import com.app.server.user.application.service.UserEventListener
 import com.app.server.user.application.service.UserService
 import com.app.server.user_challenge.application.dto.CreateUserChallengeDto

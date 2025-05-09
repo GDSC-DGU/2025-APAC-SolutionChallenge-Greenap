@@ -97,7 +97,7 @@ class UserChallengeQueryService(
     private fun mapToUserChallengeQuery(userChallenge: UserChallenge, todayDate: LocalDate): UserChallengeQuery {
         val histories = userChallenge.getUserChallengeHistoriesBeforeToday(todayDate)
         val elapsedDays = userChallenge.calculateElapsedDays(todayDate)
-        val progress = userChallenge.calculateProgress(todayDate)
+        val progress = userChallenge.calculateProgressFromElapsedDays(todayDate)
         val certificationToday = userChallenge.isCertificatedToday(todayDate)
         val certificationDataList = mapCertificationDataList(histories)
 

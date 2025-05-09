@@ -1,12 +1,14 @@
-package com.app.server.notification.service
+package com.app.server.infra
 
 import com.app.server.common.enums.CommonResultCode
 import com.app.server.common.exception.InternalServerErrorException
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpEntity
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.client.ClientHttpResponse
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
 import org.springframework.web.client.DefaultResponseErrorHandler
@@ -25,21 +27,14 @@ interface ExternalApiClient<Req, Res> {
  * 공통 템플릿 메서드를 제공하는 추상 클래스
  */
 abstract class AbstractRestApiClient<Req, Raw, Res>(
+    private val baseUrl: String,
     private val restTemplate: RestTemplate = RestTemplate().apply {
-        // HTTP 에러에도 예외 던지지 않도록 설정
-        errorHandler = object : DefaultResponseErrorHandler() {
-            override fun hasError(response: ClientHttpResponse): Boolean = false
-        }
+        this.messageConverters.add(0, MappingJackson2HttpMessageConverter().apply {
+            this.supportedMediaTypes = listOf(MediaType.APPLICATION_JSON, MediaType.TEXT_HTML, MediaType.TEXT_PLAIN)
+        })
     },
     private val objectMapper: ObjectMapper = ObjectMapper()
 ) : ExternalApiClient<Req, Res> {
-
-    /** application.yml 에 선언된 각 서비스의 base URL */
-    @Value("\${baseUrlPropertyKey}")
-    protected lateinit var baseUrl: String
-
-    /** 서브클래스가 지정할 application.yml 프로퍼티 키 (e.g. "report-server.url") */
-    protected abstract val baseUrlPropertyKey: String
 
     /** 요청 DTO → JSON 문자열 변환 및 HttpEntity 생성 */
     protected open fun buildEntity(request: Req): HttpEntity<String> {
@@ -54,7 +49,9 @@ abstract class AbstractRestApiClient<Req, Raw, Res>(
         try {
             restTemplate.postForEntity(baseUrl, entity, rawResponseType())
         } catch (ex: HttpStatusCodeException) {
-            throw InternalServerErrorException(CommonResultCode.EXTERNAL_SERVER_ERROR)
+            throw InternalServerErrorException(
+                CommonResultCode.EXTERNAL_SERVER_ERROR, ex.message!!
+            )
         }
 
     /** from ResponseEntity<Raw> → 최종 변환 Res 타입 */

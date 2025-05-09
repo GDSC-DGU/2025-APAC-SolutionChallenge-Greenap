@@ -182,8 +182,13 @@ class UserChallenge(
         return todayDate.toEpochDay() - userChallengeHistories.first().date.toEpochDay()
     }
 
-    fun calculateProgress(todayDate: LocalDate): Int {
-        return ((calculateElapsedDays(todayDate).toDouble() / totalParticipationDayCount) * 100).toInt()
+    fun calculateProgressFromElapsedDays(todayDate: LocalDate): Int {
+        return ((calculateElapsedDays(todayDate).toDouble() / participantDays) * 100).toInt()
+            .coerceIn(0, 100)
+    }
+
+    fun calculateProgressFromTotalParticipationDays(todayDate: LocalDate): Int {
+        return ((totalParticipationDayCount.toDouble() / participantDays) * 100).toInt()
             .coerceIn(0, 100)
     }
 

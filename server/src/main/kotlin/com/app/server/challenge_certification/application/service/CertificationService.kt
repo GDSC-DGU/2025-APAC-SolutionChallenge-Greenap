@@ -7,10 +7,9 @@ import com.app.server.challenge_certification.ui.dto.request.CertificationReques
 import com.app.server.challenge_certification.ui.dto.response.GetCertificatedImageUrlResponseDto
 import com.app.server.challenge_certification.ui.usecase.CertificationUseCase
 import com.app.server.common.exception.BadRequestException
-import com.app.server.core.infra.cloud_storage.CloudStorageUtil
+import com.app.server.infra.cloud_storage.CloudStorageUtil
 import com.app.server.user_challenge.application.service.UserChallengeService
 import com.app.server.user_challenge.domain.exception.UserChallengeException
-import com.app.server.user_challenge.domain.model.UserChallenge
 import jakarta.transaction.Transactional
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
