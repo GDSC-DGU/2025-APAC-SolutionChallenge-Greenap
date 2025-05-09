@@ -17,7 +17,7 @@ class ChallengeCategory(
     val description: String,
 
     @Column(name = "image_url")
-    val categoryImageUrl: String?,
+    val categoryImageUrl: String,
 
     @OneToMany(mappedBy = "challengeCategory", fetch = FetchType.LAZY)
     val challenges: List<Challenge> = listOf()

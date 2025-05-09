@@ -27,7 +27,7 @@ class ChallengeQueryService(
                 id = category.id,
                 title = category.title,
                 description = category.description,
-                imageUrl = category.categoryImageUrl!!,
+                imageUrl = category.categoryImageUrl,
                 challenges = category.challenges.map { challenge ->
                     ChallengesSimpleDto(
                         id = challenge.id,
