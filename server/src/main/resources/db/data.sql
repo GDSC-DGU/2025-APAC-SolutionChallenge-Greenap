@@ -1,4 +1,4 @@
-INSERT INTO challenge_categories
+INSERT IGNORE INTO challenge_categories
 (challenge_category_id, title, description, image_url, created_at, updated_at, deleted_at)
 VALUES (1,
         '자원 절약',
@@ -30,7 +30,7 @@ VALUES (1,
         NULL);
 
 
-INSERT INTO challenges
+INSERT IGNORE INTO challenges
 (challenge_id, challenge_category_id, title, pre_description, description, certification_method_description,
  main_image_url, certification_example_image_url, created_at, updated_at, deleted_at)
 VALUES (1,
@@ -236,7 +236,7 @@ VALUES (1,
         '2025-04-21 00:00:00', '2025-04-21 00:00:00', NULL);
 
 
-INSERT INTO users (user_id, nickname, email, profile_image_url, now_max_consecutive_participation_day_count,
+INSERT IGNORE INTO users (user_id, nickname, email, profile_image_url, now_max_consecutive_participation_day_count,
                    refresh_token, created_at, updated_at, deleted_at)
 VALUES (1,
         'testUser',
