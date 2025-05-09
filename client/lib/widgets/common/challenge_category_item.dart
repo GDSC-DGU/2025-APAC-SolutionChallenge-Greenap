@@ -10,18 +10,20 @@ class ChallengeCategoryItem extends StatelessWidget {
   final CategorySize size;
   final ChallengeCategoryModel category;
   final Gradient backgroundGradient;
+  final VoidCallback? onTap;
 
   ChallengeCategoryItem({
     super.key,
     required this.category,
     required this.size,
     required this.backgroundGradient,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Get.toNamed('/category', arguments: category),
+      onTap: onTap ?? () => Get.toNamed('/category', arguments: category),
       child: _buildLayoutBySize(),
     );
   }

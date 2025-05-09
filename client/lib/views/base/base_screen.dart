@@ -41,7 +41,7 @@ abstract class BaseScreen<T extends GetxController> extends GetView<T> {
   Widget? buildBottomNavigationBar(BuildContext context) => null;
 
   @protected
-  bool get applyTopSafeArea => true;
+  bool get applyTopSafeArea => false;
 
   @protected
   bool get applyBottomSafeArea => false;

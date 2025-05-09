@@ -8,4 +8,6 @@ abstract class AppRoutes {
   static const String VERIFICATION = '/verification';
   static const String MYCHALLENGE = '/my-challenge-detail';
   static const String VERIFICATIONUPLOAD = '/verification-upload';
+  static const String MYFEEDCATEGORY = '/my-feed-category';
+  static const String MYFEEDLIST = "/my-feed-list";
 }

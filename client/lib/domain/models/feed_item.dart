@@ -7,7 +7,7 @@ class FeedItemModel {
   final String imageUrl;
   final String content;
   final DateTime createdAt;
-  final User user;
+  final UserModel user;
 
   FeedItemModel({
     required this.id,
@@ -27,7 +27,7 @@ class FeedItemModel {
       imageUrl: json['image_url'],
       content: json['content'],
       createdAt: DateTime.parse(json['createdAt']),
-      user: User.fromJson(json['user']),
+      user: UserModel.fromJson(json['user']),
     );
   }
 }

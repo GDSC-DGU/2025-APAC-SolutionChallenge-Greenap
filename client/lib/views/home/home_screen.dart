@@ -12,7 +12,7 @@ class HomeScreen extends BaseScreen<HomeViewModel> {
   const HomeScreen({super.key});
 
   @override
-  bool get applyTopSafeArea => false;
+  bool get applyTopSafeArea => true;
 
   @override
   Widget buildBody(BuildContext context) {

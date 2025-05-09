@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:greenap/config/color_system.dart';
-import 'package:greenap/views_model/feed/feed_view_model.dart';
+import 'package:greenap/views/feed/widgets/feed_card.dart';
 import 'package:get/get.dart';
-import 'package:greenap/widgets/app_bar/default_app_bar.dart';
 import 'package:greenap/views/base/base_screen.dart';
-import './widgets/feed_card.dart';
+import 'package:greenap/widgets/app_bar/back_app_bar.dart';
+import 'package:greenap/views_model/my_feed_list/my_feed_list_view_model.dart';
 
-class FeedScreen extends BaseScreen<FeedViewModel> {
-  const FeedScreen({super.key});
+class MyFeedListScreen extends BaseScreen<MyFeedListViewModel> {
+  const MyFeedListScreen({super.key});
 
   @override
   PreferredSizeWidget buildAppBar(BuildContext context) {
-    return DefaultAppBar(title: '챌린지 피드');
+    return BackAppBar(title: "내 피드");
   }
 
   @override
