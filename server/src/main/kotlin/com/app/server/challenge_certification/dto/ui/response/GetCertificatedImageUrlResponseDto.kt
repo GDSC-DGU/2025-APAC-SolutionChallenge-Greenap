@@ -1,4 +1,4 @@
-package com.app.server.challenge_certification.ui.dto.response
+package com.app.server.challenge_certification.dto.ui.response
 
 import com.fasterxml.jackson.annotation.JsonProperty
 

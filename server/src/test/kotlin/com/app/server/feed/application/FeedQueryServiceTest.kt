@@ -2,11 +2,11 @@ package com.app.server.feed.application
 
 import com.app.server.IntegrationTestContainer
 import com.app.server.challenge.application.service.ChallengeService
+import com.app.server.challenge_certification.application.service.CertificationClient
 import com.app.server.challenge_certification.domain.event.CertificationSucceededEvent
+import com.app.server.challenge_certification.dto.ui.request.CertificationRequestDto
+import com.app.server.challenge_certification.dto.ui.request.SendToCertificationServerRequestDto
 import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
-import com.app.server.challenge_certification.infra.CertificationInfraService
-import com.app.server.challenge_certification.ui.dto.request.CertificationRequestDto
-import com.app.server.challenge_certification.ui.dto.request.SendToCertificationServerRequestDto
 import com.app.server.feed.application.service.FeedEventListener
 import com.app.server.feed.application.service.FeedProjectionService
 import com.app.server.feed.application.service.FeedService
@@ -77,16 +77,18 @@ class FeedQueryServiceTest : IntegrationTestContainer() {
     private lateinit var userChallengeEventListener: UserChallengeEventListener
 
     @MockitoBean
-    private lateinit var certificationInfraService: CertificationInfraService
+    private lateinit var certificationClient: CertificationClient
 
     var certificationRequestDto = CertificationRequestDto(
         userChallengeId = userChallengeId,
-        image = MockMultipartFile("image", "test.png", "image/png", "test".toByteArray())
+        image = MockMultipartFile("image", "test.png", "image/png",
+            "test".toByteArray())
     )
 
     var notFindCertificationRequestDto = CertificationRequestDto(
         userChallengeId = 1L,
-        image = MockMultipartFile("image", "test.png", "image/png", "test".toByteArray())
+        image = MockMultipartFile("image", "test.png", "image/png",
+            "test".toByteArray())
     )
 
     var sendToCertificationServerRequestDto = SendToCertificationServerRequestDto(
@@ -126,7 +128,7 @@ class FeedQueryServiceTest : IntegrationTestContainer() {
             challenge.description
         )
 
-        given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
+        given(certificationClient.send(sendToCertificationServerRequestDto)).willReturn(
             mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
         )
     }

@@ -1,4 +1,4 @@
-package com.app.server.challenge_certification.application.dto
+package com.app.server.challenge_certification.dto.application.business
 
 import java.time.LocalDate
 

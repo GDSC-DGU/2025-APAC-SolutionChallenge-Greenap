@@ -3,9 +3,9 @@ package com.app.server.user_challenge.application.service
 import com.app.server.IntegrationTestContainer
 import com.app.server.challenge.application.service.ChallengeService
 import com.app.server.challenge.ui.usecase.dto.request.ChallengeParticipantDto
+import com.app.server.challenge_certification.application.service.CertificationClient
 import com.app.server.challenge_certification.domain.event.CertificationSucceededEvent
 import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
-import com.app.server.challenge_certification.infra.CertificationInfraService
 import com.app.server.common.exception.BadRequestException
 import com.app.server.common.exception.InternalServerErrorException
 import com.app.server.rank.application.service.RankEventListener
@@ -14,7 +14,6 @@ import com.app.server.user_challenge.application.dto.ReceiveReportResponseDto
 import com.app.server.user_challenge.domain.enums.EUserChallengeCertificationStatus
 import com.app.server.user_challenge.domain.enums.EUserChallengeStatus
 import com.app.server.user_challenge.domain.event.ReportCreatedEvent
-import com.app.server.user_challenge.domain.event.SavedTodayUserChallengeCertificationEvent
 import com.app.server.user_challenge.domain.exception.UserChallengeException
 import com.app.server.user_challenge.domain.model.UserChallenge
 import com.app.server.user_challenge.domain.model.UserChallengeHistory
@@ -68,7 +67,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
     private lateinit var userChallengeService: UserChallengeService
 
     @MockitoBean
-    private lateinit var certificationInfraService: CertificationInfraService
+    private lateinit var certificationClient: CertificationClient
 
     @Autowired
     private lateinit var applicationEventPublisher: ApplicationEventPublisher
@@ -573,7 +572,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
 
 
     private suspend fun settingReceiveReport(status: EUserReportResultCode) {
-        given(certificationInfraService.certificate(any())).willReturn(
+        given(certificationClient.send(any())).willReturn(
             mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
         )
         given(

@@ -1,7 +1,7 @@
 package com.app.server.challenge_certification.ui.controller
 
-import com.app.server.challenge_certification.ui.dto.request.CertificationRequestDto
-import com.app.server.challenge_certification.ui.dto.response.GetCertificatedImageUrlResponseDto
+import com.app.server.challenge_certification.dto.ui.request.CertificationRequestDto
+import com.app.server.challenge_certification.dto.ui.response.GetCertificatedImageUrlResponseDto
 import com.app.server.challenge_certification.ui.usecase.CertificationUseCase
 import com.app.server.common.response.ApiResponse
 import io.swagger.v3.oas.annotations.Operation

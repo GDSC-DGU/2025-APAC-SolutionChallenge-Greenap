@@ -1,6 +1,6 @@
 package com.app.server.user_challenge.ui.controller
 
-import com.app.server.challenge_certification.ui.dto.request.UserChallengeIceRequestDto
+import com.app.server.challenge_certification.dto.ui.request.UserChallengeIceRequestDto
 import com.app.server.common.annotation.UserId
 import com.app.server.common.enums.CommonResultCode
 import com.app.server.common.enums.ResultCode

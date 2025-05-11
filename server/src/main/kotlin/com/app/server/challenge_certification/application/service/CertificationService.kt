@@ -1,10 +1,9 @@
 package com.app.server.challenge_certification.application.service
 
-import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
 import com.app.server.challenge_certification.domain.event.CertificationSucceededEvent
-import com.app.server.challenge_certification.infra.CertificationInfraService
-import com.app.server.challenge_certification.ui.dto.request.CertificationRequestDto
-import com.app.server.challenge_certification.ui.dto.response.GetCertificatedImageUrlResponseDto
+import com.app.server.challenge_certification.dto.ui.request.CertificationRequestDto
+import com.app.server.challenge_certification.dto.ui.response.GetCertificatedImageUrlResponseDto
+import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
 import com.app.server.challenge_certification.ui.usecase.CertificationUseCase
 import com.app.server.common.exception.BadRequestException
 import com.app.server.infra.cloud_storage.CloudStorageUtil
@@ -15,12 +14,12 @@ import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import java.time.LocalDate
-import java.util.Base64
+import java.util.*
 
 @Service
 @Transactional
 class CertificationService(
-    private val certificationInfraService: CertificationInfraService,
+    private val certificationClient: CertificationClient,
     private val userChallengeService: UserChallengeService,
     private val eventPublisher: ApplicationEventPublisher,
     private val cloudStorageUtil: CloudStorageUtil
@@ -33,8 +32,8 @@ class CertificationService(
 
         val userChallenge = userChallengeService.findById(certificationRequestDto.userChallengeId)
 
-        val certificateResultAndAnswer = certificationInfraService.certificate(
-            sendToCertificationServerRequestDto = certificationRequestDto.toSendToCertificationServerRequestDto(
+        val certificateResultAndAnswer = certificationClient.send(
+            certificationRequestDto.toSendToCertificationServerRequestDto(
                 userChallenge.challenge,
                 imageEncodingData = encodeImageToBase64(certificationRequestDto.image)
             )

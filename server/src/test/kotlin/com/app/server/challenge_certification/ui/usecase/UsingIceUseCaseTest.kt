@@ -2,13 +2,12 @@ package com.app.server.challenge_certification.ui.usecase
 
 import com.app.server.IntegrationTestContainer
 import com.app.server.challenge.application.service.ChallengeService
-import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
+import com.app.server.challenge_certification.application.service.CertificationClient
 import com.app.server.challenge_certification.domain.event.CertificationSucceededEvent
-import com.app.server.challenge_certification.infra.CertificationInfraService
-import com.app.server.challenge_certification.ui.dto.request.CertificationRequestDto
-import com.app.server.challenge_certification.ui.dto.request.SendToCertificationServerRequestDto
-import com.app.server.challenge_certification.ui.dto.request.UserChallengeIceRequestDto
-import com.app.server.user_challenge.ui.usecase.UsingIceUseCase
+import com.app.server.challenge_certification.dto.ui.request.CertificationRequestDto
+import com.app.server.challenge_certification.dto.ui.request.SendToCertificationServerRequestDto
+import com.app.server.challenge_certification.dto.ui.request.UserChallengeIceRequestDto
+import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
 import com.app.server.common.exception.BadRequestException
 import com.app.server.user_challenge.application.dto.CreateUserChallengeDto
 import com.app.server.user_challenge.application.service.UserChallengeEventListener
@@ -18,14 +17,11 @@ import com.app.server.user_challenge.domain.enums.EUserChallengeStatus
 import com.app.server.user_challenge.domain.exception.UserChallengeException
 import com.app.server.user_challenge.domain.model.UserChallenge
 import com.app.server.user_challenge.domain.model.UserChallengeHistory
+import com.app.server.user_challenge.ui.usecase.UsingIceUseCase
 import jakarta.transaction.Transactional
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.*
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.reset
@@ -65,7 +61,7 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
     private lateinit var userChallengeService: UserChallengeService
 
     @MockitoBean
-    private lateinit var certificationInfraService: CertificationInfraService
+    private lateinit var certificationClient: CertificationClient
 
 
     val requiredSuccessfulDaysForIce = (participationDays).floorDiv(2).plus(1)
@@ -98,7 +94,7 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
             challenge.title,
             challenge.description
         )
-        given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
+        given(certificationClient.send(sendToCertificationServerRequestDto)).willReturn(
             mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
         )
         certificationRequestDto = CertificationRequestDto(
@@ -181,7 +177,7 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
     @DisplayName("얼리기는 전체 참여 기간의 50% 이상 성공했을 때, 인증 대신 얼리기를 사용하여 인증을 건너뛸 수 있다.")
     fun skipChallengeWithLimit() = runTest {
         // given
-        given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
+        given(certificationClient.send(sendToCertificationServerRequestDto)).willReturn(
             mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
         )
         for (i in 0 until requiredSuccessfulDaysForIce)
@@ -206,7 +202,7 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
     @DisplayName("전체 참여 기간의 50% 이상을 성공하지 못했다면 얼리기를 사용할 수 없다.")
     fun skipChallengeWithLimitFailed() = runTest {
         // given
-        given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
+        given(certificationClient.send(sendToCertificationServerRequestDto)).willReturn(
             mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
         )
         for (i in 0 until notSufficientSuccessfulDaysForIce)
@@ -232,7 +228,7 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
     @DisplayName("얼리기를 사용하면 전체 참여일은 올라가지 않는다. (Legacy) ")
     fun skipChallengeWithoutIncreasingParticipationDays() = runTest {
         // given
-        given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
+        given(certificationClient.send(sendToCertificationServerRequestDto)).willReturn(
             mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
         )
         for (i in 0 until requiredSuccessfulDaysForIce)
@@ -258,7 +254,7 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
     @DisplayName("얼리기를 사용했을 때 연속 참여 조건을 만족한다면 연속 참여 일수가 증가한다.")
     fun skipChallengeWithIncreasingConsecutiveParticipationDays() = runTest {
         // given
-        given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
+        given(certificationClient.send(sendToCertificationServerRequestDto)).willReturn(
             mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
         )
         for (i in 0 until requiredSuccessfulDaysForIce)
@@ -288,7 +284,7 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
     @DisplayName("얼리기를 사용했을 때 연속 참여 조건을 만족하지 않는다면 연속 참여 일수는 증가하지 않는다.")
     fun skipChallengeWithoutIncreasingConsecutiveParticipationDays() = runTest {
         // given
-        given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
+        given(certificationClient.send(sendToCertificationServerRequestDto)).willReturn(
             mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
         )
         for (i in 0 until requiredSuccessfulDaysForIce)
@@ -322,7 +318,7 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
     @DisplayName("얼리기를 한번 사용하면 해당 챌린지에서는 다시 얼리기를 사용할 수 없다.")
     fun skipChallengeWithIceCount() = runTest {
         // given
-        given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
+        given(certificationClient.send(sendToCertificationServerRequestDto)).willReturn(
             mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
         )
 

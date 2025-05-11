@@ -2,11 +2,11 @@ package com.app.server.feed.application
 
 import com.app.server.IntegrationTestContainer
 import com.app.server.challenge.application.service.ChallengeService
+import com.app.server.challenge_certification.application.service.CertificationClient
 import com.app.server.challenge_certification.domain.event.CertificationSucceededEvent
+import com.app.server.challenge_certification.dto.ui.request.CertificationRequestDto
+import com.app.server.challenge_certification.dto.ui.request.SendToCertificationServerRequestDto
 import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
-import com.app.server.challenge_certification.infra.CertificationInfraService
-import com.app.server.challenge_certification.ui.dto.request.CertificationRequestDto
-import com.app.server.challenge_certification.ui.dto.request.SendToCertificationServerRequestDto
 import com.app.server.common.exception.BadRequestException
 import com.app.server.common.exception.NotFoundException
 import com.app.server.feed.application.service.FeedEventListener
@@ -87,7 +87,7 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
     private lateinit var feedEventListener: FeedEventListener
 
     @MockitoBean
-    private lateinit var certificationInfraService: CertificationInfraService
+    private lateinit var certificationClient: CertificationClient
 
     var certificationRequestDto = CertificationRequestDto(
         userChallengeId = userChallengeId,
@@ -129,7 +129,7 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
             challenge.description
         )
 
-        given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
+        given(certificationClient.send(sendToCertificationServerRequestDto)).willReturn(
             mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
         )
     }

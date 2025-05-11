@@ -1,6 +1,6 @@
 package com.app.server.user_challenge.application.service
 
-import com.app.server.challenge_certification.application.dto.CertificationDataDto
+import com.app.server.challenge_certification.dto.application.business.CertificationDataDto
 import com.app.server.challenge_certification.domain.event.CertificationSucceededEvent
 import com.app.server.user_challenge.domain.event.ReportCreatedEvent
 import com.app.server.user_challenge.domain.event.SavedTodayUserChallengeCertificationEvent

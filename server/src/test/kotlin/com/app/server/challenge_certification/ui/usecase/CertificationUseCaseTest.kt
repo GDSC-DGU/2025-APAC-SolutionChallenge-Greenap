@@ -2,12 +2,12 @@ package com.app.server.challenge_certification.ui.usecase
 
 import com.app.server.IntegrationTestContainer
 import com.app.server.challenge.application.service.ChallengeService
+import com.app.server.challenge_certification.application.service.CertificationClient
 import com.app.server.challenge_certification.application.service.CertificationService
 import com.app.server.challenge_certification.domain.event.CertificationSucceededEvent
+import com.app.server.challenge_certification.dto.ui.request.CertificationRequestDto
+import com.app.server.challenge_certification.dto.ui.request.SendToCertificationServerRequestDto
 import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
-import com.app.server.challenge_certification.infra.CertificationInfraService
-import com.app.server.challenge_certification.ui.dto.request.CertificationRequestDto
-import com.app.server.challenge_certification.ui.dto.request.SendToCertificationServerRequestDto
 import com.app.server.common.exception.BadRequestException
 import com.app.server.infra.cloud_storage.CloudStorageUtil
 import com.app.server.user.application.service.UserEventListener
@@ -31,11 +31,7 @@ import org.junit.jupiter.api.assertThrows
 import org.mockito.ArgumentMatchers
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.mock
-import org.mockito.kotlin.any
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.reset
-import org.mockito.kotlin.times
-import org.mockito.kotlin.verify
+import org.mockito.kotlin.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.TestConfiguration
@@ -80,7 +76,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
     private lateinit var userChallengeEventListener: UserChallengeEventListener
 
     @MockitoBean
-    private lateinit var certificationInfraService: CertificationInfraService
+    private lateinit var certificationClient: CertificationClient
 
     @MockitoSpyBean
     private lateinit var certificationService: CertificationService
@@ -134,7 +130,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
         )
 
         given(
-            certificationInfraService.certificate(
+            certificationClient.send(
                 org.mockito.kotlin.any()
             )
         ).willReturn(
@@ -225,7 +221,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
     @DisplayName("챌린지 인증에 성공하면 해당 날짜의 인증 상태를 변경할 수 있다.")
     fun completeChallenge() = runTest {
         // given
-        given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
+        given(certificationClient.send(sendToCertificationServerRequestDto)).willReturn(
             mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
         )
 
@@ -256,7 +252,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
     @DisplayName("챌린지 인증에 성공하면 전체 참여 일수가 증가한다.")
     fun completeChallengeWithIncreasingParticipationDays() = runTest {
         // given
-        given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
+        given(certificationClient.send(sendToCertificationServerRequestDto)).willReturn(
             mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
         )
 
@@ -291,7 +287,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
     @DisplayName("챌린지를 처음 인증하여 성공했다면, 연속 참여 일수가 증가한다.")
     fun completeChallengeFirstTryWithIncreasingConsecutiveParticipationDays() = runTest {
         // given
-        given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
+        given(certificationClient.send(sendToCertificationServerRequestDto)).willReturn(
             mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
         )
         val pastUserChallengeNowConsecutiveParticipationDayCount =
@@ -328,7 +324,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
     @DisplayName("챌린지 인증에 성공했을 때 연속 참여 조건을 만족한다면 연속 참여 일수가 증가한다.")
     fun completeChallengeWithIncreasingConsecutiveParticipationDays() = runTest {
         // given
-        given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
+        given(certificationClient.send(sendToCertificationServerRequestDto)).willReturn(
             mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
         )
 
@@ -383,7 +379,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
     @DisplayName("챌린지 인증에 성공했을 때 연속 참여 조건을 만족하지 않는다면 연속 참여 일수가 초기화된다.")
     fun completeChallengeWithResettingConsecutiveParticipationDays() = runTest {
         // given
-        given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
+        given(certificationClient.send(sendToCertificationServerRequestDto)).willReturn(
             mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
         )
         certificationUseCase.certificateChallengeWithDate(
@@ -435,7 +431,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
     fun failCertificated() {
         //given
         val errorMessageFromExternalAPI = "testMessage"
-        given(certificationInfraService.certificate(any())).willReturn(
+        given(certificationClient.send(any())).willReturn(
             mapOf(EUserCertificatedResultCode.CERTIFICATED_FAILED to errorMessageFromExternalAPI)
         )
         // when & then
@@ -452,7 +448,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
     @DisplayName("오늘 인증한 챌린지에 대해 인증을 시도하면 예외가 발생한다.")
     fun alreadyCertificatedToday() = runTest {
         // given
-        given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
+        given(certificationClient.send(sendToCertificationServerRequestDto)).willReturn(
             mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
         )
         certificationUseCase.certificateChallengeWithDate(
@@ -499,7 +495,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
     @DisplayName("챌린지 인증에 성공했다면, 인증 사진을 저장한다.")
     fun saveChallengeImage() = runTest {
         // given
-        given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
+        given(certificationClient.send(sendToCertificationServerRequestDto)).willReturn(
             mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
         )
         // when
@@ -528,7 +524,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
     @DisplayName("챌린지 인증에 성공하면 사용자의 현재 최대 연속 참여 일수를 갱신한다.")
     fun updateMaxConsecutiveParticipationDays() = runTest {
         // given
-        given(certificationInfraService.certificate(org.mockito.kotlin.any()))
+        given(certificationClient.send(org.mockito.kotlin.any()))
             .willReturn(
                 mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
             )
