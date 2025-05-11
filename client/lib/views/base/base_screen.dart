@@ -12,16 +12,14 @@ abstract class BaseScreen<T extends GetxController> extends GetView<T> {
       extendBody: extendBodyBehindAppBar,
       appBar: buildAppBar(context),
       body: Container(
+        height: double.infinity,
+        constraints: BoxConstraints.expand(),
         decoration: useGradientBackground ? gradientBackground : null,
         color: useGradientBackground ? null : ColorSystem.white,
         child: SafeArea(
           top: applyTopSafeArea,
           bottom: applyBottomSafeArea,
-          child: SafeArea(
-            top: applyTopSafeArea,
-            bottom: applyBottomSafeArea,
-            child: buildBody(context),
-          ),
+          child: buildBody(context),
         ),
       ),
       bottomNavigationBar: buildBottomNavigationBar(context),

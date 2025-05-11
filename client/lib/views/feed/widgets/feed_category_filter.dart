@@ -2,27 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:greenap/config/color_system.dart';
 import 'package:greenap/config/font_system.dart';
 import 'package:get/get.dart';
-import 'package:greenap/domain/enums/challenge.dart';
-import 'package:greenap/views_model/challenge/my_challenge_view_model.dart';
 
-class CategoryFilter extends GetView<MyChallengeViewModel> {
-  CategoryFilter({super.key}) {
-    Get.put(MyChallengeViewModel());
-  }
+class FeedCategoryFilter extends StatelessWidget {
+  final RxString selectedCategory;
+  final List<String> categories;
+
+  const FeedCategoryFilter({
+    super.key,
+    required this.selectedCategory,
+    required this.categories,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Obx(
       () => Row(
-        mainAxisAlignment: MainAxisAlignment.start,
         children:
-            ChallengeFilterStatus.values.map((status) {
-              final isSelected = controller.status.value == status;
+            categories.map((category) {
+              final isSelected = selectedCategory.value == category;
               return GestureDetector(
-                onTap: () => controller.setStatus(status),
+                onTap: () => selectedCategory.value = category,
                 child: Container(
                   padding: const EdgeInsets.all(8),
-                  margin: EdgeInsets.only(right: 8),
+                  margin: const EdgeInsets.only(right: 8),
                   decoration: BoxDecoration(
                     boxShadow: [
                       BoxShadow(
@@ -36,7 +38,7 @@ class CategoryFilter extends GetView<MyChallengeViewModel> {
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Text(
-                    _label(status),
+                    category,
                     style: FontSystem.Button3.copyWith(
                       color:
                           isSelected
@@ -49,16 +51,5 @@ class CategoryFilter extends GetView<MyChallengeViewModel> {
             }).toList(),
       ),
     );
-  }
-
-  String _label(ChallengeFilterStatus status) {
-    switch (status) {
-      case ChallengeFilterStatus.all:
-        return '전체';
-      case ChallengeFilterStatus.running:
-        return '진행중';
-      case ChallengeFilterStatus.completed:
-        return '진행완료';
-    }
   }
 }
