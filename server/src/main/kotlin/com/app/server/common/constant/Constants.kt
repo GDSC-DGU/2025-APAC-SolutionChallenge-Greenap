@@ -25,6 +25,7 @@ object Constants {
         "/api/auth/login/naver",
         "/api/auth/login/google",
         "/api/auth/login/apple",
+        "/api/v1/auth/oauth2/token",
         "/oauth2/authorization/google",
         "/login/oauth2/code/google",
         "/favicon.ico",
