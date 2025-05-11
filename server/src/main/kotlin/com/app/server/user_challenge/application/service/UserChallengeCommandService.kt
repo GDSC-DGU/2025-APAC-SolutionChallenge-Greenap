@@ -2,12 +2,13 @@ package com.app.server.user_challenge.application.service
 
 import com.app.server.challenge.application.service.ChallengeService
 import com.app.server.challenge.ui.usecase.dto.request.ChallengeParticipantDto
+import com.app.server.challenge_certification.enums.EConsecutiveState
 import com.app.server.challenge_certification.dto.application.business.CertificationDataDto
-import com.app.server.challenge_certification.application.service.constant.EConsecutiveState
 import com.app.server.challenge_certification.dto.ui.request.UserChallengeIceRequestDto
 import com.app.server.common.exception.InternalServerErrorException
 import com.app.server.user_challenge.application.dto.CreateUserChallengeDto
-import com.app.server.user_challenge.application.dto.ReceiveReportResponseDto
+import com.app.server.user_challenge.application.dto.response.GetReportResponseDto
+import com.app.server.user_challenge.application.dto.raw.request.SendToReportServerRequestDto
 import com.app.server.user_challenge.domain.enums.EUserChallengeCertificationStatus
 import com.app.server.user_challenge.domain.enums.EUserChallengeStatus
 import com.app.server.user_challenge.domain.event.ReportCreatedEvent
@@ -17,8 +18,8 @@ import com.app.server.user_challenge.domain.model.UserChallenge
 import com.app.server.user_challenge.domain.model.UserChallengeHistory
 import com.app.server.user_challenge.enums.EUserChallengeParticipantState
 import com.app.server.user_challenge.enums.EUserReportResultCode
-import com.app.server.user_challenge.infra.ReportInfraService
-import com.app.server.user_challenge.ui.dto.SendToReportServerRequestDto
+import com.app.server.infra.api.report.ReportAdaptor
+import com.app.server.user_challenge.port.outbound.ReportPort
 import com.app.server.user_challenge.ui.usecase.ParticipantChallengeUseCase
 import com.app.server.user_challenge.ui.usecase.UsingIceUseCase
 import org.springframework.context.ApplicationEventPublisher
@@ -32,8 +33,8 @@ class UserChallengeCommandService(
     private val userChallengeService: UserChallengeService,
     private val challengeService: ChallengeService,
     private val userChallengeHistoryCommandService: UserChallengeHistoryCommandService,
-    private val reportInfraService: ReportInfraService,
-    private val eventPublisher: ApplicationEventPublisher
+    private val eventPublisher: ApplicationEventPublisher,
+    private val reportPort: ReportPort
 ) : ParticipantChallengeUseCase, UsingIceUseCase {
 
     override fun execute(
@@ -128,8 +129,7 @@ class UserChallengeCommandService(
             totalDay = userChallenge.participantDays
         )
 
-        val report: ReceiveReportResponseDto =
-            reportInfraService.receiveReportMessage(sendToReportServerRequestDto)
+        val report: GetReportResponseDto = reportPort.getReportMessage(sendToReportServerRequestDto)
 
         saveReportMessageInUserChallenge(report, userChallenge)
 
@@ -142,7 +142,7 @@ class UserChallengeCommandService(
     }
 
     private fun saveReportMessageInUserChallenge(
-        report: ReceiveReportResponseDto,
+        report: GetReportResponseDto,
         userChallenge: UserChallenge
     ) {
         when (report.status) {

@@ -1,23 +1,24 @@
-package com.app.server.notification.service
+package com.app.server.infra.api.notification
 
 import com.app.server.common.exception.InternalServerErrorException
 import com.app.server.infra.AbstractRestApiClient
 import com.app.server.notification.dto.raw.request.SendToEncourageServerRequestDto
 import com.app.server.notification.dto.raw.response.ReceiveFromEncourageServerResponseDto
 import com.app.server.notification.exception.NotificationException
+import com.app.server.notification.port.outbound.NotificationPort
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Component
 
 @Component
-class NotificationClient(
+class NotificationAdaptor(
     @Value("\${encourage-message-server.url}")
     private val baseUrl: String,
 ) : AbstractRestApiClient<
         SendToEncourageServerRequestDto,
         ReceiveFromEncourageServerResponseDto,
         String>
-    (baseUrl) {
+    (baseUrl), NotificationPort {
 
     override fun rawResponseType() = ReceiveFromEncourageServerResponseDto::class.java
 
@@ -31,4 +32,7 @@ class NotificationClient(
 
     }
 
+    override fun getEncourageMessage(sendToEncourageServerRequestDto: SendToEncourageServerRequestDto): String {
+        return this.send(sendToEncourageServerRequestDto)
+    }
 }

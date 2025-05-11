@@ -3,14 +3,14 @@ package com.app.server.user_challenge.application.service
 import com.app.server.IntegrationTestContainer
 import com.app.server.challenge.application.service.ChallengeService
 import com.app.server.challenge.ui.usecase.dto.request.ChallengeParticipantDto
-import com.app.server.challenge_certification.application.service.CertificationClient
 import com.app.server.challenge_certification.domain.event.CertificationSucceededEvent
 import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
+import com.app.server.challenge_certification.port.outbound.CertificationPort
 import com.app.server.common.exception.BadRequestException
 import com.app.server.common.exception.InternalServerErrorException
 import com.app.server.rank.application.service.RankEventListener
 import com.app.server.user_challenge.application.dto.CreateUserChallengeDto
-import com.app.server.user_challenge.application.dto.ReceiveReportResponseDto
+import com.app.server.user_challenge.application.dto.response.GetReportResponseDto
 import com.app.server.user_challenge.domain.enums.EUserChallengeCertificationStatus
 import com.app.server.user_challenge.domain.enums.EUserChallengeStatus
 import com.app.server.user_challenge.domain.event.ReportCreatedEvent
@@ -18,7 +18,7 @@ import com.app.server.user_challenge.domain.exception.UserChallengeException
 import com.app.server.user_challenge.domain.model.UserChallenge
 import com.app.server.user_challenge.domain.model.UserChallengeHistory
 import com.app.server.user_challenge.enums.EUserReportResultCode
-import com.app.server.user_challenge.infra.ReportInfraService
+import com.app.server.user_challenge.port.outbound.ReportPort
 import com.app.server.user_challenge.ui.usecase.GetUserChallengeReportUseCase
 import com.app.server.user_challenge.ui.usecase.ParticipantChallengeUseCase
 import jakarta.transaction.Transactional
@@ -67,7 +67,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
     private lateinit var userChallengeService: UserChallengeService
 
     @MockitoBean
-    private lateinit var certificationClient: CertificationClient
+    private lateinit var certificationPort: CertificationPort
 
     @Autowired
     private lateinit var applicationEventPublisher: ApplicationEventPublisher
@@ -76,7 +76,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
     private lateinit var userChallengeEventListener: UserChallengeEventListener
 
     @MockitoBean
-    private lateinit var reportInfraService: ReportInfraService
+    private lateinit var reportPort: ReportPort
 
     var savedUserChallenge: UserChallenge? = null
     val expectedReportMessage = "탄소 절감 AI 생성 메시지"
@@ -572,13 +572,13 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
 
 
     private suspend fun settingReceiveReport(status: EUserReportResultCode) {
-        given(certificationClient.send(any())).willReturn(
+        given(certificationPort.verifyCertificate(any())).willReturn(
             mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
         )
         given(
-            reportInfraService.receiveReportMessage(any())
+            reportPort.getReportMessage(any())
         ).willReturn(
-            ReceiveReportResponseDto(
+            GetReportResponseDto(
                 status = status, message = expectedReportMessage
             )
         )

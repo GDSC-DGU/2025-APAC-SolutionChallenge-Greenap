@@ -3,14 +3,12 @@ package com.app.server.user_challenge.ui.usecase
 import com.app.server.IntegrationTestContainer
 import com.app.server.challenge.ui.usecase.dto.request.ChallengeParticipantDto
 import com.app.server.common.exception.BadRequestException
-import com.app.server.common.exception.BusinessException
 import com.app.server.common.exception.InternalServerErrorException
 import com.app.server.user_challenge.application.service.UserChallengeService
 import com.app.server.user_challenge.domain.enums.EUserChallengeCertificationStatus
 import com.app.server.user_challenge.domain.enums.EUserChallengeStatus
 import com.app.server.user_challenge.domain.exception.UserChallengeException
 import com.app.server.user_challenge.domain.model.UserChallenge
-import com.app.server.user_challenge.ui.usecase.ParticipantChallengeUseCase
 import jakarta.transaction.Transactional
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach

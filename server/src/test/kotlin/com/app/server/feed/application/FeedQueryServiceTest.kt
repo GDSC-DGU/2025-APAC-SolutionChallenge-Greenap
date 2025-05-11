@@ -2,11 +2,11 @@ package com.app.server.feed.application
 
 import com.app.server.IntegrationTestContainer
 import com.app.server.challenge.application.service.ChallengeService
-import com.app.server.challenge_certification.application.service.CertificationClient
 import com.app.server.challenge_certification.domain.event.CertificationSucceededEvent
 import com.app.server.challenge_certification.dto.ui.request.CertificationRequestDto
 import com.app.server.challenge_certification.dto.ui.request.SendToCertificationServerRequestDto
 import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
+import com.app.server.challenge_certification.port.outbound.CertificationPort
 import com.app.server.feed.application.service.FeedEventListener
 import com.app.server.feed.application.service.FeedProjectionService
 import com.app.server.feed.application.service.FeedService
@@ -77,7 +77,7 @@ class FeedQueryServiceTest : IntegrationTestContainer() {
     private lateinit var userChallengeEventListener: UserChallengeEventListener
 
     @MockitoBean
-    private lateinit var certificationClient: CertificationClient
+    private lateinit var certificationPort: CertificationPort
 
     var certificationRequestDto = CertificationRequestDto(
         userChallengeId = userChallengeId,
@@ -128,7 +128,7 @@ class FeedQueryServiceTest : IntegrationTestContainer() {
             challenge.description
         )
 
-        given(certificationClient.send(sendToCertificationServerRequestDto)).willReturn(
+        given(certificationPort.verifyCertificate(sendToCertificationServerRequestDto)).willReturn(
             mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
         )
     }

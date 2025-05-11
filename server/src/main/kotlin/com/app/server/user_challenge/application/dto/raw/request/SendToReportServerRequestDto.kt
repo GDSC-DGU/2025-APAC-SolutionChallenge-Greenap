@@ -1,4 +1,4 @@
-package com.app.server.user_challenge.ui.dto
+package com.app.server.user_challenge.application.dto.raw.request
 
 import com.fasterxml.jackson.annotation.JsonProperty
 

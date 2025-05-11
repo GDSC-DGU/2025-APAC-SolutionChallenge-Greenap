@@ -3,14 +3,15 @@ package com.app.server.notification.ui.usecase
 import com.app.server.IntegrationTestContainer
 import com.app.server.challenge.ui.usecase.dto.request.ChallengeParticipantDto
 import com.app.server.challenge_certification.domain.event.CertificationSucceededEvent
+import com.app.server.infra.api.report.ReportAdaptor
 import com.app.server.notification.dto.request.GetEncourageMessageRequestDto
-import com.app.server.notification.service.NotificationClient
-import com.app.server.user_challenge.application.dto.ReceiveReportResponseDto
+import com.app.server.notification.port.outbound.NotificationPort
+import com.app.server.user_challenge.application.dto.response.GetReportResponseDto
 import com.app.server.user_challenge.application.service.UserChallengeEventListener
 import com.app.server.user_challenge.application.service.UserChallengeService
 import com.app.server.user_challenge.domain.enums.EUserChallengeStatus
 import com.app.server.user_challenge.enums.EUserReportResultCode
-import com.app.server.user_challenge.infra.ReportInfraService
+import com.app.server.user_challenge.port.outbound.ReportPort
 import com.app.server.user_challenge.ui.usecase.ParticipantChallengeUseCase
 import jakarta.transaction.Transactional
 import kotlinx.coroutines.test.runTest
@@ -37,7 +38,7 @@ import kotlin.test.Test
 class GetEncourageMessageUseCaseTest : IntegrationTestContainer() {
 
     @MockitoBean
-    private lateinit var reportInfraService: ReportInfraService
+    private lateinit var reportPort: ReportPort
 
     @Autowired
     private lateinit var userChallengeService: UserChallengeService
@@ -52,7 +53,7 @@ class GetEncourageMessageUseCaseTest : IntegrationTestContainer() {
     private lateinit var userChallengeEventListener: UserChallengeEventListener
 
     @MockitoBean
-    private lateinit var notificationClient: NotificationClient
+    private lateinit var notificationPort: NotificationPort
 
     var firstChallengeParticipantDto: ChallengeParticipantDto = ChallengeParticipantDto(
         userId = userId,
@@ -81,7 +82,7 @@ class GetEncourageMessageUseCaseTest : IntegrationTestContainer() {
 
     @BeforeEach
     fun setUp() {
-        given(notificationClient.send(any()))
+        given(notificationPort.getEncourageMessage(any()))
             .willReturn("${userName}님, ${challengeTitle} 챌린지에 참여하고 계신가요? 파이팅!!!")
     }
 
@@ -176,12 +177,12 @@ class GetEncourageMessageUseCaseTest : IntegrationTestContainer() {
         // given
         val userChallenge = participantChallengeUseCase.execute(firstChallengeParticipantDto)
         given(
-            reportInfraService.receiveReportMessage(
+            reportPort.getReportMessage(
                 any()
             )
         )
             .willReturn(
-                ReceiveReportResponseDto(
+                GetReportResponseDto(
                     status = EUserReportResultCode.RECEIVE_REPORT_SUCCESS,
                     message = "인증 성공",
                 )

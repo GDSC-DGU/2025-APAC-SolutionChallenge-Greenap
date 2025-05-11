@@ -2,10 +2,10 @@ package com.app.server.user_challenge.ui.usecase
 
 import com.app.server.IntegrationTestContainer
 import com.app.server.challenge.application.service.ChallengeService
-import com.app.server.challenge_certification.application.service.CertificationClient
 import com.app.server.challenge_certification.application.service.CertificationService
 import com.app.server.challenge_certification.dto.ui.request.CertificationRequestDto
 import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
+import com.app.server.challenge_certification.port.outbound.CertificationPort
 import com.app.server.challenge_certification.ui.usecase.CertificationUseCase
 import com.app.server.infra.cloud_storage.CloudStorageUtil
 import com.app.server.user_challenge.application.dto.CreateUserChallengeDto
@@ -14,7 +14,7 @@ import com.app.server.user_challenge.domain.enums.EUserChallengeCertificationSta
 import com.app.server.user_challenge.domain.enums.EUserChallengeStatus
 import com.app.server.user_challenge.domain.model.UserChallenge
 import com.app.server.user_challenge.domain.model.UserChallengeHistory
-import com.app.server.user_challenge.ui.dto.GetTotalUserChallengeResponseDto
+import com.app.server.user_challenge.ui.dto.response.GetTotalUserChallengeResponseDto
 import jakarta.transaction.Transactional
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
@@ -60,7 +60,7 @@ class GetTotalUserChallengeUseCaseTest : IntegrationTestContainer() {
     private lateinit var userChallengeService: UserChallengeService
 
     @MockitoBean
-    private lateinit var certificationClient: CertificationClient
+    private lateinit var certificationPort: CertificationPort
 
     @Autowired
     private lateinit var getTotalUserChallengeUseCase: GetTotalUserChallengeUseCase
@@ -83,7 +83,7 @@ class GetTotalUserChallengeUseCaseTest : IntegrationTestContainer() {
                 "test".toByteArray(UTF_8)
             )
         )
-        given(certificationClient.send(any())).willReturn(
+        given(certificationPort.verifyCertificate(any())).willReturn(
             mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
         )
         given(cloudStorageUtil.uploadImageToCloudStorage(any(), any()))

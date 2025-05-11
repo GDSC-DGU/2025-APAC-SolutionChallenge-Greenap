@@ -1,5 +1,6 @@
 package com.app.server.challenge_certification.application.service
 
+import com.app.server.challenge_certification.port.outbound.CertificationPort
 import com.app.server.challenge_certification.domain.event.CertificationSucceededEvent
 import com.app.server.challenge_certification.dto.ui.request.CertificationRequestDto
 import com.app.server.challenge_certification.dto.ui.response.GetCertificatedImageUrlResponseDto
@@ -19,7 +20,7 @@ import java.util.*
 @Service
 @Transactional
 class CertificationService(
-    private val certificationClient: CertificationClient,
+    private val certificationPort: CertificationPort,
     private val userChallengeService: UserChallengeService,
     private val eventPublisher: ApplicationEventPublisher,
     private val cloudStorageUtil: CloudStorageUtil
@@ -32,7 +33,7 @@ class CertificationService(
 
         val userChallenge = userChallengeService.findById(certificationRequestDto.userChallengeId)
 
-        val certificateResultAndAnswer = certificationClient.send(
+        val certificateResultAndAnswer = certificationPort.verifyCertificate(
             certificationRequestDto.toSendToCertificationServerRequestDto(
                 userChallenge.challenge,
                 imageEncodingData = encodeImageToBase64(certificationRequestDto.image)

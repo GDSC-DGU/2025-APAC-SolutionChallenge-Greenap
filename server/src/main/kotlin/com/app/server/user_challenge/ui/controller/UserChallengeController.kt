@@ -5,8 +5,8 @@ import com.app.server.common.annotation.UserId
 import com.app.server.common.enums.CommonResultCode
 import com.app.server.common.enums.ResultCode
 import com.app.server.common.response.ApiResponse
-import com.app.server.user_challenge.ui.dto.ChallengeParticipantRequestDto
-import com.app.server.user_challenge.ui.dto.GetTotalUserChallengeResponseDto
+import com.app.server.user_challenge.ui.dto.request.ChallengeParticipantRequestDto
+import com.app.server.user_challenge.ui.dto.response.GetTotalUserChallengeResponseDto
 import com.app.server.user_challenge.ui.usecase.GetTotalUserChallengeUseCase
 import com.app.server.user_challenge.ui.usecase.ParticipantChallengeUseCase
 import com.app.server.user_challenge.ui.usecase.UsingIceUseCase

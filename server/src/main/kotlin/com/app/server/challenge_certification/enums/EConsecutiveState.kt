@@ -1,4 +1,4 @@
-package com.app.server.challenge_certification.application.service.constant
+package com.app.server.challenge_certification.enums
 
 enum class EConsecutiveState {
     FIRST_DAY,

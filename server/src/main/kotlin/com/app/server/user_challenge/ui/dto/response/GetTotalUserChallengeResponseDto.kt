@@ -1,4 +1,4 @@
-package com.app.server.user_challenge.ui.dto
+package com.app.server.user_challenge.ui.dto.response
 
 import com.app.server.user_challenge.domain.enums.EUserChallengeCertificationStatus
 import com.fasterxml.jackson.annotation.JsonProperty

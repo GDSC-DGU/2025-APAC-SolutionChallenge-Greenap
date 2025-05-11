@@ -5,7 +5,11 @@ import com.app.server.user_challenge.domain.enums.EUserChallengeCertificationSta
 import com.app.server.user_challenge.domain.enums.EUserChallengeStatus
 import com.app.server.user_challenge.domain.model.UserChallenge
 import com.app.server.user_challenge.domain.model.UserChallengeHistory
-import com.app.server.user_challenge.ui.dto.*
+import com.app.server.user_challenge.ui.dto.response.CertificationData
+import com.app.server.user_challenge.ui.dto.response.CertificationReportDataDto
+import com.app.server.user_challenge.ui.dto.response.GetTotalUserChallengeResponseDto
+import com.app.server.user_challenge.ui.dto.response.ReportDto
+import com.app.server.user_challenge.ui.dto.response.UserChallengeQuery
 import com.app.server.user_challenge.ui.usecase.GetTotalUserChallengeUseCase
 import com.app.server.user_challenge.ui.usecase.GetUserChallengeReportUseCase
 import org.springframework.stereotype.Service

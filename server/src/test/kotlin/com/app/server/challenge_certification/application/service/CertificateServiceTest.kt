@@ -6,6 +6,7 @@ import com.app.server.challenge_certification.domain.event.CertificationSucceede
 import com.app.server.challenge_certification.dto.ui.request.CertificationRequestDto
 import com.app.server.challenge_certification.dto.ui.request.SendToCertificationServerRequestDto
 import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
+import com.app.server.challenge_certification.port.outbound.CertificationPort
 import com.app.server.common.exception.BadRequestException
 import com.app.server.infra.cloud_storage.CloudStorageUtil
 import com.app.server.user_challenge.application.dto.CreateUserChallengeDto
@@ -52,7 +53,7 @@ class CertificateServiceTest : IntegrationTestContainer() {
     private lateinit var certificationService: CertificationService
 
     @MockitoBean
-    private lateinit var certificationClient: CertificationClient
+    private lateinit var certificationClientPort: CertificationPort
 
     @Autowired
     private lateinit var userChallengeService: UserChallengeService
@@ -178,7 +179,7 @@ class CertificateServiceTest : IntegrationTestContainer() {
         val errorMessage = "testMessage"
         given(cloudStorageUtil.uploadImageToCloudStorage(any(), any()))
             .willReturn(imageUrl)
-        given(certificationClient.send(any())).willReturn(
+        given(certificationClientPort.verifyCertificate(any())).willReturn(
             mapOf(EUserCertificatedResultCode.CERTIFICATED_FAILED to errorMessage)
         )
         // when
@@ -197,7 +198,7 @@ class CertificateServiceTest : IntegrationTestContainer() {
     fun publishChallengeImage() {
         given(cloudStorageUtil.uploadImageToCloudStorage(any(), any()))
             .willReturn(imageUrl)
-        given(certificationClient.send(any()))
+        given(certificationClientPort.verifyCertificate(any()))
             .willReturn(
                 mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
             )

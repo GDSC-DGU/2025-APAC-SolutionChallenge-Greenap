@@ -1,9 +1,11 @@
-package com.app.server.notification.service
+package com.app.server.notification.application.service
 
 import com.app.server.challenge.application.service.ChallengeService
+import com.app.server.notification.application.dto.command.GetEncourageMessageCommand
+import com.app.server.notification.application.dto.result.EncourageMessageInfoDto
 import com.app.server.notification.dto.raw.request.SendToEncourageServerRequestDto
-import com.app.server.notification.dto.request.GetEncourageMessageRequestDto
 import com.app.server.notification.dto.response.GetEncourageMessageResponseDto
+import com.app.server.notification.port.outbound.NotificationPort
 import com.app.server.notification.ui.usecase.GetEncourageMessageUseCase
 import com.app.server.user.application.service.UserService
 import com.app.server.user_challenge.application.service.UserChallengeService
@@ -13,15 +15,17 @@ import org.springframework.stereotype.Service
 import java.time.LocalDate
 
 @Service
-class NotificationService(
+class NotificationServiceImpl(
     private val userService: UserService,
     private val challengeService: ChallengeService,
     private val userChallengeService: UserChallengeService,
-    private val notificationClient: NotificationClient
-) : GetEncourageMessageUseCase {
+    private val notificationPort: NotificationPort
+) : NotificationService {
 
-    override fun execute(dto: GetEncourageMessageRequestDto): GetEncourageMessageResponseDto {
-        val userId = dto.userId
+    override fun getEncourageMessageForMain(command: GetEncourageMessageCommand): EncourageMessageInfoDto {
+        val userId = command.userId
+        val todayDateIs = command.todayDate
+
         val userName = userService.findById(userId).nickname
 
         val maxChallengeScope = challengeService.findAll().size
@@ -29,7 +33,7 @@ class NotificationService(
         val challengeId: Long = selectChallengeIdForTargetOfEncourage(
             maxChallengeScope = maxChallengeScope,
             userId = userId,
-            todayDate = dto.todayDate
+            todayDate = todayDateIs
         )
 
         val selectChallengeTitle = challengeService.findById(challengeId).title
@@ -38,7 +42,7 @@ class NotificationService(
             userId = userId,
             challengeId = challengeId
         )
-        val progress: Int = getProgressOf(userChallenge, dto.todayDate)
+        val progress: Int = getProgressOf(userChallenge, todayDateIs)
 
         val rawRequestDto = SendToEncourageServerRequestDto(
             userName,
@@ -46,9 +50,9 @@ class NotificationService(
             progress
         )
 
-        val response: String = notificationClient.send(rawRequestDto)
+        val response: String = notificationPort.getEncourageMessage(rawRequestDto)
 
-        return GetEncourageMessageResponseDto(
+        return EncourageMessageInfoDto(
             challengeTitle = selectChallengeTitle,
             progress = progress,
             userChallengeId = userChallenge?.id,

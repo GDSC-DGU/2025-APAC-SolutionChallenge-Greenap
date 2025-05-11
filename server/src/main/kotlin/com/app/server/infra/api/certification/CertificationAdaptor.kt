@@ -1,5 +1,6 @@
-package com.app.server.challenge_certification.application.service
+package com.app.server.infra.api.certification
 
+import com.app.server.challenge_certification.port.outbound.CertificationPort
 import com.app.server.challenge_certification.dto.application.raw.ReceiveFromCertificationServerResponseDto
 import com.app.server.challenge_certification.dto.ui.request.SendToCertificationServerRequestDto
 import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
@@ -12,13 +13,13 @@ import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Component
 
 @Component
-class CertificationClient(
+class CertificationAdaptor(
     @Value("\${certification-server.url}")
     private val certificationServerUrl: String,
 ) : AbstractRestApiClient<
         SendToCertificationServerRequestDto,
         ReceiveFromCertificationServerResponseDto,
-        Map<EUserCertificatedResultCode, String>>(certificationServerUrl) {
+        Map<EUserCertificatedResultCode, String>>(certificationServerUrl), CertificationPort {
 
     override fun rawResponseType() = ReceiveFromCertificationServerResponseDto::class.java
 
@@ -28,7 +29,6 @@ class CertificationClient(
         val responseBody = response.body ?: throw InternalServerErrorException(
             UserChallengeException.ERROR_IN_CERTIFICATED_SERVER
         )
-
 
         if (responseBody.success.toString().lowercase() == "true"
             || responseBody.result_text.contains("success")
@@ -48,5 +48,10 @@ class CertificationClient(
                         to HttpStatus.INTERNAL_SERVER_ERROR.name
             )
         }
+    }
+
+    override fun verifyCertificate(sendToCertificationServerRequestDto: SendToCertificationServerRequestDto)
+    : Map<EUserCertificatedResultCode, String> {
+        return this.send(sendToCertificationServerRequestDto)
     }
 }

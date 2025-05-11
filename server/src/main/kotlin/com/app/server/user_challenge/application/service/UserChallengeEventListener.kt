@@ -6,8 +6,8 @@ import com.app.server.user_challenge.domain.event.ReportCreatedEvent
 import com.app.server.user_challenge.domain.event.SavedTodayUserChallengeCertificationEvent
 import com.app.server.user_challenge.domain.model.UserChallengeHistory
 import com.app.server.user_challenge.ui.controller.ReportWaiter
-import com.app.server.user_challenge.ui.dto.CertificationReportDataDto
-import com.app.server.user_challenge.ui.dto.ReportDto
+import com.app.server.user_challenge.ui.dto.response.CertificationReportDataDto
+import com.app.server.user_challenge.ui.dto.response.ReportDto
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
