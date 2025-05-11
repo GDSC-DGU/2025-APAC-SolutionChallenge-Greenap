@@ -44,6 +44,25 @@ class CustomOAuth2SuccessHandler(
         val accessToken = client.accessToken.tokenValue
 
         // 사용자 정보 가져오기
+        val userInfoResponseDto = getUserInfoFromIdToken(oauth2User)
+
+        setResponse(response, userInfoResponseDto)
+    }
+
+    private fun setResponse(
+        response: HttpServletResponse,
+        userInfoResponseDto: UserInfoResponseDto
+    ) {
+        response.contentType = "application/json"
+        response.characterEncoding = "UTF-8"
+        response.status = HttpServletResponse.SC_OK
+
+        val responseBody = ApiResponse.success(userInfoResponseDto)
+
+        response.writer.write(ObjectMapper().writeValueAsString(responseBody))
+    }
+
+    fun getUserInfoFromIdToken(oauth2User: OAuth2User): UserInfoResponseDto {
         val email: String = oauth2User.getAttribute<String>("email") ?: "unknown"
         val nickname = oauth2User.getAttribute<String>("name") ?: "unknown"
         val profileImage = oauth2User.getAttribute<String>("picture") ?: "default.png"
@@ -62,14 +81,7 @@ class CustomOAuth2SuccessHandler(
         } else {
             handleExistingUserLogin(existUser)
         }
-
-        response.contentType = "application/json"
-        response.characterEncoding = "UTF-8"
-        response.status = HttpServletResponse.SC_OK
-
-        val responseBody = ApiResponse.success(userInfoResponseDto)
-
-        response.writer.write(ObjectMapper().writeValueAsString(responseBody))
+        return userInfoResponseDto
     }
 
     private fun handleExistingUserLogin(user: User): UserInfoResponseDto {
