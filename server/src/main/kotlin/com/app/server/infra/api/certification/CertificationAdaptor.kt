@@ -1,8 +1,8 @@
 package com.app.server.infra.api.certification
 
 import com.app.server.challenge_certification.port.outbound.CertificationPort
-import com.app.server.challenge_certification.dto.application.raw.ReceiveFromCertificationServerResponseDto
-import com.app.server.challenge_certification.dto.ui.request.SendToCertificationServerRequestDto
+import com.app.server.infra.api.certification.dto.ReceiveFromCertificationServerResponseDto
+import com.app.server.challenge_certification.ui.dto.request.SendToCertificationServerRequestDto
 import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
 import com.app.server.common.exception.InternalServerErrorException
 import com.app.server.infra.AbstractRestApiClient

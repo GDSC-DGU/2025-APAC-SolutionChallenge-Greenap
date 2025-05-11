@@ -6,6 +6,7 @@ import com.app.server.challenge.domain.model.Challenge
 import com.app.server.user.application.repository.UserRepository
 import com.app.server.user.domain.model.User
 import com.app.server.user_challenge.application.dto.CreateUserChallengeDto
+import com.app.server.user_challenge.application.service.query.UserChallengeQueryService
 import com.app.server.user_challenge.domain.enums.EUserChallengeStatus
 import com.app.server.user_challenge.domain.model.UserChallenge
 import jakarta.transaction.Transactional

@@ -3,10 +3,8 @@ package com.app.server.notification.application.service
 import com.app.server.challenge.application.service.ChallengeService
 import com.app.server.notification.application.dto.command.GetEncourageMessageCommand
 import com.app.server.notification.application.dto.result.EncourageMessageInfoDto
-import com.app.server.notification.dto.raw.request.SendToEncourageServerRequestDto
-import com.app.server.notification.dto.response.GetEncourageMessageResponseDto
+import com.app.server.infra.api.notification.dto.request.SendToEncourageServerRequestDto
 import com.app.server.notification.port.outbound.NotificationPort
-import com.app.server.notification.ui.usecase.GetEncourageMessageUseCase
 import com.app.server.user.application.service.UserService
 import com.app.server.user_challenge.application.service.UserChallengeService
 import com.app.server.user_challenge.domain.enums.EUserChallengeStatus
@@ -56,7 +54,8 @@ class NotificationServiceImpl(
             challengeTitle = selectChallengeTitle,
             progress = progress,
             userChallengeId = userChallenge?.id,
-            message = response
+            message = response,
+            userChallengeStatus = userChallenge?.status ?: EUserChallengeStatus.NOT_PARTICIPATED
         )
     }
 

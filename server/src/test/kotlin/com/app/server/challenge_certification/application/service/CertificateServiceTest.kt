@@ -2,9 +2,10 @@ package com.app.server.challenge_certification.application.service
 
 import com.app.server.IntegrationTestContainer
 import com.app.server.challenge.application.service.ChallengeService
+import com.app.server.challenge_certification.application.dto.command.CertificationCommand
 import com.app.server.challenge_certification.domain.event.CertificationSucceededEvent
-import com.app.server.challenge_certification.dto.ui.request.CertificationRequestDto
-import com.app.server.challenge_certification.dto.ui.request.SendToCertificationServerRequestDto
+import com.app.server.challenge_certification.ui.dto.request.CertificationRequestDto
+import com.app.server.challenge_certification.ui.dto.request.SendToCertificationServerRequestDto
 import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
 import com.app.server.challenge_certification.port.outbound.CertificationPort
 import com.app.server.common.exception.BadRequestException
@@ -50,10 +51,10 @@ import kotlin.test.Test
 class CertificateServiceTest : IntegrationTestContainer() {
 
     @MockitoSpyBean
-    private lateinit var certificationService: CertificationService
+    private lateinit var certificationService: CertificationServiceImpl
 
     @MockitoBean
-    private lateinit var certificationClientPort: CertificationPort
+    private lateinit var certificationPort: CertificationPort
 
     @Autowired
     private lateinit var userChallengeService: UserChallengeService
@@ -179,13 +180,17 @@ class CertificateServiceTest : IntegrationTestContainer() {
         val errorMessage = "testMessage"
         given(cloudStorageUtil.uploadImageToCloudStorage(any(), any()))
             .willReturn(imageUrl)
-        given(certificationClientPort.verifyCertificate(any())).willReturn(
+        given(certificationPort.verifyCertificate(any())).willReturn(
             mapOf(EUserCertificatedResultCode.CERTIFICATED_FAILED to errorMessage)
         )
         // when
         val exception = assertThrows<BadRequestException> {
-            certificationService.certificateChallengeWithDate(
-                certificationRequestDto, participantsStartDate
+            certificationService.certificateImage(
+                CertificationCommand(
+                    certificationRequestDto.userChallengeId,
+                    certificationRequestDto.image,
+                    participantsStartDate
+                )
             )
         }
         // then
@@ -198,13 +203,17 @@ class CertificateServiceTest : IntegrationTestContainer() {
     fun publishChallengeImage() {
         given(cloudStorageUtil.uploadImageToCloudStorage(any(), any()))
             .willReturn(imageUrl)
-        given(certificationClientPort.verifyCertificate(any()))
+        given(certificationPort.verifyCertificate(any()))
             .willReturn(
                 mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
             )
         // when
-        certificationService.certificateChallengeWithDate(
-            certificationRequestDto, participantsStartDate
+        certificationService.certificateImage(
+            CertificationCommand(
+                certificationRequestDto.userChallengeId,
+                certificationRequestDto.image,
+                participantsStartDate
+            )
         )
 
         // then

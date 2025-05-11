@@ -1,7 +1,8 @@
 package com.app.server.user_challenge.application.service
 
-import com.app.server.challenge_certification.dto.application.business.CertificationDataDto
+import com.app.server.challenge_certification.application.dto.CertificationDataDto
 import com.app.server.challenge_certification.domain.event.CertificationSucceededEvent
+import com.app.server.user_challenge.application.service.command.UserChallengeCommandServiceImpl
 import com.app.server.user_challenge.domain.event.ReportCreatedEvent
 import com.app.server.user_challenge.domain.event.SavedTodayUserChallengeCertificationEvent
 import com.app.server.user_challenge.domain.model.UserChallengeHistory
@@ -17,7 +18,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class UserChallengeEventListener(
-    private val userChallengeCommandService: UserChallengeCommandService,
+    private val userChallengeCommandService: UserChallengeCommandServiceImpl,
     private val userChallengeService: UserChallengeService,
     private val reportWaiter: ReportWaiter,
 ) {

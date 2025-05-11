@@ -2,8 +2,8 @@ package com.app.server.notification.ui.usecase
 
 import com.app.server.notification.application.dto.command.GetEncourageMessageCommand
 import com.app.server.notification.application.service.NotificationServiceImpl
-import com.app.server.notification.dto.request.GetEncourageMessageRequestDto
-import com.app.server.notification.dto.response.GetEncourageMessageResponseDto
+import com.app.server.notification.ui.dto.request.GetEncourageMessageRequestDto
+import com.app.server.notification.ui.dto.response.GetEncourageMessageResponseDto
 import org.springframework.stereotype.Component
 
 interface GetEncourageMessageUseCase {

@@ -1,6 +1,6 @@
 package com.app.server.notification.port.outbound
 
-import com.app.server.notification.dto.raw.request.SendToEncourageServerRequestDto
+import com.app.server.infra.api.notification.dto.request.SendToEncourageServerRequestDto
 
 interface NotificationPort {
 

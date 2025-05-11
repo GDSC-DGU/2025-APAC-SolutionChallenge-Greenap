@@ -1,8 +1,8 @@
 package com.app.server.infra.api.report
 
 import com.app.server.infra.AbstractRestApiClient
-import com.app.server.user_challenge.application.dto.raw.request.SendToReportServerRequestDto
-import com.app.server.user_challenge.application.dto.raw.response.ReceiveFromReportServerResponseDto
+import com.app.server.infra.api.report.dto.request.SendToReportServerRequestDto
+import com.app.server.infra.api.report.dto.response.ReceiveFromReportServerResponseDto
 import com.app.server.user_challenge.application.dto.response.GetReportResponseDto
 import com.app.server.user_challenge.enums.EUserReportResultCode
 import com.app.server.user_challenge.port.outbound.ReportPort

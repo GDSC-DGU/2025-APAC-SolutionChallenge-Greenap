@@ -2,8 +2,8 @@ package com.app.server.user_challenge.ui.usecase
 
 import com.app.server.IntegrationTestContainer
 import com.app.server.challenge.application.service.ChallengeService
-import com.app.server.challenge_certification.application.service.CertificationService
-import com.app.server.challenge_certification.dto.ui.request.CertificationRequestDto
+import com.app.server.challenge_certification.application.service.CertificationServiceImpl
+import com.app.server.challenge_certification.ui.dto.request.CertificationRequestDto
 import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
 import com.app.server.challenge_certification.port.outbound.CertificationPort
 import com.app.server.challenge_certification.ui.usecase.CertificationUseCase
@@ -48,7 +48,7 @@ class GetTotalUserChallengeUseCaseTest : IntegrationTestContainer() {
     private lateinit var cloudStorageUtil: CloudStorageUtil
 
     @MockitoSpyBean
-    private lateinit var certificationService: CertificationService
+    private lateinit var certificationService: CertificationServiceImpl
 
     @MockitoBean
     private lateinit var applicationEventPublisher: ApplicationEventPublisher
@@ -99,7 +99,7 @@ class GetTotalUserChallengeUseCaseTest : IntegrationTestContainer() {
         )
 
         for (i in 0 until completedUserChallenge!!.participantDays) {
-            certificationUseCase.certificateChallengeWithDate(
+            certificationUseCase.execute(
                 certificationRequestDto,
                 participantsStartDate.plusDays(i.toLong())
             )

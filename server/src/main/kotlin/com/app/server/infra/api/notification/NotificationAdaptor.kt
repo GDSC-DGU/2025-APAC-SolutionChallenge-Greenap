@@ -2,8 +2,8 @@ package com.app.server.infra.api.notification
 
 import com.app.server.common.exception.InternalServerErrorException
 import com.app.server.infra.AbstractRestApiClient
-import com.app.server.notification.dto.raw.request.SendToEncourageServerRequestDto
-import com.app.server.notification.dto.raw.response.ReceiveFromEncourageServerResponseDto
+import com.app.server.infra.api.notification.dto.request.SendToEncourageServerRequestDto
+import com.app.server.infra.api.notification.dto.response.ReceiveFromEncourageServerResponseDto
 import com.app.server.notification.exception.NotificationException
 import com.app.server.notification.port.outbound.NotificationPort
 import org.springframework.beans.factory.annotation.Value

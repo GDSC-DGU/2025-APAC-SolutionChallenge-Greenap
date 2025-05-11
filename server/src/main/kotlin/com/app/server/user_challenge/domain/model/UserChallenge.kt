@@ -84,6 +84,7 @@ class UserChallenge(
             EUserChallengeStatus.PENDING -> throw BadRequestException(UserChallengeException.CHALLENGE_WAITED_AND_STATUS_IS_PENDING)
             EUserChallengeStatus.WAITING -> EUserChallengeParticipantState.EXISTING_CHALLENGE_CONTINUE
             EUserChallengeStatus.DEAD -> throw InternalServerErrorException(UserChallengeException.REPORT_NOT_FOUND_AND_STATUS_IS_DEAD)
+            EUserChallengeStatus.NOT_PARTICIPATED -> EUserChallengeParticipantState.NEW_CHALLENGE_START
         }
     }
 

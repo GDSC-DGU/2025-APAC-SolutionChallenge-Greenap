@@ -2,10 +2,10 @@ package com.app.server.challenge_certification.ui.usecase
 
 import com.app.server.IntegrationTestContainer
 import com.app.server.challenge.application.service.ChallengeService
-import com.app.server.challenge_certification.application.service.CertificationService
+import com.app.server.challenge_certification.application.service.CertificationServiceImpl
 import com.app.server.challenge_certification.domain.event.CertificationSucceededEvent
-import com.app.server.challenge_certification.dto.ui.request.CertificationRequestDto
-import com.app.server.challenge_certification.dto.ui.request.SendToCertificationServerRequestDto
+import com.app.server.challenge_certification.ui.dto.request.CertificationRequestDto
+import com.app.server.challenge_certification.ui.dto.request.SendToCertificationServerRequestDto
 import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
 import com.app.server.challenge_certification.port.outbound.CertificationPort
 import com.app.server.common.exception.BadRequestException
@@ -79,7 +79,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
     private lateinit var certificationPort: CertificationPort
 
     @MockitoSpyBean
-    private lateinit var certificationService: CertificationService
+    private lateinit var certificationService: CertificationServiceImpl
 
 
     var certificationRequestDto = CertificationRequestDto(
@@ -226,7 +226,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
         )
 
         // when
-        certificationUseCase.certificateChallengeWithDate(
+        certificationUseCase.execute(
             certificationRequestDto = certificationRequestDto,
             certificationDate = participantsStartDate
         )
@@ -259,7 +259,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
         val pastUserChallengeTotalParticipationDayCount = savedUserChallenge!!.totalParticipationDayCount
 
         // when
-        certificationUseCase.certificateChallengeWithDate(
+        certificationUseCase.execute(
             certificationRequestDto = certificationRequestDto,
             certificationDate = participantsStartDate
         )
@@ -293,7 +293,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
         val pastUserChallengeNowConsecutiveParticipationDayCount =
             savedUserChallenge!!.nowConsecutiveParticipationDayCount
         // when
-        certificationUseCase.certificateChallengeWithDate(
+        certificationUseCase.execute(
             certificationRequestDto = certificationRequestDto,
             certificationDate = participantsStartDate
         )
@@ -328,7 +328,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
             mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
         )
 
-        certificationUseCase.certificateChallengeWithDate(
+        certificationUseCase.execute(
             certificationRequestDto = certificationRequestDto,
             certificationDate = participantsStartDate
         )
@@ -349,7 +349,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
             savedUserChallenge!!.nowConsecutiveParticipationDayCount
 
         // when
-        certificationUseCase.certificateChallengeWithDate(
+        certificationUseCase.execute(
             certificationRequestDto = certificationRequestDto,
             certificationDate = participantsStartDate.plusDays(1)
         )
@@ -382,7 +382,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
         given(certificationPort.verifyCertificate(sendToCertificationServerRequestDto)).willReturn(
             mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
         )
-        certificationUseCase.certificateChallengeWithDate(
+        certificationUseCase.execute(
             certificationRequestDto = certificationRequestDto,
             certificationDate = participantsStartDate
         )
@@ -402,7 +402,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
         val pastUserChallengeMaxConsecutiveParticipationDayCount =
             savedUserChallenge!!.maxConsecutiveParticipationDayCount
         // when
-        certificationUseCase.certificateChallengeWithDate(
+        certificationUseCase.execute(
             certificationRequestDto = certificationRequestDto,
             certificationDate = participantsStartDate.plusDays(2)
         )
@@ -436,7 +436,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
         )
         // when & then
         val exception = assertThrows<BadRequestException> {
-            certificationUseCase.certificateChallengeWithDate(
+            certificationUseCase.execute(
                 certificationRequestDto = certificationRequestDto,
                 certificationDate = participantsStartDate
             )
@@ -451,7 +451,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
         given(certificationPort.verifyCertificate(sendToCertificationServerRequestDto)).willReturn(
             mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
         )
-        certificationUseCase.certificateChallengeWithDate(
+        certificationUseCase.execute(
             certificationRequestDto = certificationRequestDto,
             certificationDate = participantsStartDate
         )
@@ -470,7 +470,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
 
         // when & then
         val exception = assertThrows<BadRequestException> {
-            certificationUseCase.certificateChallengeWithDate(
+            certificationUseCase.execute(
                 certificationRequestDto = certificationRequestDto,
                 certificationDate = participantsStartDate
             )
@@ -499,7 +499,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
             mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
         )
         // when
-        certificationUseCase.certificateChallengeWithDate(
+        certificationUseCase.execute(
             certificationRequestDto = certificationRequestDto,
             certificationDate = participantsStartDate
         )
@@ -530,15 +530,15 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
             )
 
         // when
-        certificationUseCase.certificateChallengeWithDate(
+        certificationUseCase.execute(
             certificationRequestDto = certificationRequestDto,
             certificationDate = participantsStartDate
         )
-        certificationUseCase.certificateChallengeWithDate(
+        certificationUseCase.execute(
             certificationRequestDto = certificationRequestDto,
             certificationDate = participantsStartDate.plusDays(1)
         )
-        certificationUseCase.certificateChallengeWithDate(
+        certificationUseCase.execute(
             certificationRequestDto = secondCertificationRequestDto,
             certificationDate = participantsStartDate
         )

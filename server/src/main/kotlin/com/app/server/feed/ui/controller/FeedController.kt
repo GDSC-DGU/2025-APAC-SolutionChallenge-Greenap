@@ -4,10 +4,9 @@ import com.app.server.common.annotation.UserId
 import com.app.server.common.enums.CommonResultCode
 import com.app.server.common.enums.ResultCode
 import com.app.server.common.response.ApiResponse
-import com.app.server.feed.ui.dto.CreateFeedRequestDto
+import com.app.server.feed.ui.dto.request.CreateFeedRequestDto
 import com.app.server.feed.ui.dto.FeedListResponseDto
-import com.app.server.feed.ui.dto.ReadFeedProjectionCommand
-import com.app.server.feed.ui.dto.ReadFeedRequestDto
+import com.app.server.feed.ui.dto.request.ReadFeedRequestDto
 import com.app.server.feed.ui.usecase.CreateFeedUseCase
 import com.app.server.feed.ui.usecase.DeleteFeedUseCase
 import com.app.server.feed.ui.usecase.ReadFeedUseCase
@@ -52,14 +51,7 @@ class FeedController(
     ) : ApiResponse<FeedListResponseDto> {
         return ApiResponse.success(
             readFeedUseCase.execute(
-                ReadFeedProjectionCommand.toCommand(
-                    userId = userId,
-                    categoryId = readFeedRequestDto.categoryId,
-                    scope = readFeedRequestDto.scope,
-                    userChallengeId = readFeedRequestDto.userChallengeId,
-                    page = readFeedRequestDto.page,
-                    size = readFeedRequestDto.size
-                )
+                readFeedRequestDto.of(userId)
             )
         )
     }

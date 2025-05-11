@@ -5,6 +5,7 @@ import com.app.server.challenge.ui.usecase.dto.request.ChallengeParticipantDto
 import com.app.server.common.exception.BadRequestException
 import com.app.server.common.exception.InternalServerErrorException
 import com.app.server.user_challenge.application.service.UserChallengeService
+import com.app.server.user_challenge.application.service.command.UserChallengeCommandService
 import com.app.server.user_challenge.domain.enums.EUserChallengeCertificationStatus
 import com.app.server.user_challenge.domain.enums.EUserChallengeStatus
 import com.app.server.user_challenge.domain.exception.UserChallengeException
@@ -23,9 +24,9 @@ import kotlin.test.Test
 @SpringBootTest
 @Transactional
 @Rollback
-class ParticipantChallengeUseCaseTest : IntegrationTestContainer() {
+class userChallengeCommandServiceTest : IntegrationTestContainer() {
     @Autowired
-    private lateinit var participantChallengeUseCase: ParticipantChallengeUseCase
+    private lateinit var userChallengeCommandService: UserChallengeCommandService
 
     @Autowired
     private lateinit var usrChallengeService: UserChallengeService
@@ -54,29 +55,29 @@ class ParticipantChallengeUseCaseTest : IntegrationTestContainer() {
     fun participateChallenge() {
 
         // when
-        val userChallenge : UserChallenge = participantChallengeUseCase.execute(challengeParticipantDto)
+        val userChallenge = userChallengeCommandService.execute(challengeParticipantDto)
 
         // then
         assertThat(userChallenge.userId).isEqualTo(userId)
-        assertThat(userChallenge.challenge.id).isEqualTo(challengeId)
+        assertThat(userChallenge.challengeTitle).isEqualTo(challengeTitle)
         assertThat(userChallenge.status).isEqualTo(EUserChallengeStatus.RUNNING)
-        assertThat(userChallenge.participantDays).isEqualTo(participationDays)
+        assertThat(userChallenge.participantsDate).isEqualTo(participationDays)
         assertThat(userChallenge.iceCount).isZero()
-        assertThat(userChallenge.maxConsecutiveParticipationDayCount).isEqualTo(userChallenge.nowConsecutiveParticipationDayCount).isZero()
+        assertThat(userChallenge.maxConsecutiveDays).isEqualTo(userChallenge.nowConsecutiveDays).isZero()
         assertThat(userChallenge.reportMessage).isNull()
-        assertThat(userChallenge.getUserChallengeHistories())
+        assertThat(userChallenge.challengeHistories)
             .hasSize(participationDays)
-            .allMatch { it.status == EUserChallengeCertificationStatus.FAILED }
+            .allMatch { it.isCertificated == EUserChallengeCertificationStatus.FAILED }
     }
 
     @Test
     @DisplayName("해당 챌린지를 눌렀을 때, 이 챌린지에 이미 참여하고 있다면, 새로 참여할 수 없다.")
     fun participateChallengeWithAlreadyParticipated() {
         // given
-        participantChallengeUseCase.execute(challengeParticipantDto)
+        userChallengeCommandService.execute(challengeParticipantDto)
         // when
         val exception = assertThrows<BadRequestException> {
-            participantChallengeUseCase.execute(challengeParticipantDto)
+            userChallengeCommandService.execute(challengeParticipantDto)
         }
         // then
         assertThat(exception).isInstanceOf(BadRequestException::class.java)
@@ -87,12 +88,12 @@ class ParticipantChallengeUseCaseTest : IntegrationTestContainer() {
     @DisplayName("해당 챌린지를 눌렀을 때, 챌린지를 마쳤지만 아직 챌린지 리포트를 확인하지 못한 경우에는 챌린지 리포트를 확인해야 다시 참여할 수 있다.")
     fun participateChallengeWithNotParticipated() {
         // given
-        participantChallengeUseCase.execute(challengeParticipantDto.copy(
+        userChallengeCommandService.execute(challengeParticipantDto.copy(
             status = EUserChallengeStatus.PENDING
         ))
         // when
         val exception = assertThrows<BadRequestException> {
-            participantChallengeUseCase.execute(challengeParticipantDto)
+            userChallengeCommandService.execute(challengeParticipantDto)
         }
         // then
         assertThat(exception).isInstanceOf(BadRequestException::class.java)
@@ -103,12 +104,12 @@ class ParticipantChallengeUseCaseTest : IntegrationTestContainer() {
     @DisplayName("해당 챌린지를 눌렀을 때, 이 챌린지를 마쳤지만 리포트를 확인하지 못했다면, 챌린지 리포트를 다시 발급받아야 한다.")
     fun participateChallengeWithDead() {
         // given
-        participantChallengeUseCase.execute(challengeParticipantDto.copy(
+        userChallengeCommandService.execute(challengeParticipantDto.copy(
             status = EUserChallengeStatus.DEAD
         ))
         // when
         val exception = assertThrows<InternalServerErrorException> {
-            participantChallengeUseCase.execute(challengeParticipantDto)
+            userChallengeCommandService.execute(challengeParticipantDto)
         }
         // then
         assertThat(exception).isInstanceOf(InternalServerErrorException::class.java)
@@ -119,26 +120,26 @@ class ParticipantChallengeUseCaseTest : IntegrationTestContainer() {
     @DisplayName("해당 챌린지를 눌렀을 때, 해당 챌린지를 이전에 참여한 이력이 있어도, 2일 내로 완료한 챌린지가 아니라면 챌린지에 새로 참가할 수 있다.")
     fun participateChallengeWithCompleted() {
         // given
-        val completedUserChallenge = participantChallengeUseCase.execute(
+        val completedUserChallenge = userChallengeCommandService.execute(
             challengeParticipantDto.copy(
                 status = EUserChallengeStatus.COMPLETED
             )
         )
 
         // when
-        val userChallenge = participantChallengeUseCase.execute(challengeParticipantDto)
+        val userChallenge = userChallengeCommandService.execute(challengeParticipantDto)
 
         // then
         assertThat(userChallenge.userId).isEqualTo(userId).isEqualTo(completedUserChallenge.userId)
-        assertThat(userChallenge.challenge.id).isEqualTo(challengeId).isEqualTo(completedUserChallenge.challenge.id)
+        assertThat(userChallenge.challengeTitle).isEqualTo(challengeTitle).isEqualTo(completedUserChallenge.challengeTitle)
         assertThat(userChallenge.status).isEqualTo(EUserChallengeStatus.RUNNING)
-        assertThat(userChallenge.participantDays).isEqualTo(participationDays)
+        assertThat(userChallenge.participantsDate).isEqualTo(participationDays)
         assertThat(userChallenge.iceCount).isZero()
-        assertThat(userChallenge.maxConsecutiveParticipationDayCount).isEqualTo(userChallenge.nowConsecutiveParticipationDayCount).isZero()
+        assertThat(userChallenge.maxConsecutiveDays).isEqualTo(userChallenge.nowConsecutiveDays).isZero()
         assertThat(userChallenge.reportMessage).isNull()
-        assertThat(userChallenge.getUserChallengeHistories())
+        assertThat(userChallenge.challengeHistories)
             .hasSize(participationDays)
-            .allMatch { it.status == EUserChallengeCertificationStatus.FAILED }
-        assertThat(completedUserChallenge.id).isNotEqualTo(userChallenge.id)
+            .allMatch { it.isCertificated == EUserChallengeCertificationStatus.FAILED }
+        assertThat(completedUserChallenge.userChallengeId).isNotEqualTo(userChallenge.userChallengeId)
     }
 }
