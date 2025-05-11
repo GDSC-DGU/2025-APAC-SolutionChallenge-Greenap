@@ -53,7 +53,7 @@ class AuthController(
 
     @Operation(
         summary = "OAuth2 로그인",
-        description = "OAuth2 인증을 통해 사용자를 로그인합니다."
+        description = "OAuth2 인증을 통해 사용자를 로그인합니다. Google 로그인만 지원되기 때문에 registrationId는 반드시 google로 설정해야 합니다."
     )
     @ApiResponses(
         value = [
