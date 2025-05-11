@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:greenap/config/color_system.dart';
+import 'package:greenap/config/font_system.dart';
 import 'package:lottie/lottie.dart';
+import 'package:greenap/views_model/login/login_view_model.dart';
 
-// LoginScreen 내부
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -14,6 +16,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen>
     with TickerProviderStateMixin {
   late final AnimationController _controller;
+  final LoginViewModel viewModel = Get.find<LoginViewModel>(); // 💡 이제 find 사용
 
   @override
   void initState() {
@@ -43,29 +46,25 @@ class _LoginScreenState extends State<LoginScreen>
                   controller: _controller,
                   onLoaded: (composition) {
                     _controller.duration = composition.duration;
-                    _controller.value = 1.0; // ✅ 마지막 장면만 보여주기
+                    _controller.value = 1.0;
                   },
                   width: 350,
                   height: 350,
                   fit: BoxFit.contain,
                 ),
-                SizedBox(height: 40),
-
-                // ✅ Google 로그인 버튼
+                const SizedBox(height: 40),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {
-                      // 구글 로그인 연동
-                    },
+                    onPressed: viewModel.signInWithGoogle,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.black87,
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(8),
                       ),
-                      elevation: 4,
+                      elevation: 2,
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -73,16 +72,13 @@ class _LoginScreenState extends State<LoginScreen>
                       children: [
                         SvgPicture.asset(
                           'assets/icons/google_logo.svg',
-                          width: 24,
-                          height: 24,
+                          width: 36,
+                          height: 36,
                         ),
                         const SizedBox(width: 12),
                         const Text(
                           "Sign Up with Google",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
+                          style: FontSystem.Body1,
                         ),
                       ],
                     ),
