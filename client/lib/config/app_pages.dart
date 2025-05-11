@@ -17,6 +17,7 @@ import 'package:greenap/bindings/verification_upload_binding.dart';
 import 'package:greenap/views/my_feed_category/my_feed_category_screen.dart';
 import 'package:greenap/views/my_feed_list/my_feed_list_screen.dart';
 import 'package:greenap/bindings/my_feed_list_binding.dart';
+import 'package:greenap/bindings/login_binding.dart';
 import 'app_routes.dart';
 
 abstract class AppPages {
@@ -27,7 +28,11 @@ abstract class AppPages {
       binding: RootBinding(),
     ),
     GetPage(name: AppRoutes.SPLASH, page: () => const SplashScreen()),
-    GetPage(name: AppRoutes.LOGIN, page: () => const LoginScreen()),
+    GetPage(
+      name: AppRoutes.LOGIN,
+      page: () => const LoginScreen(),
+      binding: LoginBinding(),
+    ),
 
     GetPage(name: AppRoutes.HOME, page: () => HomeScreen()),
     GetPage(name: AppRoutes.CHALLENGE, page: () => ChallengeScreen()),

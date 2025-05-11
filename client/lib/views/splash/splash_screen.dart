@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:greenap/config/color_system.dart';
 import 'package:lottie/lottie.dart';
 import 'dart:async';

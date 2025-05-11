@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:greenap/config/color_system.dart';
 import 'package:get/get.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:greenap/config/color_system.dart';
 import 'package:greenap/config/font_system.dart';
 import 'package:greenap/views_model/mypage/mypage_view_model.dart';
 import 'package:greenap/views/base/base_screen.dart';
