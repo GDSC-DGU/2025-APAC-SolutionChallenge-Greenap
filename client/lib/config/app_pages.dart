@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
 import 'package:greenap/views/home/home_screen.dart';
+import 'package:greenap/views/splash/splash_screen.dart';
+import 'package:greenap/views/login/login_screen.dart';
 import 'package:greenap/views/feed/feed_screen.dart';
 import 'package:greenap/views/challenge/challenge_screen.dart';
 import 'package:greenap/views/mypage/mypage_screen.dart';
@@ -24,6 +26,9 @@ abstract class AppPages {
       page: () => RootScreen(),
       binding: RootBinding(),
     ),
+    GetPage(name: AppRoutes.SPLASH, page: () => const SplashScreen()),
+    GetPage(name: AppRoutes.LOGIN, page: () => const LoginScreen()),
+
     GetPage(name: AppRoutes.HOME, page: () => HomeScreen()),
     GetPage(name: AppRoutes.CHALLENGE, page: () => ChallengeScreen()),
     GetPage(
@@ -37,7 +42,7 @@ abstract class AppPages {
       binding: MyChallengeDetailBinding(),
     ),
     GetPage(name: AppRoutes.MYPAGE, page: () => MypageScreen()),
-    GetPage(name: AppRoutes.MYPAGE, page: () => MypageScreen()),
+    GetPage(name: AppRoutes.VERIFICATION, page: () => VerificationScreen()),
     GetPage(name: AppRoutes.FEED, page: () => FeedScreen()),
     GetPage(name: AppRoutes.MYFEEDCATEGORY, page: () => MyFeedCategoryScreen()),
     GetPage(

@@ -19,11 +19,11 @@ abstract class ColorSystem {
     50: Color(0xFFF1F2FB),
   });
   static const int _grayValue = 0xFF808189;
-  static const mainGradient = RadialGradient(
-    center: Alignment.center,
-    radius: 0.5,
-    colors: [Color(0xFF4EC9EB), Color(0xFF4FDAC1), Color(0xFF3CBBFD)],
-    stops: [0.0, 0.81, 1.0],
+  static const mainGradient = LinearGradient(
+    colors: [Color(0xFFD3FFF7), Color(0xFFFFFFFF)],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    stops: [0.0, 1.0],
   );
   static const blueGradient = LinearGradient(
     colors: [Color(0xFFD3FFF7), Color(0xFFFFFFFF)],

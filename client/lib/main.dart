@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
       title: "Greenap",
       theme: ThemeData(useMaterial3: true, fontFamily: 'Pretendard'),
       // Initial Route
-      initialRoute: AppRoutes.ROOT,
+      initialRoute: AppRoutes.SPLASH,
       getPages: AppPages.data,
       debugShowCheckedModeBanner: false,
     );
