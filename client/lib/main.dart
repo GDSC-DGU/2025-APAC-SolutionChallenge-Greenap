@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:greenap/config/color_system.dart';
 import 'package:greenap/config/app_routes.dart';
 import 'package:greenap/config/app_pages.dart';
 
@@ -17,7 +16,7 @@ class MyApp extends StatelessWidget {
       title: "Greenap",
       theme: ThemeData(useMaterial3: true, fontFamily: 'Pretendard'),
       // Initial Route
-      initialRoute: AppRoutes.SPLASH,
+      initialRoute: AppRoutes.ROOT,
       getPages: AppPages.data,
       debugShowCheckedModeBanner: false,
     );
