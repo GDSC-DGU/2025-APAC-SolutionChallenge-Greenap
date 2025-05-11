@@ -1,4 +1,4 @@
-package com.example.habit_earth
+package com.example.greenap
 
 import io.flutter.embedding.android.FlutterActivity
 
