@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1045352990940",
+    "project_id": "greenap-ae7bd",
+    "storage_bucket": "greenap-ae7bd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1045352990940:android:e088b849e5e649045c0c19",
+        "android_client_info": {
+          "package_name": "com.greenap.dev"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1045352990940-lsppv0g71e430pn5b0u3mc6ntq79t5tn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.greenap.dev",
+            "certificate_hash": "9e99522595c14fdba1766fe0e4c2320eb6f81177"
+          }
+        },
+        {
+          "client_id": "1045352990940-c611mgshq4nhpknc01ubjlo9k8uo9juc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB3z-byTKiaqtqq9VBo9ARO4V7cOMiZBus"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1045352990940-c611mgshq4nhpknc01ubjlo9k8uo9juc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

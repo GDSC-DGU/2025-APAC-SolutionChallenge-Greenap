@@ -58,7 +58,7 @@ class FeedScreen extends BaseScreen<FeedViewModel> {
                 separatorBuilder: (_, __) => const SizedBox(height: 24),
                 itemBuilder: (context, index) {
                   final feed = filteredList[index];
-                  return FeedCard(feed: feed);
+                  return FeedCard(feed: feed, isMine: false);
                 },
               );
             }),

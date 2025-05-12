@@ -2,12 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:greenap/config/color_system.dart';
 import 'package:greenap/config/font_system.dart';
 import 'package:greenap/domain/models/feed_item.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 
 class FeedCard extends StatelessWidget {
   final FeedItemModel feed;
+  final bool isMine;
+  final VoidCallback? onEdit;
+  final VoidCallback? onDelete;
 
-  const FeedCard({super.key, required this.feed});
+  const FeedCard({
+    super.key,
+    required this.feed,
+    this.isMine = false,
+    this.onEdit,
+    this.onDelete,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +38,6 @@ class FeedCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 상단: 진행 상태 및 날짜
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -65,7 +74,6 @@ class FeedCard extends StatelessWidget {
             title: Text(feed.user.nickname),
             subtitle: Text(feed.content),
           ),
-          // 인증 이미지
           ClipRRect(
             borderRadius: BorderRadius.circular(4),
             child: Image.asset(
@@ -75,6 +83,27 @@ class FeedCard extends StatelessWidget {
               height: 300,
             ),
           ),
+          if (isMine)
+            Row(
+              children: [
+                IconButton(
+                  icon: Icon(
+                    Icons.edit,
+                    size: 20,
+                    color: ColorSystem.gray[500],
+                  ),
+                  onPressed: onEdit,
+                ),
+                IconButton(
+                  icon: Icon(
+                    Icons.delete_outline,
+                    size: 20,
+                    color: ColorSystem.red,
+                  ),
+                  onPressed: onDelete,
+                ),
+              ],
+            ),
         ],
       ),
     );
