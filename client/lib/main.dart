@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:greenap/config/app_routes.dart';
 import 'package:greenap/config/app_pages.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:greenap/bindings/app_binding.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,6 +23,7 @@ class MyApp extends StatelessWidget {
       initialRoute: AppRoutes.SPLASH,
       getPages: AppPages.data,
       debugShowCheckedModeBanner: false,
+      initialBinding: AppBinding(),
     );
   }
 }
