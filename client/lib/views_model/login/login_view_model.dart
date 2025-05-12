@@ -1,63 +1,77 @@
 import 'dart:convert';
 import 'package:get/get.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:http/http.dart' as http;
+import 'package:greenap/data/dto/user_info_dto.dart';
+import 'package:greenap/domain/models/user.dart';
+import 'package:greenap/data/provider/auth/auth_provider.dart';
+import 'package:greenap/core/network/response_wrapper.dart';
 
 class LoginViewModel extends GetxController {
   final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email', 'profile']);
-
+  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
   final isLoading = false.obs;
+  final AuthProvider _authProvider = Get.find<AuthProvider>();
+
+  @override
+  void onInit() {
+    super.onInit();
+    _checkLoginStatus();
+  }
+
+  Future<void> _checkLoginStatus() async {
+    final accessToken = await _secureStorage.read(key: 'accessToken');
+    final refreshToken = await _secureStorage.read(key: 'refreshToken');
+
+    if (accessToken != null && refreshToken != null) {
+      print('이미 로그인된 사용자입니다.');
+      Get.offAllNamed('/root', arguments: {'initialTab': 2});
+    }
+  }
 
   Future<void> signInWithGoogle() async {
     isLoading.value = true;
     try {
-      print("[DEBUG] 구글 로그인 시작");
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       if (googleUser == null) {
-        print("[DEBUG] 사용자가 로그인 취소함");
         isLoading.value = false;
         return;
       }
-
-      print("[DEBUG] 사용자 로그인 완료: ${googleUser.email}");
 
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
+      final accessToken = googleAuth.accessToken;
+      final idToken = googleAuth.idToken;
 
-      print("[DEBUG] accessToken: ${googleAuth.accessToken}");
-      print("[DEBUG] idToken: ${googleAuth.idToken}");
-
-      final String? code = googleAuth.idToken;
-      if (code == null) {
-        print("[ERROR] idToken이 null입니다. API 요청 불가능");
-        isLoading.value = false;
-        return;
+      if (accessToken == null || idToken == null) {
+        throw Exception("구글 토큰이 유효하지 않습니다.");
       }
 
-      final response = await http.get(
-        Uri.parse(
-          'https://greenap-server-590591992798.asia-northeast3.run.app/login/oauth2/google?code=${code}',
-        ),
-        headers: {'Content-Type': 'application/json'},
-      );
+      final ResponseWrapper<UserInfoDto> response = await _authProvider
+          .googleLogin(accessToken, idToken);
+      if (response.data != null) {
+        final userModel = response.data!.toModel();
 
-      print("[DEBUG] 백엔드 응답 코드: ${response.statusCode}");
-      print("[DEBUG] 백엔드 응답 내용: ${response.body}");
+        await _secureStorage.write(
+          key: 'accessToken',
+          value: response.data!.jwtTokenDto.accessToken,
+        );
+        await _secureStorage.write(
+          key: 'refreshToken',
+          value: response.data!.jwtTokenDto.refreshToken,
+        );
 
-      if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
-        final token = responseData['token'];
+        final savedAccessToken = await _secureStorage.read(key: 'accessToken');
+        print('저장된 accessToken: $savedAccessToken');
 
-        // TODO: Save token securely (e.g., with flutter_secure_storage)
-        // TODO: Navigate to home screen
-
-        print("로그인 성공! token: $token");
-        Get.offAllNamed('/home');
+        print("로그인 성공: ${userModel.nickname}");
+        Get.offAllNamed('/root', arguments: {'initialTab': 2});
       } else {
-        print("로그인 실패: ${response.statusCode} ${response.body}");
+        print("[ERROR] 로그인 실패 전체 응답: ${jsonEncode(response)}");
+        throw Exception("로그인 실패: ${response.message ?? '응답 메시지 없음'}");
       }
     } catch (e) {
-      print("예외 발생: $e");
+      print(" 로그인 예외 발생: $e");
     } finally {
       isLoading.value = false;
     }
