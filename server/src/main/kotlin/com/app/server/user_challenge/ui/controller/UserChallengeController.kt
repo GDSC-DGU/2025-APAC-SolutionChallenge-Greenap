@@ -5,11 +5,13 @@ import com.app.server.common.annotation.UserId
 import com.app.server.common.enums.CommonResultCode
 import com.app.server.common.enums.ResultCode
 import com.app.server.common.response.ApiResponse
-import com.app.server.user_challenge.ui.dto.ChallengeParticipantRequestDto
-import com.app.server.user_challenge.ui.dto.GetTotalUserChallengeResponseDto
+import com.app.server.user_challenge.ui.dto.request.ChallengeParticipantRequestDto
+import com.app.server.user_challenge.ui.dto.response.GetTotalUserChallengeResponseDto
 import com.app.server.user_challenge.ui.usecase.GetTotalUserChallengeUseCase
 import com.app.server.user_challenge.ui.usecase.ParticipantChallengeUseCase
 import com.app.server.user_challenge.ui.usecase.UsingIceUseCase
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDate
 
 @RestController
+@Tag(name = "User Challenge API", description = "사용자 챌린지 관련 API")
 @RequestMapping("/api/v1")
 class UserChallengeController(
     private val participantChallengeUseCase: ParticipantChallengeUseCase,
@@ -26,10 +29,10 @@ class UserChallengeController(
     private val usingIceUseCase: UsingIceUseCase
 ) {
 
-    /**
-     * 특정 챌린지에 사용자가 참여할 수 있다.
-     *
-     */
+    @Operation(
+        summary = "챌린지 참여",
+        description = "챌린지에 참여합니다. 챌린지 ID와 함께 요청하세요."
+    )
     @PostMapping("/challenges")
     fun participateChallenge(
         @UserId userId: Long,
@@ -37,10 +40,14 @@ class UserChallengeController(
     ): ApiResponse<ResultCode> {
         val challengeParticipantDto = requestBody.toChallengeParticipantDto(userId)
         participantChallengeUseCase.execute(challengeParticipantDto)
-        // TODO: userCHallengeId 리턴하기
+        // TODO: userChallengeId 리턴하기
         return ApiResponse.success(CommonResultCode.SUCCESS)
     }
 
+    @Operation(
+        summary = "챌린지 참여 내역 조회",
+        description = "사용자가 참여한 챌린지 내역을 조회합니다."
+    )
     @GetMapping("/challenges/user")
     fun getTotalUserChallenge(@UserId userId: Long): ApiResponse<GetTotalUserChallengeResponseDto> {
         val totalUserChallenge: GetTotalUserChallengeResponseDto =
@@ -51,6 +58,10 @@ class UserChallengeController(
         return ApiResponse.success(totalUserChallenge)
     }
 
+    @Operation(
+        summary = "챌린지 얼리기",
+        description = "챌린지를 얼릴 수 있습니다."
+    )
     @PostMapping("/challenges/user/{userChallengeId}/ice")
     fun iceDailyUserChallenge(
         @PathVariable userChallengeId: Long

@@ -9,14 +9,4 @@ data class CertificationRequestDto(
     val userChallengeId: Long,
     @JsonProperty("image")
     val image: MultipartFile,
-){
-    fun toSendToCertificationServerRequestDto(
-        challenge: Challenge,
-        imageEncodingData: String
-    ) = SendToCertificationServerRequestDto(
-        "data:image;base64,$imageEncodingData",
-        challenge.id!!,
-        challenge.title,
-        challenge.description
-    )
-}
+)

@@ -25,6 +25,7 @@ object Constants {
         "/api/auth/login/naver",
         "/api/auth/login/google",
         "/api/auth/login/apple",
+        "/api/v1/auth/oauth2/token",
         "/oauth2/authorization/google",
         "/login/oauth2/code/google",
         "/favicon.ico",
@@ -41,6 +42,8 @@ object Constants {
     val BYPASS_URLS: List<String> = listOf( //
         "/hello",  // 모니터링
         "/actuator/**",  // 피드백 데이터 조회
+        "/swagger-ui/**",
+        "/v3/api-docs/**",
     )
 
     const val CONTENT_TYPE: String = "Content-Type"

@@ -84,6 +84,7 @@ class UserChallenge(
             EUserChallengeStatus.PENDING -> throw BadRequestException(UserChallengeException.CHALLENGE_WAITED_AND_STATUS_IS_PENDING)
             EUserChallengeStatus.WAITING -> EUserChallengeParticipantState.EXISTING_CHALLENGE_CONTINUE
             EUserChallengeStatus.DEAD -> throw InternalServerErrorException(UserChallengeException.REPORT_NOT_FOUND_AND_STATUS_IS_DEAD)
+            EUserChallengeStatus.NOT_PARTICIPATED -> EUserChallengeParticipantState.NEW_CHALLENGE_START
         }
     }
 
@@ -182,8 +183,13 @@ class UserChallenge(
         return todayDate.toEpochDay() - userChallengeHistories.first().date.toEpochDay()
     }
 
-    fun calculateProgress(todayDate: LocalDate): Int {
-        return ((calculateElapsedDays(todayDate).toDouble() / totalParticipationDayCount) * 100).toInt()
+    fun calculateProgressFromElapsedDays(todayDate: LocalDate): Int {
+        return ((calculateElapsedDays(todayDate).toDouble() / participantDays) * 100).toInt()
+            .coerceIn(0, 100)
+    }
+
+    fun calculateProgressFromTotalParticipationDays(todayDate: LocalDate): Int {
+        return ((totalParticipationDayCount.toDouble() / participantDays) * 100).toInt()
             .coerceIn(0, 100)
     }
 

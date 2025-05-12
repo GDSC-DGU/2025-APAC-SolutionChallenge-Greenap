@@ -1,5 +1,6 @@
 package com.app.server.feed.application.service
 
+import com.app.server.feed.application.service.command.FeedProjectionCommandService
 import com.app.server.feed.domain.event.FeedCreatedEvent
 import com.app.server.feed.domain.event.FeedDeletedEvent
 import com.app.server.feed.domain.event.FeedModifiedEvent
