@@ -3,10 +3,10 @@ package com.app.server.feed.application
 import com.app.server.IntegrationTestContainer
 import com.app.server.challenge.application.service.ChallengeService
 import com.app.server.challenge_certification.domain.event.CertificationSucceededEvent
-import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
-import com.app.server.challenge_certification.infra.CertificationInfraService
 import com.app.server.challenge_certification.ui.dto.request.CertificationRequestDto
 import com.app.server.challenge_certification.ui.dto.request.SendToCertificationServerRequestDto
+import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
+import com.app.server.challenge_certification.port.outbound.CertificationPort
 import com.app.server.common.exception.BadRequestException
 import com.app.server.common.exception.NotFoundException
 import com.app.server.feed.application.service.FeedEventListener
@@ -16,7 +16,7 @@ import com.app.server.feed.domain.event.FeedCreatedEvent
 import com.app.server.feed.domain.model.command.Feed
 import com.app.server.feed.exception.FeedException
 import com.app.server.feed.ui.dto.CreateFeedCommand
-import com.app.server.feed.ui.dto.CreateFeedRequestDto
+import com.app.server.feed.ui.dto.request.CreateFeedRequestDto
 import com.app.server.feed.ui.usecase.CreateFeedUseCase
 import com.app.server.feed.ui.usecase.DeleteFeedUseCase
 import com.app.server.feed.ui.usecase.UpdateFeedUseCase
@@ -87,7 +87,7 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
     private lateinit var feedEventListener: FeedEventListener
 
     @MockitoBean
-    private lateinit var certificationInfraService: CertificationInfraService
+    private lateinit var certificationPort: CertificationPort
 
     var certificationRequestDto = CertificationRequestDto(
         userChallengeId = userChallengeId,
@@ -129,7 +129,7 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
             challenge.description
         )
 
-        given(certificationInfraService.certificate(sendToCertificationServerRequestDto)).willReturn(
+        given(certificationPort.verifyCertificate(sendToCertificationServerRequestDto)).willReturn(
             mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
         )
     }

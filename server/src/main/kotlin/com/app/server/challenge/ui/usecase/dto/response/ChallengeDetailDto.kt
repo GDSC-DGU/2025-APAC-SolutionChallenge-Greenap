@@ -10,7 +10,7 @@ data class ChallengeDetailDto(
     val description: String,
     val certificationMethodDescription: String,
     val status: EChallengeStatus = EChallengeStatus.RUNNING,
-    val mainImageUrl: String?,
+    val mainImageUrl: String,
     val certificationExampleImageUrl: String?,
     val categoryId: Long?,
     val categoryTitle: String,

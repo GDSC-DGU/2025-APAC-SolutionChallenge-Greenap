@@ -21,7 +21,7 @@ class Challenge(
     val certificationMethodDescription: String,
 
     @Column(name = "main_image_url")
-    val mainImageUrl: String?,
+    val mainImageUrl: String,
     @Column(name = "certification_example_image_url")
     val certificationExampleImageUrl: String?,
 

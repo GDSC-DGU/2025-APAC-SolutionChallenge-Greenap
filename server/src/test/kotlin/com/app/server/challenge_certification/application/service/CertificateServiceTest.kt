@@ -2,18 +2,18 @@ package com.app.server.challenge_certification.application.service
 
 import com.app.server.IntegrationTestContainer
 import com.app.server.challenge.application.service.ChallengeService
+import com.app.server.challenge_certification.application.dto.command.CertificationCommand
 import com.app.server.challenge_certification.domain.event.CertificationSucceededEvent
-import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
-import com.app.server.challenge_certification.infra.CertificationInfraService
 import com.app.server.challenge_certification.ui.dto.request.CertificationRequestDto
 import com.app.server.challenge_certification.ui.dto.request.SendToCertificationServerRequestDto
+import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
+import com.app.server.challenge_certification.port.outbound.CertificationPort
 import com.app.server.common.exception.BadRequestException
-import com.app.server.core.infra.cloud_storage.CloudStorageUtil
+import com.app.server.infra.cloud_storage.CloudStorageUtil
 import com.app.server.user_challenge.application.dto.CreateUserChallengeDto
 import com.app.server.user_challenge.application.service.UserChallengeService
 import com.app.server.user_challenge.domain.enums.EUserChallengeCertificationStatus
 import com.app.server.user_challenge.domain.enums.EUserChallengeStatus
-import com.app.server.user_challenge.domain.exception.UserChallengeException
 import com.app.server.user_challenge.domain.model.UserChallenge
 import com.app.server.user_challenge.domain.model.UserChallengeHistory
 import jakarta.transaction.Transactional
@@ -51,16 +51,16 @@ import kotlin.test.Test
 class CertificateServiceTest : IntegrationTestContainer() {
 
     @MockitoSpyBean
-    private lateinit var certificationService: CertificationService
+    private lateinit var certificationService: CertificationServiceImpl
+
+    @MockitoBean
+    private lateinit var certificationPort: CertificationPort
 
     @Autowired
     private lateinit var userChallengeService: UserChallengeService
 
     @Autowired
     private lateinit var challengeService: ChallengeService
-
-    @MockitoBean
-    private lateinit var certificationInfraService: CertificationInfraService
 
     @MockitoBean
     private lateinit var cloudStorageUtil: CloudStorageUtil
@@ -180,13 +180,17 @@ class CertificateServiceTest : IntegrationTestContainer() {
         val errorMessage = "testMessage"
         given(cloudStorageUtil.uploadImageToCloudStorage(any(), any()))
             .willReturn(imageUrl)
-        given(certificationInfraService.certificate(any())).willReturn(
+        given(certificationPort.verifyCertificate(any())).willReturn(
             mapOf(EUserCertificatedResultCode.CERTIFICATED_FAILED to errorMessage)
         )
         // when
         val exception = assertThrows<BadRequestException> {
-            certificationService.certificateChallengeWithDate(
-                certificationRequestDto, participantsStartDate
+            certificationService.certificateImage(
+                CertificationCommand(
+                    certificationRequestDto.userChallengeId,
+                    certificationRequestDto.image,
+                    participantsStartDate
+                )
             )
         }
         // then
@@ -199,13 +203,17 @@ class CertificateServiceTest : IntegrationTestContainer() {
     fun publishChallengeImage() {
         given(cloudStorageUtil.uploadImageToCloudStorage(any(), any()))
             .willReturn(imageUrl)
-        given(certificationInfraService.certificate(any()))
+        given(certificationPort.verifyCertificate(any()))
             .willReturn(
                 mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
             )
         // when
-        certificationService.certificateChallengeWithDate(
-            certificationRequestDto, participantsStartDate
+        certificationService.certificateImage(
+            CertificationCommand(
+                certificationRequestDto.userChallengeId,
+                certificationRequestDto.image,
+                participantsStartDate
+            )
         )
 
         // then

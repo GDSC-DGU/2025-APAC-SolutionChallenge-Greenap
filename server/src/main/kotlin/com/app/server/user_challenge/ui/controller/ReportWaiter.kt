@@ -1,6 +1,6 @@
 package com.app.server.user_challenge.ui.controller
 
-import com.app.server.user_challenge.ui.dto.ReportDto
+import com.app.server.user_challenge.ui.dto.response.ReportDto
 import com.app.server.common.response.ApiResponse
 import org.springframework.stereotype.Component
 import org.springframework.web.context.request.async.DeferredResult

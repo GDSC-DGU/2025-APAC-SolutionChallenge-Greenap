@@ -1,6 +1,6 @@
 package com.app.server.core.scheduler
 
-import com.app.server.user_challenge.application.service.UserChallengeCommandService
+import com.app.server.user_challenge.application.service.command.UserChallengeCommandServiceImpl
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -11,7 +11,7 @@ import java.time.LocalDate
 
 @Configuration
 class UserChallengeScheduler (
-    private val userChallengeCommandService: UserChallengeCommandService
+    private val userChallengeCommandServiceImpl: UserChallengeCommandServiceImpl
 ){
 
     private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
@@ -19,21 +19,21 @@ class UserChallengeScheduler (
     @Scheduled(cron = "0 0 0 * * ?")
     fun updateChallengeStatusToPending() {
         scope.launch {
-            userChallengeCommandService.batchUpdateChallengeStatusFromRunningToPending(LocalDate.now())
+            userChallengeCommandServiceImpl.batchUpdateChallengeStatusFromRunningToPending(LocalDate.now())
         }
     }
 
     @Scheduled(cron = "0 0 0 * * ?")
     fun updateChallengeStatusFromPendingToCompleted() {
         scope.launch {
-            userChallengeCommandService.batchUpdateChallengeStatusFromPendingToCompleted(LocalDate.now())
+            userChallengeCommandServiceImpl.batchUpdateChallengeStatusFromPendingToCompleted(LocalDate.now())
         }
     }
 
     @Scheduled(cron = "0 0 0 * * ?")
     fun updateChallengeStatusFromWaitingToCompleted() {
         scope.launch {
-            userChallengeCommandService.batchUpdateChallengeStatusFromWaitingToCompleted(LocalDate.now())
+            userChallengeCommandServiceImpl.batchUpdateChallengeStatusFromWaitingToCompleted(LocalDate.now())
         }
     }
 
