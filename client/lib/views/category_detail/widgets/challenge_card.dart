@@ -5,6 +5,7 @@ import 'package:greenap/domain/models/challenge_item.dart';
 import 'package:greenap/domain/models/dummy/challenge_detail_dummy.dart';
 import 'challenge_detail_popup.dart';
 import 'package:greenap/domain/models/challenge_detail.dart';
+import 'package:greenap/views_model/category_detail/category_detail_view_model.dart';
 import 'package:get/get.dart';
 import 'challenge_start_popup.dart';
 
@@ -12,11 +13,15 @@ class ChallengeCard extends StatelessWidget {
   final ChallengeItemModel challenge;
   ChallengeCard({super.key, required this.challenge});
 
-  void _showDetailPopup(BuildContext context) {
-    final ChallengeDetailModel detail = dummyChallengeDetails.firstWhere(
-      (e) => e.id == challenge.id,
-      orElse: () => throw Exception('해당 챌린지의 상세 정보를 찾을 수 없습니다.'),
-    );
+  void _showDetailPopup(BuildContext context) async {
+    final viewModel = Get.find<CategoryDetailViewModel>();
+
+    await viewModel.fetchChallengeDetail(challenge.id);
+
+    final detail = viewModel.challengeDetail.value;
+    if (detail == null) {
+      return;
+    }
 
     showDialog(
       context: Get.context!,
@@ -24,8 +29,13 @@ class ChallengeCard extends StatelessWidget {
           (_) => ChallengeDetailPopup(
             challenge: detail,
             onCancel: () => Navigator.pop(context),
-            onJoin: (duration) {
+            onJoin: (duration) async {
               Navigator.pop(context);
+
+              await viewModel.joinChallenge(
+                challengeId: challenge.id,
+                duration: duration,
+              );
 
               // 다음 프레임에서 실행되도록 함
               Future.delayed(Duration.zero, () {
@@ -40,7 +50,10 @@ class ChallengeCard extends StatelessWidget {
                         },
                         goVerification: () {
                           Navigator.pop(context);
-                          // 인증 화면 이동
+                          Get.toNamed(
+                            '/verification-upload',
+                            arguments: challenge.id,
+                          );
                         },
                       ),
                 );

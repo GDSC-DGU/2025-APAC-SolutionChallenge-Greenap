@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:greenap/data/provider/challenge/challenge_provider.dart';
 import 'package:greenap/data/provider/auth/auth_provider.dart';
 import 'package:greenap/data/provider/challenge/my_challenge_provider.dart';
+import 'package:greenap/data/provider/category_detail/category_detail_provider.dart';
 
 class AppBinding extends Bindings {
   @override
@@ -10,5 +11,6 @@ class AppBinding extends Bindings {
     Get.lazyPut<AuthProvider>(() => AuthProvider());
     Get.lazyPut<ChallengeProvider>(() => ChallengeProvider());
     Get.lazyPut<MyChallengeProvider>(() => MyChallengeProvider());
+    Get.lazyPut<CategoryDetailProvider>(() => CategoryDetailProvider());
   }
 }

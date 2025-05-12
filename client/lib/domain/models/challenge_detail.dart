@@ -23,23 +23,4 @@ class ChallengeDetailModel extends ChallengeItemModel {
          description: description,
          mainImageUrl: mainImageUrl,
        );
-
-  factory ChallengeDetailModel.fromJson(Map<String, dynamic> json) {
-    return ChallengeDetailModel(
-      id: json['id'],
-      title: json['title'],
-      description: json['description'],
-      mainImageUrl: json['main_image_url'],
-      preDescription: json['pre_description'],
-      certificationExampleImageUrl: json['certification_example_image_url'],
-      certificationMethodDescription: json['certification_method_description'],
-      participationDates:
-          (json['participation_dates'] as List)
-              .map((e) => int.parse(e.toString()))
-              .toList(),
-      percentOfCompletedUser: double.parse(
-        (json['percent_of_completed_user']).toStringAsFixed(2),
-      ),
-    );
-  }
 }
