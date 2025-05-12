@@ -14,17 +14,4 @@ class ChallengeCategoryModel {
     required this.imageUrl,
     required this.challenges,
   });
-
-  factory ChallengeCategoryModel.fromJson(Map<String, dynamic> json) {
-    return ChallengeCategoryModel(
-      id: json['id'],
-      title: json['title'],
-      description: json['description'],
-      imageUrl: json['image_url'],
-      challenges:
-          (json['challenges'] as List)
-              .map((e) => ChallengeItemModel.fromJson(e))
-              .toList(),
-    );
-  }
 }

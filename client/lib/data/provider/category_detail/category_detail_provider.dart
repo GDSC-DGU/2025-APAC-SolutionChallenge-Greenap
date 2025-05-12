@@ -1,27 +1,24 @@
 import 'package:greenap/core/network/base_connect.dart';
 import 'package:greenap/core/network/response_wrapper.dart';
-import 'package:greenap/data/dto/challenge_category_dto.dart';
-import 'package:greenap/domain/models/challenge_category.dart';
+import 'package:greenap/domain/models/challenge_detail.dart';
+import 'package:greenap/data/dto/challege_detail_dto.dart';
 
-class ChallengeProvider extends BaseConnect {
-  Future<ResponseWrapper<List<ChallengeCategoryModel>>>
-  getChallengeCategories() async {
-    print('[DEBUG] getChallengeCategories() 실행됨');
-    final response = await getRequest('/api/v1/challenges');
+class CategoryDetailProvider extends BaseConnect {
+  Future<ResponseWrapper<ChallengeDetailModel>> getChallengeDetail(
+    int challengeId,
+  ) async {
+    print('[DEBUG] getChallengeDetail() 실행됨');
 
+    final response = await getRequest('/api/v1/challenges/$challengeId');
     print('[DEBUG] 전체 응답 body: ${response.body}');
 
     if (response.statusCode == 200) {
       final body = response.body;
-      final List<dynamic> rawCategories = body['data']['categories'];
-      final modelList =
-          rawCategories
-              .map((e) => ChallengeCategoryDto.fromJson(e).toModel())
-              .toList();
+      final challenge = body['data'];
 
-      return ResponseWrapper<List<ChallengeCategoryModel>>(
+      return ResponseWrapper<ChallengeDetailModel>(
         code: body['code'],
-        data: modelList,
+        data: ChallengeDetailDto.fromJson(challenge).toModel(),
         message: body['message'],
       );
     }
@@ -29,7 +26,7 @@ class ChallengeProvider extends BaseConnect {
     return ResponseWrapper(
       code: response.body['code'] ?? '500',
       data: null,
-      message: response.body['error']?['message'],
+      message: response.body['error']?['message'] ?? '데이터 없음',
     );
   }
 

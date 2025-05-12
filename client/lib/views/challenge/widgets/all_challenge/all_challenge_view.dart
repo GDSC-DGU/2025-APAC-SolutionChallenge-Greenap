@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:greenap/config/color_system.dart';
-import 'package:greenap/config/font_system.dart';
 import 'package:greenap/widgets/common/challenge_category_item.dart';
 import 'package:greenap/views_model/challenge/challenge_view_model.dart';
 import 'package:get/get.dart';
@@ -40,7 +39,7 @@ class AllChallengeView extends StatelessWidget {
           final category = categories[index];
           final background = backgroundColors[index % backgroundColors.length];
           return ChallengeCategoryItem(
-            category: category.toModel(),
+            category: category,
             size: CategorySize.large,
             backgroundGradient: background,
           );

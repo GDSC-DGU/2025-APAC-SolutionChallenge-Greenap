@@ -64,7 +64,7 @@ class _ChallengeDetailPopupState extends State<ChallengeDetailPopup> {
 
   Widget _buildImage() {
     return Center(
-      child: Image.asset(
+      child: Image.network(
         widget.challenge.mainImageUrl,
         width: 120,
         height: 120,

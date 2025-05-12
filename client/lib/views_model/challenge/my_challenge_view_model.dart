@@ -19,18 +19,22 @@ class MyChallengeViewModel extends GetxController {
     fetchMyChallenges();
   }
 
+  @override
+  void onReady() {
+    super.onReady();
+    fetchMyChallenges();
+  }
+
   void setStatus(ChallengeFilterStatus value) {
     status.value = value;
   }
 
   Future<void> fetchMyChallenges() async {
     isLoading.value = true;
-
+    print('[DEBUG] fetchMyChallenges() 호출됨');
     final response = await _provider.getMyChallenges();
     if (response.data != null) {
-      final allChallenges =
-          _challengeViewModel.challengeList.map((e) => e.toModel()).toList();
-
+      final allChallenges = _challengeViewModel.challengeList.toList();
       myChallenges.value =
           response.data!.map((dto) {
             String? imageUrl;
