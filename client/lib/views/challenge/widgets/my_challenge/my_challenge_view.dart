@@ -23,14 +23,7 @@ class MyChallengeView extends BaseScreen<MyChallengeViewModel> {
         const SizedBox(height: 24),
         Expanded(
           child: Obx(() {
-            final filtered =
-                dummyMyChallenges
-                    .where(
-                      (item) => isStatusMatch(item, viewModel.status.value),
-                    )
-                    .toList();
-
-            return _buildChallengeList(filtered);
+            return _buildChallengeList(viewModel.myChallenges);
           }),
         ),
       ],
@@ -52,15 +45,11 @@ class MyChallengeView extends BaseScreen<MyChallengeViewModel> {
   }
 
   Widget _buildChallengeList(List<MyChallengeModel> filtered) {
-    final allChallenges = dummyChallengeCategory;
     return ListView.separated(
       itemCount: filtered.length,
       separatorBuilder: (_, __) => const SizedBox(height: 20),
       itemBuilder: (context, index) {
-        return MyChallengeCard(
-          myChallenge: filtered[index],
-          allChallenges: allChallenges,
-        );
+        return MyChallengeCard(myChallenge: filtered[index]);
       },
     );
   }

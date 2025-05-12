@@ -12,6 +12,7 @@ class MyChallengeModel {
   final ChallengeCertificated isCerficatedInToday;
   final ChallengeStatus status;
   final List<Map<String, String>> certificationDataList;
+  final String? mainImageUrl;
 
   MyChallengeModel({
     required this.id,
@@ -25,32 +26,6 @@ class MyChallengeModel {
     required this.isCerficatedInToday,
     required this.status,
     required this.certificationDataList,
+    this.mainImageUrl,
   });
-
-  factory MyChallengeModel.fromJson(Map<String, dynamic> json) {
-    return MyChallengeModel(
-      id: json['id'],
-      challengeId: json['challenge_id'],
-      title: json['title'],
-      category: json['category'],
-      totalDays: json['total_days'],
-      elapsedDays: json['elapsed_days'],
-      progress: json['progress'],
-      iceCount: json['ice_count'],
-      isCerficatedInToday: ChallengeCertificated.values.firstWhere(
-        (e) =>
-            e.name == json['is_cerficated_in_today'].toString().toLowerCase(),
-        orElse: () => ChallengeCertificated.FAILED,
-      ),
-      status: ChallengeStatus.values.firstWhere(
-        (e) => e.name == json['status'].toString().toLowerCase(),
-        orElse: () => ChallengeStatus.running,
-      ),
-      certificationDataList: List<Map<String, String>>.from(
-        (json['certification_data_list'] as List).map(
-          (item) => Map<String, String>.from(item),
-        ),
-      ),
-    );
-  }
 }

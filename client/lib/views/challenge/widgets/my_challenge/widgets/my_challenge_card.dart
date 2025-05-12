@@ -8,13 +8,8 @@ import 'package:get/get.dart';
 
 class MyChallengeCard extends StatelessWidget {
   final MyChallengeModel myChallenge;
-  final List<ChallengeCategoryModel> allChallenges;
 
-  const MyChallengeCard({
-    super.key,
-    required this.myChallenge,
-    required this.allChallenges,
-  });
+  const MyChallengeCard({super.key, required this.myChallenge});
 
   Color getStatusColor(ChallengeStatus status) {
     switch (status) {
@@ -38,27 +33,8 @@ class MyChallengeCard extends StatelessWidget {
     }
   }
 
-  String? getImageUrlByChallengeId(
-    int challengeId,
-    List<ChallengeCategoryModel> categories,
-  ) {
-    for (final category in categories) {
-      for (final challenge in category.challenges) {
-        if (challenge.id == challengeId) {
-          return challenge.mainImageUrl;
-        }
-      }
-    }
-    return null;
-  }
-
   @override
   Widget build(BuildContext context) {
-    final imageUrl = getImageUrlByChallengeId(
-      myChallenge.challengeId,
-      allChallenges,
-    );
-
     final cardContent = Container(
       decoration: BoxDecoration(
         color: ColorSystem.white,
@@ -76,14 +52,17 @@ class MyChallengeCard extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         child: Row(
           children: [
-            imageUrl != null
-                ? Image.asset(
-                  imageUrl,
+            myChallenge.mainImageUrl?.isNotEmpty == true
+                ? Image.network(
+                  myChallenge.mainImageUrl!,
                   fit: BoxFit.contain,
                   width: 84,
                   height: 84,
+                  errorBuilder: (context, error, stackTrace) {
+                    return const Icon(Icons.image_not_supported);
+                  },
                 )
-                : const Text(""),
+                : const Icon(Icons.image),
             SizedBox(width: 10),
             Expanded(
               child: Column(

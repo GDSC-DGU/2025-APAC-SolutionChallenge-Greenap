@@ -124,7 +124,9 @@ class ChallengeCategoryItem extends StatelessWidget {
               ),
             ),
           ),
-          Expanded(child: Image.asset(category.imageUrl, fit: BoxFit.contain)),
+          Expanded(
+            child: Image.network(category.imageUrl, fit: BoxFit.contain),
+          ),
         ],
       ),
     );
