@@ -107,7 +107,7 @@ class GetTotalRankUseCaseTest : IntegrationTestContainer() {
         )
     }
 
-    private suspend fun makeTotalRank(userChallenge: UserChallenge, certificateDate: LocalDate) {
+    private fun makeTotalRank(userChallenge: UserChallenge, certificateDate: LocalDate) {
         userChallengeEventListener.processWhenReceive(
             event = makeEvent(
                 userChallenge.id!!,

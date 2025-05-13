@@ -47,7 +47,7 @@ class AuthService(
     fun refreshToken(token: String): UserInfoResponseDto {
 
         val refreshToken = refineToken(token)
-        if (jwtUtil.validateToken(refreshToken)) {
+        if (!jwtUtil.validateToken(refreshToken)) {
             throw BadRequestException(AuthException.INVALID_REFRESH_TOKEN)
         }
         val userId = jwtUtil.getUserIdFromToken(refreshToken)

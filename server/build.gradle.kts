@@ -83,6 +83,8 @@ dependencies {
     // GCP
     implementation("com.google.cloud:spring-cloud-gcp-storage:6.1.1")
     implementation("com.google.cloud.sql:mysql-socket-factory-connector-j-8:1.18.0")
+    implementation("com.google.protobuf:protobuf-java:4.28.2")
+    implementation(platform("com.google.cloud:libraries-bom:26.59.0"))
 
     // Swagger
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0")

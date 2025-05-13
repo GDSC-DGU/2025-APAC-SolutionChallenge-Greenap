@@ -109,7 +109,7 @@ class GetUserTotalRankUseCaseTest : IntegrationTestContainer() {
         assertThat(result.userRankInfo.rank).isEqualTo(1)
     }
 
-    private suspend fun makeTotalRank(userChallenge: UserChallenge, certificateDate: LocalDate) {
+    private fun makeTotalRank(userChallenge: UserChallenge, certificateDate: LocalDate) {
         userChallengeEventListener.processWhenReceive(
             event = makeEvent(
                 userChallenge.id!!,

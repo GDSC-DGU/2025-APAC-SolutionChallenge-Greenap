@@ -130,7 +130,7 @@ class GetUserSpecificChallengeTotalRankUseCaseTest : IntegrationTestContainer(){
         )
     }
 
-    private suspend fun makeSpecificRank(userChallenge: UserChallenge, certificateDate: LocalDate): RankState {
+    private fun makeSpecificRank(userChallenge: UserChallenge, certificateDate: LocalDate): RankState {
         userChallengeEventListener.processWhenReceive(
             event = makeEvent(
                 userChallenge.id!!,
