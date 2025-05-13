@@ -128,9 +128,8 @@ class ReportView extends StatelessWidget {
 
   void _handleJoinChallenge(BuildContext context) async {
     final viewModel = Get.find<MyChallengeDetailViewModel>();
-    final challengeDetail = await viewModel.fetchChallengeDetail(
-      report.userChallengeId,
-    );
+    await viewModel.fetchChallengeDetail(report.userChallengeId);
+    final challengeDetail = viewModel.challengeDetail.value;
 
     if (challengeDetail != null) {
       showDialog(

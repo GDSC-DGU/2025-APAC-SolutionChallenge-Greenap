@@ -1,29 +1,67 @@
+import 'dart:io';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:greenap/data/provider/verification/verification_provider.dart';
 import 'package:greenap/domain/models/challenge_detail.dart';
-import 'package:greenap/domain/models/dummy/challenge_detail_dummy.dart';
 
 class VerificationUploadViewModel extends GetxController {
   late final int challengeId;
-  late final ChallengeDetailModel challengeDetail;
+  late final int userChallengeId;
   final RxBool isChecked = false.obs;
+  final Rx<File?> selectedImage = Rx<File?>(null);
+  final RxBool isLoading = false.obs;
+
+  final challengeDetail = Rxn<ChallengeDetailModel>();
+  late final VerificationProvider _provider;
 
   @override
   void onInit() {
     super.onInit();
-    challengeId = Get.arguments as int;
+
+    final args = Get.arguments as Map<String, dynamic>;
+    challengeId = args['challengeId'];
+    userChallengeId = args['userChallengeId'];
+    _provider = Get.find<VerificationProvider>();
+
     fetchChallengeDetail();
   }
 
-  void fetchChallengeDetail() {
-    // 실제 호출로 대체 필요
+  Future<void> fetchChallengeDetail() async {
+    print('[DEBUG] 챌린지 상세 정보 요청 시작: $challengeId');
+    final response = await _provider.getChallengeDetail(challengeId);
+    print('[DEBUG] 응답 수신: status=${response.code}, message=${response.data}');
+
+    if (response.data != null) {
+      challengeDetail.value = response.data;
+    } else {
+      print('[ERROR] 챌린지 상세 정보 없음');
+    }
+  }
+
+  /// 이미지 선택
+  Future<void> pickImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      selectedImage.value = File(pickedFile.path);
+    }
+  }
+
+  /// 인증 요청
+  Future<String?> submitVerification() async {
+    if (selectedImage.value == null) return '이미지를 선택해주세요.';
+
+    isLoading.value = true;
     try {
-      final detail = dummyChallengeDetails.firstWhere(
-        (detail) => detail.id == challengeId,
-        orElse: () => throw Exception('챌린지 상세 정보가 없습니다.'),
+      final response = await _provider.uploadVerificationImage(
+        userChallengeId: userChallengeId,
+        imageFile: selectedImage.value!,
       );
-      challengeDetail = detail;
+      return response.message;
     } catch (e) {
-      print('챌린지 상세 불러오기 실패: $e');
+      return '인증 요청 중 오류가 발생했습니다.';
+    } finally {
+      isLoading.value = false;
     }
   }
 }

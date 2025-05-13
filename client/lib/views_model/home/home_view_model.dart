@@ -1,14 +1,16 @@
 import 'package:get/get.dart';
 import 'package:greenap/data/provider/challenge/challenge_provider.dart';
 import 'package:greenap/domain/models/challenge_category.dart';
-import 'package:greenap/domain/models/my_challenge.dart';
 import 'package:greenap/data/provider/challenge/my_challenge_provider.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class HomeViewModel extends GetxController {
   final RxList<ChallengeCategoryModel> challengeCategories =
       <ChallengeCategoryModel>[].obs;
   late final MyChallengeProvider _myChallengeProvider;
   late final ChallengeProvider _challengeProvider;
+  final Rxn<String> nickname = Rxn<String>();
+  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
   @override
   void onInit() {
@@ -16,6 +18,17 @@ class HomeViewModel extends GetxController {
     _myChallengeProvider = Get.find<MyChallengeProvider>();
     _challengeProvider = Get.find<ChallengeProvider>();
     fetchChallengeCategories();
+    userInfo();
+  }
+
+  Future<void> userInfo() async {
+    final storedNickname = await _secureStorage.read(key: 'nickname');
+    if (storedNickname != null) {
+      nickname.value = storedNickname;
+      print('[DEBUG] 닉네임 불러오기 성공: $storedNickname');
+    } else {
+      print('[DEBUG] 저장된 닉네임 없음');
+    }
   }
 
   Future<void> fetchChallengeCategories() async {

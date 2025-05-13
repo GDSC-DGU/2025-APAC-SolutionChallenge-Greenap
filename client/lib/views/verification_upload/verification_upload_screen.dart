@@ -11,6 +11,7 @@ import 'package:greenap/widgets/common/bottom_action_button.dart';
 import './widgets/verification_fail_popup.dart';
 import './widgets/verification_success_popup.dart';
 import './widgets/loading_popup.dart';
+import 'package:image_picker/image_picker.dart';
 
 class VerificationUploadScreen extends BaseScreen<VerificationUploadViewModel> {
   const VerificationUploadScreen({super.key});
@@ -22,10 +23,14 @@ class VerificationUploadScreen extends BaseScreen<VerificationUploadViewModel> {
 
   @override
   Widget buildBody(BuildContext context) {
-    final challenge = viewModel.challengeDetail;
+    return Obx(() {
+      final challenge = viewModel.challengeDetail.value;
 
-    return Obx(
-      () => SingleChildScrollView(
+      if (challenge == null) {
+        return const Center(child: CircularProgressIndicator());
+      }
+
+      return SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -42,65 +47,62 @@ class VerificationUploadScreen extends BaseScreen<VerificationUploadViewModel> {
             const SizedBox(height: 12),
             BottomActionButton.outlined(
               text: '인증 사진 첨부하기',
-              onPressed: _handleAttachPhoto(viewModel),
+              onPressed:
+                  viewModel.isChecked.value
+                      ? () => _handleAttachPhoto(viewModel)
+                      : null,
             ),
           ],
         ),
-      ),
-    );
+      );
+    });
   }
 
-  VoidCallback? _handleAttachPhoto(VerificationUploadViewModel viewModel) {
-    return viewModel.isChecked.value ? () => _executeVerificationFlow() : null;
-  }
+  Future<void> _handleAttachPhoto(VerificationUploadViewModel viewModel) async {
+    await viewModel.pickImage();
 
-  Future<void> _executeVerificationFlow() async {
-    // 1. 로딩 팝업
+    if (viewModel.selectedImage.value == null) return;
+
     showDialog(
       context: Get.context!,
       barrierDismissible: false,
       builder: (_) => const LoadingPopup(),
     );
 
-    await Future.delayed(const Duration(seconds: 2));
+    final resultMessage = await viewModel.submitVerification();
 
-    // 무조건 루트 다이얼로그 팝
     Navigator.of(Get.context!, rootNavigator: true).pop();
 
     await Future.delayed(const Duration(milliseconds: 100));
 
-    final isSuccess = DateTime.now().second % 2 == 0;
+    final isSuccess = resultMessage == null || resultMessage == "Success";
 
-    if (isSuccess) {
-      await showDialog(
-        context: Get.context!,
-        builder:
-            (_) => VerificationSuccessPopup(
-              onViewFeed: () {
-                Navigator.pop(Get.context!);
-                Get.offAllNamed('/root', arguments: {'initialTab': 1});
-              },
-              onUploadFeed: () {
-                Navigator.pop(Get.context!);
-                Get.offAllNamed('/root', arguments: {'initialTab': 1});
-              },
-            ),
-      );
-    } else {
-      await showDialog(
-        context: Get.context!,
-        builder:
-            (_) => VerificationFailPopup(
-              onViewFeed: () {
-                Navigator.pop(Get.context!);
-                Get.offAllNamed('/root', arguments: {'initialTab': 1});
-              },
-              onRetry: () {
-                Navigator.pop(Get.context!); // 실패 팝업 닫기
-              },
-            ),
-      );
-    }
+    await showDialog(
+      context: Get.context!,
+      builder:
+          (_) =>
+              isSuccess
+                  ? VerificationSuccessPopup(
+                    onViewFeed: () {
+                      Navigator.pop(Get.context!);
+                      Get.offAllNamed('/root', arguments: {'initialTab': 1});
+                    },
+                    onUploadFeed: () {
+                      Navigator.pop(Get.context!);
+                      Get.offAllNamed('/root', arguments: {'initialTab': 1});
+                    },
+                  )
+                  : VerificationFailPopup(
+                    reason: resultMessage ?? '알 수 없는 이유로 인증에 실패했어요.',
+                    onViewFeed: () {
+                      Navigator.pop(Get.context!);
+                      Get.offAllNamed('/root', arguments: {'initialTab': 1});
+                    },
+                    onRetry: () {
+                      Navigator.pop(Get.context!);
+                    },
+                  ),
+    );
   }
 
   Widget _buildTitle(ChallengeDetailModel challenge) {

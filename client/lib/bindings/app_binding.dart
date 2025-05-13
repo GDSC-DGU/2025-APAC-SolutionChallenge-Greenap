@@ -4,6 +4,7 @@ import 'package:greenap/data/provider/auth/auth_provider.dart';
 import 'package:greenap/data/provider/challenge/my_challenge_provider.dart';
 import 'package:greenap/data/provider/category_detail/category_detail_provider.dart';
 import 'package:greenap/data/provider/feed/feed_provider.dart';
+import 'package:greenap/data/provider/verification/verification_provider.dart';
 
 class AppBinding extends Bindings {
   @override
@@ -17,5 +18,9 @@ class AppBinding extends Bindings {
       fenix: true,
     );
     Get.lazyPut<FeedProvider>(() => FeedProvider(), fenix: true);
+    Get.lazyPut<VerificationProvider>(
+      () => VerificationProvider(),
+      fenix: true,
+    );
   }
 }

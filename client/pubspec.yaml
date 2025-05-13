@@ -44,6 +44,8 @@ dependencies:
   http: ^1.4.0
   flutter_dotenv: ^5.2.1
   flutter_secure_storage: ^9.2.4
+  image_picker: ^1.0.7
+  collection: ^1.18.0
 
 dev_dependencies:
   flutter_test:

@@ -27,14 +27,24 @@ class CategoryDetailViewModel extends GetxController {
     }
   }
 
-  /// 챌린지 참여
-  Future<ResponseWrapper> joinChallenge({
+  Future<ResponseWrapper<int>> joinChallenge({
     required int challengeId,
     required int duration,
   }) async {
-    return await _provider.joinChallenge(
+    final response = await _provider.joinChallenge(
       challengeId: challengeId,
       participantsDate: duration,
     );
+
+    if (response.data != null) {
+      return response;
+    } else {
+      print('[ERROR]: ${response.message}');
+      return ResponseWrapper(
+        code: response.code,
+        data: null,
+        message: response.message,
+      );
+    }
   }
 }

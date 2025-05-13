@@ -41,7 +41,7 @@ class ChallengeVerificationCard extends StatelessWidget {
           child: Row(
             children: [
               challengeItem != null
-                  ? Image.asset(
+                  ? Image.network(
                     challengeItem.mainImageUrl,
                     width: 110,
                     height: 110,
@@ -124,7 +124,10 @@ class ChallengeVerificationCard extends StatelessWidget {
                           onPressed: () {
                             Get.toNamed(
                               '/verification-upload',
-                              arguments: challenge.challengeId,
+                              arguments: {
+                                'challengeId': challenge.challengeId,
+                                'userChallengeId': challenge.id,
+                              },
                             );
                           },
                         ),

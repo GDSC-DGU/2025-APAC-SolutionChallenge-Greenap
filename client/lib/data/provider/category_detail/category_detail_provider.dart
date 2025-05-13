@@ -30,7 +30,7 @@ class CategoryDetailProvider extends BaseConnect {
     );
   }
 
-  Future<ResponseWrapper> joinChallenge({
+  Future<ResponseWrapper<int>> joinChallenge({
     required int challengeId,
     required int participantsDate,
   }) async {
@@ -41,10 +41,21 @@ class CategoryDetailProvider extends BaseConnect {
 
     print('[DEBUG] 챌린지 참여 요청 결과: ${response.body}');
 
-    return ResponseWrapper(
-      code: response.body['code'] ?? '500',
-      data: response.body['data'],
-      message: response.body['message'],
-    );
+    if (response.statusCode == 200) {
+      final body = response.body;
+      final data = body['data'];
+
+      return ResponseWrapper<int>(
+        code: body['code'],
+        data: data?['userChallengeId'],
+        message: body['message'],
+      );
+    } else {
+      return ResponseWrapper(
+        code: response.body['code'] ?? '500',
+        data: null,
+        message: response.body['message'] ?? '참여 실패',
+      );
+    }
   }
 }

@@ -17,7 +17,6 @@ abstract class BaseConnect extends GetConnect {
       final token = await getAccessToken();
       if (token != null) {
         request.headers['Authorization'] = 'Bearer $token';
-        print('[DEBUG] 요청 헤더에 토큰 추가됨: $token');
       } else {
         print('[DEBUG] 요청 헤더에 토큰 없음');
       }
