@@ -14,6 +14,7 @@ import com.app.server.core.security.handler.JwtAccessDeniedHandler
 import com.app.server.core.security.provider.JwtAuthenticationProvider
 import com.app.server.core.security.service.CustomUserDetailsService
 import com.app.server.core.security.util.JwtUtil
+import jakarta.annotation.PostConstruct
 import jakarta.servlet.DispatcherType
 import org.springframework.aot.generate.ValueCodeGenerator.withDefaults
 import org.springframework.context.annotation.Bean
@@ -24,6 +25,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer
 import org.springframework.security.config.http.SessionCreationPolicy
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.logout.LogoutFilter
 
@@ -41,6 +43,14 @@ class SecurityConfig(
     private val customOAuth2SuccessHandler: CustomOAuth2SuccessHandler,
     private val customOAuth2failureHandler: CustomOAuth2FailureHandler,
 ) {
+
+    @PostConstruct
+    fun enableAsyncSecurityContextPropagation() {
+        SecurityContextHolder.setStrategyName(
+            SecurityContextHolder.MODE_INHERITABLETHREADLOCAL
+        )
+    }
+
 
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
