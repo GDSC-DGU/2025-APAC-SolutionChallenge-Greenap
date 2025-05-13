@@ -1,9 +1,11 @@
 package com.app.server.user_challenge.application.service.query
 
+import com.app.server.common.exception.BadRequestException
 import com.app.server.rank.application.service.RankService
 import com.app.server.user_challenge.application.service.UserChallengeService
 import com.app.server.user_challenge.domain.enums.EUserChallengeCertificationStatus
 import com.app.server.user_challenge.domain.enums.EUserChallengeStatus
+import com.app.server.user_challenge.domain.exception.UserChallengeException
 import com.app.server.user_challenge.domain.model.UserChallenge
 import com.app.server.user_challenge.domain.model.UserChallengeHistory
 import com.app.server.user_challenge.ui.dto.response.CertificationData
@@ -44,11 +46,12 @@ class UserChallengeQueryService(
         return GetTotalUserChallengeResponseDto(userChallenges = mappedList)
     }
 
-    override fun getReport(userChallengeId: Long, todayDate: LocalDate): ReportDto? {
+    override fun getReport(userChallengeId: Long, todayDate: LocalDate): ReportDto {
 
         val userChallenge : UserChallenge = userChallengeService.findById(userChallengeId)
 
-        if (isReportReceivedFrom(userChallenge)) return null
+        if (isReportReceivedFrom(userChallenge))
+            throw BadRequestException(UserChallengeException.REPORT_NOT_FOUND_AND_STATUS_IS_DEAD)
 
         val successDays = userChallenge.getUserChallengeHistories()
             .count { it.status != EUserChallengeCertificationStatus.FAILED }

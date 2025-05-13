@@ -19,11 +19,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer
 import org.springframework.security.config.http.SessionCreationPolicy
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.logout.LogoutFilter
-import org.springframework.security.web.context.SecurityContextHolderFilter
-import org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter
 
 @Configuration
 @EnableWebSecurity
@@ -40,19 +37,8 @@ class SecurityConfig(
     private val customOAuth2failureHandler: CustomOAuth2FailureHandler,
 ) {
 
-    init {
-        SecurityContextHolder.setStrategyName(
-            SecurityContextHolder.MODE_INHERITABLETHREADLOCAL
-        )
-    }
-
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
-
-        http.addFilterBefore(
-            WebAsyncManagerIntegrationFilter(),
-            SecurityContextHolderFilter::class.java
-        )
 
         http
             .csrf { it.disable() }
