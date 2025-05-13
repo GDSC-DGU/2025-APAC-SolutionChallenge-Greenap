@@ -27,10 +27,10 @@ class ChallengeEncourageMessage extends StatelessWidget {
         ],
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SvgPicture.asset('assets/icons/earth.svg', width: 20, height: 20),
-          SizedBox(width: 6),
+          SizedBox(width: 10),
           Expanded(
             child: Obx(
               () => Text(

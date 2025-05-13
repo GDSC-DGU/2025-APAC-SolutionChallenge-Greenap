@@ -14,7 +14,6 @@ class UserInfo extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(() {
       final nickname = viewModel.nickname.value ?? '사용자';
-
       return Container(
         padding: EdgeInsets.symmetric(horizontal: 0, vertical: 12),
         child: Row(
