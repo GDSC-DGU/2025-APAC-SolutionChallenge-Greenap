@@ -7,6 +7,7 @@ abstract class AppRoutes {
   static const String CHALLENGE = '/challenge';
   static const String CATEGORY = '/category';
   static const String MYPAGE = '/mypage';
+  static const String RANKING = "/ranking";
   static const String VERIFICATION = '/verification';
   static const String MYCHALLENGE = '/my-challenge-detail';
   static const String VERIFICATIONUPLOAD = '/verification-upload';

@@ -1,4 +1,4 @@
-import 'package:greenap/domain/models/my_rank.dart';
+import 'package:greenap/domain/models/all_ranking.dart';
 
 class UserRankDto {
   final String nickname;
@@ -19,6 +19,14 @@ class UserRankDto {
           json['longest_consecutive_participation_count'],
     );
   }
+  ParticipantUserModel toModel() {
+    return ParticipantUserModel(
+      nickname: nickname,
+      profileImageUrl: profileImageUrl,
+      longestConsecutiveParticipationCount:
+          longestConsecutiveParticipationCount,
+    );
+  }
 }
 
 class MyRankDto {
@@ -34,11 +42,7 @@ class MyRankDto {
     );
   }
 
-  MyRankModel toModel() {
-    return MyRankModel(
-      rank: rank,
-      longestConsecutiveParticipationCount:
-          user.longestConsecutiveParticipationCount,
-    );
+  ParticipantModel toModel() {
+    return ParticipantModel(rank: rank, user: user.toModel());
   }
 }
