@@ -3,13 +3,16 @@ import 'package:greenap/data/provider/challenge/challenge_provider.dart';
 import 'package:greenap/domain/models/challenge_category.dart';
 import 'package:greenap/data/provider/challenge/my_challenge_provider.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:greenap/data/provider/notification/encourage_provider.dart';
 
 class HomeViewModel extends GetxController {
   final RxList<ChallengeCategoryModel> challengeCategories =
       <ChallengeCategoryModel>[].obs;
   late final MyChallengeProvider _myChallengeProvider;
   late final ChallengeProvider _challengeProvider;
+  late final EncourageProvider _encourageProvider;
   final Rxn<String> nickname = Rxn<String>();
+  final Rxn<String> encourageMessage = Rxn<String>();
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
   @override
@@ -17,8 +20,20 @@ class HomeViewModel extends GetxController {
     super.onInit();
     _myChallengeProvider = Get.find<MyChallengeProvider>();
     _challengeProvider = Get.find<ChallengeProvider>();
+    _encourageProvider = Get.find<EncourageProvider>();
+    fetchEncourageMessage();
     fetchChallengeCategories();
     userInfo();
+  }
+
+  Future<void> fetchEncourageMessage() async {
+    final response = await _encourageProvider.getEncourageMessage();
+    if (response.message != null) {
+      encourageMessage.value = response.data;
+      print('[DEBUG] 메시지 : ${response.data}');
+    } else {
+      print('[DEBUG] 메시지 없음');
+    }
   }
 
   Future<void> userInfo() async {
@@ -44,7 +59,6 @@ class HomeViewModel extends GetxController {
     final categories = categoryResponse.data!;
     final myChallenges = myChallengeResponse.data!;
 
-    // 2. 카테고리별 참여 챌린지 수 집계
     final Map<String, int> categoryCountMap = {};
 
     for (final challenge in myChallenges) {
