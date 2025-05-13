@@ -4,5 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 
 data class GetCertificatedImageUrlResponseDto(
     @JsonProperty("image_url")
-    val imageUrl: String
+    val imageUrl: String,
+    @JsonProperty("is_finished")
+    val isFinished: Boolean,
 )

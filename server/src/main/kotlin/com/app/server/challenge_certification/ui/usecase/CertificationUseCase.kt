@@ -34,6 +34,11 @@ class CertificationUseCaseImpl(
 
         val result = certificationService.certificateImage(command)
 
-        return GetCertificatedImageUrlResponseDto(result)
+        val isFinishedDay = LocalDate.now().isEqual(certificationDate)
+
+        return GetCertificatedImageUrlResponseDto(
+            imageUrl = result,
+            isFinished = isFinishedDay
+        )
     }
 }
