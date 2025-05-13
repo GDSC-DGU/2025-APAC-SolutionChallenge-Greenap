@@ -5,8 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 data class SendToCertificationServerRequestDto (
 
     val image_url: String,
-    @JsonProperty("challenge_id")
-    val challengeId: Long = 0,
+    val challengeId: Long,
     @JsonProperty("challenge_title")
     val challenge_title: String,
     @JsonProperty("challenge_description")

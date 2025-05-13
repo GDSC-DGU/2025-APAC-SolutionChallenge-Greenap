@@ -14,27 +14,21 @@ class UserChallengeScheduler (
     private val userChallengeCommandServiceImpl: UserChallengeCommandServiceImpl
 ){
 
-    private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
-
     @Scheduled(cron = "0 0 0 * * ?")
     fun updateChallengeStatusToPending() {
-        scope.launch {
             userChallengeCommandServiceImpl.batchUpdateChallengeStatusFromRunningToPending(LocalDate.now())
-        }
+
     }
 
     @Scheduled(cron = "0 0 0 * * ?")
     fun updateChallengeStatusFromPendingToCompleted() {
-        scope.launch {
             userChallengeCommandServiceImpl.batchUpdateChallengeStatusFromPendingToCompleted(LocalDate.now())
-        }
     }
 
     @Scheduled(cron = "0 0 0 * * ?")
     fun updateChallengeStatusFromWaitingToCompleted() {
-        scope.launch {
             userChallengeCommandServiceImpl.batchUpdateChallengeStatusFromWaitingToCompleted(LocalDate.now())
-        }
+
     }
 
 }
