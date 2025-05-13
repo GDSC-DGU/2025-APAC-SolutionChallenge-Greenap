@@ -5,18 +5,12 @@ import com.app.server.core.security.JwtAuthEntryPoint
 import com.app.server.core.security.filter.CustomLogoutFilter
 import com.app.server.core.security.filter.JwtAuthenticationFilter
 import com.app.server.core.security.filter.JwtExceptionFilter
-import com.app.server.core.security.handler.CustomOAuth2FailureHandler
-import com.app.server.core.security.handler.CustomOAuth2SuccessHandler
-import com.app.server.core.security.service.CustomOAuth2UserService
-import com.app.server.core.security.handler.CustomSignOutProcessHandler
-import com.app.server.core.security.handler.CustomSignOutResultHandler
-import com.app.server.core.security.handler.JwtAccessDeniedHandler
+import com.app.server.core.security.handler.*
 import com.app.server.core.security.provider.JwtAuthenticationProvider
+import com.app.server.core.security.service.CustomOAuth2UserService
 import com.app.server.core.security.service.CustomUserDetailsService
 import com.app.server.core.security.util.JwtUtil
-import jakarta.annotation.PostConstruct
 import jakarta.servlet.DispatcherType
-import org.springframework.aot.generate.ValueCodeGenerator.withDefaults
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.Customizer
@@ -28,6 +22,8 @@ import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.logout.LogoutFilter
+import org.springframework.security.web.context.SecurityContextHolderFilter
+import org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter
 
 @Configuration
 @EnableWebSecurity
@@ -44,16 +40,20 @@ class SecurityConfig(
     private val customOAuth2failureHandler: CustomOAuth2FailureHandler,
 ) {
 
-    @PostConstruct
-    fun enableAsyncSecurityContextPropagation() {
+    init {
         SecurityContextHolder.setStrategyName(
             SecurityContextHolder.MODE_INHERITABLETHREADLOCAL
         )
     }
 
-
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
+
+        http.addFilterBefore(
+            WebAsyncManagerIntegrationFilter(),
+            SecurityContextHolderFilter::class.java
+        )
+
         http
             .csrf { it.disable() }
             .httpBasic { it.disable() }
