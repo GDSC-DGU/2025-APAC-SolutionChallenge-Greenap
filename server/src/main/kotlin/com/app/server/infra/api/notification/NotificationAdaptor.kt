@@ -28,7 +28,7 @@ class NotificationAdaptor(
             NotificationException.RECEIVE_FAILED
         )
 
-        return responseBody.message
+        return responseBody.result_text
 
     }
 
