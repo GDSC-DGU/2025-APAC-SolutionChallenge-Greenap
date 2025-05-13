@@ -1,6 +1,5 @@
 import 'package:greenap/core/network/base_connect.dart';
 import 'package:greenap/core/network/response_wrapper.dart';
-import 'package:greenap/data/dto/encourage_dto.dart';
 
 class EncourageProvider extends BaseConnect {
   Future<ResponseWrapper<String>> getEncourageMessage() async {

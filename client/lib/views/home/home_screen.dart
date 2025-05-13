@@ -7,6 +7,7 @@ import 'widgets/today_habit_card/today_habit_card.dart';
 import 'package:greenap/views_model/home/home_view_model.dart';
 import 'package:greenap/views/base/base_screen.dart';
 import 'package:get/get.dart';
+import 'package:greenap/domain/enums/challenge.dart';
 
 class HomeScreen extends BaseScreen<HomeViewModel> {
   const HomeScreen({super.key});
@@ -32,13 +33,22 @@ class HomeScreen extends BaseScreen<HomeViewModel> {
                   style: FontSystem.Head1.copyWith(color: ColorSystem.mint),
                 ),
                 const SizedBox(height: 12),
-                TodayHabitCard(
-                  challenges: [
-                    {'name': '텀블러 사용하기', 'isCerficated': true},
-                    {'name': '대중교통 이용하기', 'isCerficated': false},
-                    {'name': '채식 식단 실천하기', 'isCerficated': false},
-                  ],
-                ),
+                Obx(() {
+                  final challengeList = viewModel.myChallengeList;
+                  return TodayHabitCard(
+                    challenges:
+                        challengeList.map((challenge) {
+                          return {
+                            'name': challenge.title,
+                            'isCerficated':
+                                challenge.isCerficatedInToday ==
+                                        ChallengeCertificated.SUCCESS
+                                    ? true
+                                    : false,
+                          };
+                        }).toList(),
+                  );
+                }),
               ],
             ),
             const SizedBox(height: 32),

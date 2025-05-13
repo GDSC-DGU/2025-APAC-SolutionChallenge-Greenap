@@ -18,7 +18,7 @@ class VerificationFailPopup extends StatelessWidget {
   Widget build(BuildContext context) {
     return BasePopupDialog(
       title: '챌린지 인증을 실패했습니다',
-      subtitle: '$reason \n재인증이 필요합니다',
+      subtitle: '$reason',
       actions: [
         PopupActionButton(
           text: '피드 둘러보기',

@@ -42,10 +42,9 @@ class VerificationDayListView extends StatelessWidget {
           certDate.day == DateTime.now().day;
 
       final status =
-          isToday
+          (isToday && statusStr == 'FAILED')
               ? VerificationStatus.upcoming
               : VerificationStatusExtension.fromString(statusStr);
-
       statusByDay[i + 1] = status;
       print(statusByDay);
     }
