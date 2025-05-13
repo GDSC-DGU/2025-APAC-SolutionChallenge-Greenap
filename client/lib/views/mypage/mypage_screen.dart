@@ -125,7 +125,7 @@ class MypageScreen extends BaseScreen<MypageViewModel> {
               ),
               label: '내 피드',
               onTap: () {
-                Get.toNamed('/my-feed-category');
+                Get.toNamed('/my-feed-list');
               },
             ),
           ],

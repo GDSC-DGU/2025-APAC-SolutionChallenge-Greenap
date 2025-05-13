@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
 import 'package:greenap/domain/models/feed_item.dart';
-import 'package:greenap/domain/models/dummy/feed_item_dummy.dart';
 import 'package:greenap/data/provider/feed/feed_provider.dart';
 
 class FeedViewModel extends GetxController {

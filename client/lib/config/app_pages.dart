@@ -14,7 +14,6 @@ import 'package:greenap/bindings/my_challenge_detail_binding.dart';
 import 'package:greenap/bindings/root_binding.dart';
 import 'package:greenap/bindings/category_detail_binding.dart';
 import 'package:greenap/bindings/verification_upload_binding.dart';
-import 'package:greenap/views/my_feed_category/my_feed_category_screen.dart';
 import 'package:greenap/views/my_feed_list/my_feed_list_screen.dart';
 import 'package:greenap/bindings/my_feed_list_binding.dart';
 import 'package:greenap/bindings/login_binding.dart';
@@ -49,7 +48,6 @@ abstract class AppPages {
     GetPage(name: AppRoutes.MYPAGE, page: () => MypageScreen()),
     GetPage(name: AppRoutes.VERIFICATION, page: () => VerificationScreen()),
     GetPage(name: AppRoutes.FEED, page: () => FeedScreen()),
-    GetPage(name: AppRoutes.MYFEEDCATEGORY, page: () => MyFeedCategoryScreen()),
     GetPage(
       name: AppRoutes.MYFEEDLIST,
       page: () => MyFeedListScreen(),
