@@ -14,6 +14,7 @@ import com.app.server.core.security.handler.JwtAccessDeniedHandler
 import com.app.server.core.security.provider.JwtAuthenticationProvider
 import com.app.server.core.security.service.CustomUserDetailsService
 import com.app.server.core.security.util.JwtUtil
+import jakarta.servlet.DispatcherType
 import org.springframework.aot.generate.ValueCodeGenerator.withDefaults
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -51,6 +52,7 @@ class SecurityConfig(
             }
             .authorizeHttpRequests { auth ->
                 auth.requestMatchers(*Constants.NO_NEED_AUTH_URLS.toTypedArray()).permitAll()
+                    .dispatcherTypeMatchers(DispatcherType.ASYNC).permitAll()
                     .requestMatchers("/api/admin/**").hasRole("ADMIN")
                     .anyRequest().authenticated()
             }
