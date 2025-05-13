@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:greenap/config/color_system.dart';
 import 'package:greenap/config/font_system.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
+import 'package:greenap/views_model/home/home_view_model.dart';
 
 class UserInfo extends StatelessWidget {
-  const UserInfo({super.key});
+  UserInfo({super.key});
+
+  final HomeViewModel viewModel = Get.find<HomeViewModel>();
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +18,7 @@ class UserInfo extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            "지속 가능한 하루, OOO님과 함께",
+            "지속 가능한 하루, ${viewModel.nickname}님과 함께",
             style: FontSystem.Head3.copyWith(color: ColorSystem.gray[700]),
           ),
           Row(

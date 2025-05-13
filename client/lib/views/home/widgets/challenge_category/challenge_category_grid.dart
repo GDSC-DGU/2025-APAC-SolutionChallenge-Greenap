@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:greenap/config/color_system.dart';
 import 'package:greenap/widgets/common/challenge_category_item.dart';
-import 'package:greenap/domain/models/dummy/challenge_dummy.dart';
-import 'package:greenap/views_model/challenge/challenge_view_model.dart';
 import 'package:greenap/views_model/home/home_view_model.dart';
 import 'package:get/get.dart';
 
@@ -23,11 +21,10 @@ class ChallengeCategoryGrid extends StatelessWidget {
     return Obx(() {
       final categories = viewModel.challengeCategories;
       if (categories.isEmpty) {
-        return const SizedBox.shrink(); // 혹은 로딩 위젯
+        return const SizedBox.shrink();
       }
 
       if (categories.length < 4) {
-        // 4개 미만이면 로딩/대체 UI 반환
         return const Center(child: CircularProgressIndicator());
       }
 

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'verification_day_circle.dart';
+import 'package:intl/intl.dart';
+
 import 'package:greenap/domain/enums/verification.dart';
 import 'package:greenap/domain/extensions/verification_ext.dart';
-import 'package:greenap/config/color_system.dart';
 
 class VerificationDayListView extends StatelessWidget {
   final int totalDays;
-  final List<Map<String, String>> certificationDataList;
+  final List<Map<String, dynamic>> certificationDataList;
 
   const VerificationDayListView({
     super.key,
@@ -19,6 +20,39 @@ class VerificationDayListView extends StatelessWidget {
     const int itemsPerRow = 5;
     const double spacing = 12;
     final double horizontalPadding = 20.0;
+
+    final Map<int, VerificationStatus> statusByDay = {};
+    final today = DateTime.now();
+
+    for (int i = 0; i < certificationDataList.length; i++) {
+      final raw = certificationDataList[i];
+      final dynamic statusRaw = raw['is_certificated'];
+      final String statusStr =
+          (statusRaw is String)
+              ? statusRaw.toUpperCase()
+              : 'FAILED'; // fallback
+      final rawDate = raw['date'];
+      DateTime? certDate;
+
+      if (rawDate is String) {
+        certDate = DateTime.tryParse(rawDate);
+      } else if (rawDate is List && rawDate.length == 3) {
+        certDate = DateTime(rawDate[0], rawDate[1], rawDate[2]);
+      }
+      final isToday =
+          certDate != null &&
+          certDate.year == DateTime.now().year &&
+          certDate.month == DateTime.now().month &&
+          certDate.day == DateTime.now().day;
+
+      final status =
+          isToday
+              ? VerificationStatus.upcoming
+              : VerificationStatusExtension.fromString(statusStr);
+
+      statusByDay[i + 1] = status;
+      print(statusByDay);
+    }
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -47,15 +81,8 @@ class VerificationDayListView extends StatelessWidget {
             runSpacing: spacing,
             children: List.generate(totalDays, (index) {
               final day = index + 1;
+              final status = statusByDay[day] ?? VerificationStatus.upcoming;
 
-              VerificationStatus status;
-              if (index < certificationDataList.length) {
-                final rawStatus =
-                    certificationDataList[index]['is_certificated'] ?? 'false';
-                status = VerificationStatusExtension.fromString(rawStatus);
-              } else {
-                status = VerificationStatus.upcoming;
-              }
               return SizedBox(
                 width: itemWidth,
                 child: VerificationDayCircle(dayNumber: day, status: status),
@@ -65,5 +92,9 @@ class VerificationDayListView extends StatelessWidget {
         );
       },
     );
+  }
+
+  bool _isSameDate(DateTime a, DateTime b) {
+    return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 }

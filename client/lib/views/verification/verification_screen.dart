@@ -3,13 +3,18 @@ import 'package:greenap/config/Font_system.dart';
 import 'package:greenap/config/color_system.dart';
 import 'package:get/get.dart';
 import 'package:greenap/views_model/verification/verification_view_model.dart';
+import 'package:greenap/views_model/challenge/my_challenge_view_model.dart';
 import 'package:greenap/widgets/app_bar/default_app_bar.dart';
+import 'package:greenap/domain/enums/challenge.dart';
 import 'package:greenap/views/base/base_screen.dart';
 import './widgets/ice_description_card.dart';
 import './widgets/challenge_verification_card.dart';
 
 class VerificationScreen extends BaseScreen<VerificationViewModel> {
-  const VerificationScreen({super.key});
+  final MyChallengeViewModel myChallengeViewModel = Get.find();
+  final VerificationViewModel verificationViewModel = Get.find();
+
+  VerificationScreen({super.key});
 
   @override
   PreferredSizeWidget buildAppBar(BuildContext context) {
@@ -19,7 +24,10 @@ class VerificationScreen extends BaseScreen<VerificationViewModel> {
   @override
   Widget buildBody(BuildContext context) {
     return Obx(() {
-      final challenges = viewModel.myChallenges;
+      final challenges =
+          myChallengeViewModel.myChallenges
+              .where((c) => c.status == ChallengeStatus.running)
+              .toList();
 
       return SingleChildScrollView(
         child: Padding(

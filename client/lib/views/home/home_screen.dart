@@ -5,7 +5,6 @@ import 'widgets/challenge_category/challenge_category.dart';
 import 'widgets/user_info/user_info.dart';
 import 'widgets/today_habit_card/today_habit_card.dart';
 import 'package:greenap/views_model/home/home_view_model.dart';
-import 'package:get/get.dart';
 import 'package:greenap/views/base/base_screen.dart';
 
 class HomeScreen extends BaseScreen<HomeViewModel> {

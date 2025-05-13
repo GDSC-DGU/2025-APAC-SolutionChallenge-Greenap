@@ -29,11 +29,11 @@ class ChallengeCard extends StatelessWidget {
             onCancel: () => Navigator.pop(context),
             onJoin: (duration) async {
               Navigator.pop(context);
-
-              await viewModel.joinChallenge(
+              final response = await viewModel.joinChallenge(
                 challengeId: challenge.id,
                 duration: duration,
               );
+              final userChallengeId = response.data;
 
               // 다음 프레임에서 실행되도록 함
               Future.delayed(Duration.zero, () {
@@ -50,7 +50,10 @@ class ChallengeCard extends StatelessWidget {
                           Navigator.pop(context);
                           Get.toNamed(
                             '/verification-upload',
-                            arguments: challenge.id,
+                            arguments: {
+                              'challengeId': challenge.id,
+                              'userChallengeId': userChallengeId,
+                            },
                           );
                         },
                       ),

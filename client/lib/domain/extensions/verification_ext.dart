@@ -6,12 +6,12 @@ import 'package:greenap/config/font_system.dart';
 
 extension VerificationStatusExtension on VerificationStatus {
   static VerificationStatus fromString(String value) {
-    switch (value.toLowerCase()) {
-      case 'true':
+    switch (value) {
+      case 'SUCCESS':
         return VerificationStatus.success;
-      case 'false':
+      case 'FAILED':
         return VerificationStatus.failed;
-      case 'ice':
+      case 'ICE':
         return VerificationStatus.ice;
       default:
         return VerificationStatus.failed;

@@ -61,6 +61,13 @@ class LoginViewModel extends GetxController {
           value: response.data!.jwtTokenDto.refreshToken,
         );
 
+        await _secureStorage.write(key: 'nickname', value: userModel.nickname);
+
+        await _secureStorage.write(
+          key: 'profileImageUrl',
+          value: userModel.profileImageUrl,
+        );
+
         final savedAccessToken = await _secureStorage.read(key: 'accessToken');
         print('저장된 accessToken: $savedAccessToken');
 
