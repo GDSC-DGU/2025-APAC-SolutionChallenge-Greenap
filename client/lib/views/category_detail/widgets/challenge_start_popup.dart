@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:greenap/config/color_system.dart';
-import 'package:greenap/config/font_system.dart';
 import 'package:greenap/widgets/common/base_popup_dialog.dart';
 import 'package:greenap/widgets/common/popup_action_button.dart';
 import 'package:greenap/domain/models/challenge_detail.dart';

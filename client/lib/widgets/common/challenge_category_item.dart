@@ -61,7 +61,9 @@ class ChallengeCategoryItem extends StatelessWidget {
             category.title,
             style: FontSystem.Body1Bold.copyWith(color: ColorSystem.gray[800]),
           ),
-          Expanded(child: Image.asset(category.imageUrl, fit: BoxFit.contain)),
+          Expanded(
+            child: Image.network(category.imageUrl, fit: BoxFit.contain),
+          ),
         ],
       ),
     );
@@ -91,7 +93,9 @@ class ChallengeCategoryItem extends StatelessWidget {
             style: FontSystem.Body1Bold.copyWith(color: ColorSystem.gray[800]),
           ),
 
-          Expanded(child: Image.asset(category.imageUrl, fit: BoxFit.contain)),
+          Expanded(
+            child: Image.network(category.imageUrl, fit: BoxFit.contain),
+          ),
         ],
       ),
     );

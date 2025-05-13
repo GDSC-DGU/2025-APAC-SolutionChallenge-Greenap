@@ -8,10 +8,11 @@ class ChallengeViewModel extends GetxController {
   final isLeftSelected = true.obs;
   final isLoading = false.obs;
 
-  final ChallengeProvider _provider = Get.find<ChallengeProvider>();
+  late final ChallengeProvider _provider;
   @override
   void onInit() {
     super.onInit();
+    _provider = Get.find<ChallengeProvider>();
     fetchChallengeCategories();
   }
 

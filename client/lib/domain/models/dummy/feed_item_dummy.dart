@@ -3,7 +3,6 @@ import '../user.dart';
 
 final List<FeedItemModel> dummyFeedItems = [
   FeedItemModel(
-    id: 1,
     category: '자원절약',
     challengeTitle: '텀블러 사용하기',
     imageUrl: 'assets/images/verification_example_image.png',
@@ -16,7 +15,6 @@ final List<FeedItemModel> dummyFeedItems = [
     ),
   ),
   FeedItemModel(
-    id: 2,
     category: '친환경',
     challengeTitle: '비닐봉지 줄이기',
     imageUrl: 'assets/images/verification_example_image.png',

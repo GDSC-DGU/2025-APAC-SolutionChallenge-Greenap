@@ -14,3 +14,16 @@ extension ChallengeDurationExtension on ChallengeDuration {
     }
   }
 }
+
+extension ChallengeFilterExtension on ChallengeFilterStatus {
+  ChallengeStatus? toChallengeStatus() {
+    switch (this) {
+      case ChallengeFilterStatus.running:
+        return ChallengeStatus.running;
+      case ChallengeFilterStatus.completed:
+        return ChallengeStatus.completed;
+      case ChallengeFilterStatus.all:
+        return null;
+    }
+  }
+}

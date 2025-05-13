@@ -56,7 +56,7 @@ abstract class BaseConnect extends GetConnect {
   }
 
   /// 안전한 GET 요청
-  Future<Response> getRequest(String url, {Map<String, String>? query}) async {
+  Future<Response> getRequest(String url, {Map<String, dynamic>? query}) async {
     var response = await get(url, query: query);
 
     if (_shouldRefresh(response)) {

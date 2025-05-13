@@ -1,7 +1,7 @@
 import 'user.dart';
 
 class FeedItemModel {
-  final int id;
+  // final int id;
   final String category;
   final String challengeTitle;
   final String imageUrl;
@@ -10,7 +10,7 @@ class FeedItemModel {
   final UserModel user;
 
   FeedItemModel({
-    required this.id,
+    // required this.id,
     required this.category,
     required this.challengeTitle,
     required this.imageUrl,
@@ -21,10 +21,10 @@ class FeedItemModel {
 
   factory FeedItemModel.fromJson(Map<String, dynamic> json) {
     return FeedItemModel(
-      id: json['id'],
+      // id: json['id'],
       category: json['category'],
-      challengeTitle: json['challenge_title'],
-      imageUrl: json['image_url'],
+      challengeTitle: json['challengeTitle'],
+      imageUrl: json['imageUrl'],
       content: json['content'],
       createdAt: DateTime.parse(json['createdAt']),
       user: UserModel.fromJson(json['user']),
