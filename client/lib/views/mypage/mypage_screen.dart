@@ -19,83 +19,86 @@ class MypageScreen extends BaseScreen<MypageViewModel> {
   @override
   Widget buildBody(BuildContext context) {
     return Obx(() {
-      final user = viewModel.user.value;
       final myRanking = viewModel.myRanking.value;
-      final longestConsecutiveParticipationCount =
-          viewModel.longestConsecutiveParticipationCount.value;
-
-      if (user == null) return Center(child: CircularProgressIndicator());
-
+      if (myRanking == null) {
+        return Center(child: CircularProgressIndicator());
+      }
       return SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // 프로필 이미지
             CircleAvatar(
               radius: 40,
-              backgroundImage: NetworkImage(user.profileImageUrl),
+              backgroundImage: NetworkImage(myRanking!.user.profileImageUrl),
               backgroundColor: ColorSystem.gray[100],
             ),
             const SizedBox(height: 12),
             Text(
-              user.nickname,
+              myRanking.user.nickname,
               style: FontSystem.Head2.copyWith(color: ColorSystem.gray[800]),
             ),
             const SizedBox(height: 32),
-
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: ColorSystem.white,
-                borderRadius: BorderRadius.circular(8),
-                boxShadow: [
-                  BoxShadow(
-                    color: ColorSystem.black.withOpacity(0.04),
-                    spreadRadius: 2,
-                    blurRadius: 4,
-                    offset: Offset(0, 0),
-                  ),
-                ],
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        "랭킹",
-                        style: FontSystem.Head2.copyWith(
-                          color: ColorSystem.gray[700],
+            GestureDetector(
+              onTap: () {
+                Get.toNamed('/ranking', arguments: myRanking);
+              },
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: ColorSystem.white,
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: ColorSystem.black.withOpacity(0.04),
+                      spreadRadius: 2,
+                      blurRadius: 4,
+                      offset: Offset(0, 0),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          "랭킹",
+                          style: FontSystem.Head2.copyWith(
+                            color: ColorSystem.gray[700],
+                          ),
                         ),
-                      ),
-                      Spacer(),
-                      Text(
-                        "전체보기",
-                        style: FontSystem.Body2.copyWith(
-                          color: ColorSystem.gray[600],
+                        Spacer(),
+                        Text(
+                          "전체보기",
+                          style: FontSystem.Body2.copyWith(
+                            color: ColorSystem.gray[600],
+                          ),
                         ),
-                      ),
-                      SizedBox(width: 4),
-                      SvgPicture.asset(
-                        "assets/icons/arrow.svg",
-                        width: 16,
-                        height: 16,
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      _buildRankingItem('챌린지 랭킹', myRanking ?? 0),
-                      SizedBox(width: 16),
-                      _buildRankingItem(
-                        '최장 연속 일수',
-                        longestConsecutiveParticipationCount ?? 0,
-                      ),
-                    ],
-                  ),
-                ],
+                        SizedBox(width: 4),
+                        SvgPicture.asset(
+                          "assets/icons/arrow.svg",
+                          width: 16,
+                          height: 16,
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        _buildRankingItem('챌린지 랭킹', myRanking!.rank ?? 0),
+                        SizedBox(width: 16),
+                        _buildRankingItem(
+                          '최장 연속 일수',
+                          myRanking!
+                                  .user
+                                  .longestConsecutiveParticipationCount ??
+                              0,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 24),
