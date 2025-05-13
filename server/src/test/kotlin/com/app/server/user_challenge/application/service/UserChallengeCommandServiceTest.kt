@@ -147,7 +147,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
         return userChallengeService.save(userChallenge)
     }
 
-    private suspend fun makeSpecificRank(userChallenge: UserChallenge, certificateDate: LocalDate) {
+    private fun makeSpecificRank(userChallenge: UserChallenge, certificateDate: LocalDate) {
         userChallengeEventListener.processWhenReceive(
             event = makeEvent(
                 userChallenge.id!!,
@@ -571,7 +571,7 @@ class UserChallengeCommandServiceTest : IntegrationTestContainer() {
     }
 
 
-    private suspend fun settingReceiveReport(status: EUserReportResultCode) {
+    private  fun settingReceiveReport(status: EUserReportResultCode) {
         given(certificationPort.verifyCertificate(any())).willReturn(
             mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
         )

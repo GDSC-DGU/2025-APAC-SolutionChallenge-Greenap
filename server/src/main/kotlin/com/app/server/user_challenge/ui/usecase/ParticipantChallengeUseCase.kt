@@ -1,6 +1,7 @@
 package com.app.server.user_challenge.ui.usecase
 
 import com.app.server.challenge.ui.usecase.dto.request.ChallengeParticipantDto
+import com.app.server.user_challenge.application.dto.response.UserChallengeResponseDto
 import com.app.server.user_challenge.application.service.command.UserChallengeCommandServiceImpl
 import org.springframework.stereotype.Component
 
@@ -11,7 +12,7 @@ interface ParticipantChallengeUseCase {
      */
     fun execute(
         challengeParticipantDto: ChallengeParticipantDto,
-    ) : Long
+    ) : UserChallengeResponseDto
 }
 
 @Component
@@ -20,8 +21,8 @@ class ParticipantChallengeUseCaseImpl(
 ) : ParticipantChallengeUseCase {
     override fun execute(
         challengeParticipantDto : ChallengeParticipantDto,
-    ): Long {
+    ): UserChallengeResponseDto {
         val result = userChallengeCommandService.execute(challengeParticipantDto)
-        return result.userChallengeId
+        return result
     }
 }

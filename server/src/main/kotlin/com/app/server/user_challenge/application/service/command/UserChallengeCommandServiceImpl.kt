@@ -133,7 +133,7 @@ class UserChallengeCommandServiceImpl(
         )
     }
 
-    suspend fun processAfterCertificateSuccess(
+    fun processAfterCertificateSuccess(
         userChallengeId: Long, certificationDto: CertificationDataDto
     ): SavedTodayUserChallengeCertificationEvent {
         val userChallenge = userChallengeService.findById(userChallengeId)
@@ -353,7 +353,7 @@ class UserChallengeCommandServiceImpl(
         userChallengeService.save(userChallenge)
     }
 
-    suspend fun batchUpdateChallengeStatusFromRunningToPending(validateToday: LocalDate) {
+     fun batchUpdateChallengeStatusFromRunningToPending(validateToday: LocalDate) {
         val runningUserChallengeList : List<UserChallenge> = userChallengeService.findAllByStatus(EUserChallengeStatus.RUNNING)
 
         runningUserChallengeList.forEach { userChallenge ->
@@ -363,7 +363,7 @@ class UserChallengeCommandServiceImpl(
         }
     }
 
-    suspend fun batchUpdateChallengeStatusFromPendingToCompleted(validateToday: LocalDate) {
+     fun batchUpdateChallengeStatusFromPendingToCompleted(validateToday: LocalDate) {
         val pendingUserChallengeList : List<UserChallenge> = userChallengeService.findAllByStatus(EUserChallengeStatus.PENDING)
         pendingUserChallengeList.forEach { userChallenge ->
             if (userChallenge.checkIsCompleted(validateToday)) {
@@ -372,7 +372,7 @@ class UserChallengeCommandServiceImpl(
         }
     }
 
-    suspend fun batchUpdateChallengeStatusFromWaitingToCompleted(validateToday: LocalDate) {
+     fun batchUpdateChallengeStatusFromWaitingToCompleted(validateToday: LocalDate) {
         val waitingUserChallengeList : List<UserChallenge> = userChallengeService.findAllByStatus(EUserChallengeStatus.WAITING)
         waitingUserChallengeList.forEach { userChallenge ->
             if (userChallenge.checkIsCompleted(validateToday)) {

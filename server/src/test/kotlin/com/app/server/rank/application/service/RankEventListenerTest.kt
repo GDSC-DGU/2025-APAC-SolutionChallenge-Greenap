@@ -92,7 +92,7 @@ class RankEventListenerTest : IntegrationTestContainer() {
         )
     }
 
-    private suspend fun makeSpecificRank(userChallenge: UserChallenge, certificateDate: LocalDate) {
+    private fun makeSpecificRank(userChallenge: UserChallenge, certificateDate: LocalDate) {
         userChallengeEventListener.processWhenReceive(
             event = makeEvent(
                 userChallenge.id!!,
@@ -105,7 +105,7 @@ class RankEventListenerTest : IntegrationTestContainer() {
         )
     }
 
-    private suspend fun makeTotalRank(userChallenge: UserChallenge, certificateDate: LocalDate) {
+    private fun makeTotalRank(userChallenge: UserChallenge, certificateDate: LocalDate) {
         userChallengeEventListener.processWhenReceive(
             event = makeEvent(
                 userChallenge.id!!,

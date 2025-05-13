@@ -5,6 +5,7 @@ import com.app.server.common.annotation.UserId
 import com.app.server.common.enums.CommonResultCode
 import com.app.server.common.enums.ResultCode
 import com.app.server.common.response.ApiResponse
+import com.app.server.user_challenge.application.dto.response.UserChallengeResponseDto
 import com.app.server.user_challenge.ui.dto.request.ChallengeParticipantRequestDto
 import com.app.server.user_challenge.ui.dto.response.GetTotalUserChallengeResponseDto
 import com.app.server.user_challenge.ui.usecase.GetTotalUserChallengeUseCase
@@ -37,11 +38,9 @@ class UserChallengeController(
     fun participateChallenge(
         @UserId userId: Long,
         @RequestBody requestBody: ChallengeParticipantRequestDto
-    ): ApiResponse<ResultCode> {
+    ): ApiResponse<UserChallengeResponseDto> {
         val challengeParticipantDto = requestBody.toChallengeParticipantDto(userId)
-        participantChallengeUseCase.execute(challengeParticipantDto)
-        // TODO: userChallengeId 리턴하기
-        return ApiResponse.success(CommonResultCode.SUCCESS)
+        return ApiResponse.success(participantChallengeUseCase.execute(challengeParticipantDto))
     }
 
     @Operation(

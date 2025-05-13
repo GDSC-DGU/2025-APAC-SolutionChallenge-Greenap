@@ -2,6 +2,7 @@ package com.app.server.user_challenge.application.service
 
 import com.app.server.challenge_certification.application.dto.CertificationDataDto
 import com.app.server.challenge_certification.domain.event.CertificationSucceededEvent
+import com.app.server.rank.application.service.RankQueryService
 import com.app.server.user_challenge.application.service.command.UserChallengeCommandServiceImpl
 import com.app.server.user_challenge.domain.event.ReportCreatedEvent
 import com.app.server.user_challenge.domain.event.SavedTodayUserChallengeCertificationEvent
@@ -21,23 +22,15 @@ class UserChallengeEventListener(
     private val userChallengeCommandService: UserChallengeCommandServiceImpl,
     private val userChallengeService: UserChallengeService,
     private val reportWaiter: ReportWaiter,
+    private val rankQueryService: RankQueryService,
 ) {
-
-    val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
     @EventListener
     fun handleCertificationSucceededEvent(certificationSucceededEvent: CertificationSucceededEvent) {
-        try {
-            scope.launch {
-                processWhenReceive(certificationSucceededEvent)
-            }
-        } catch (e: Exception) {
-            // TODO : 실패 시 보상 트랜잭션 이벤트 제공 필요
-            throw e
-        }
+       processWhenReceive(certificationSucceededEvent)
     }
 
-    suspend fun processWhenReceive(event: CertificationSucceededEvent): SavedTodayUserChallengeCertificationEvent {
+    fun processWhenReceive(event: CertificationSucceededEvent): SavedTodayUserChallengeCertificationEvent {
         return userChallengeCommandService.processAfterCertificateSuccess(
             userChallengeId = event.userChallengeId,
             certificationDto = CertificationDataDto(
@@ -50,20 +43,16 @@ class UserChallengeEventListener(
 
     @EventListener
     fun handleReportCreatedEvent(reportCreatedEvent: ReportCreatedEvent) {
-        try {
-            scope.launch {
-                processWhenReceive(reportCreatedEvent)
-            }
-        } catch (e: Exception) {
-            // TODO : 실패 시 보상 트랜잭션 이벤트 제공 필요
-            throw e
-        }
+        processWhenReceive(reportCreatedEvent)
     }
 
-    suspend fun processWhenReceive(event: ReportCreatedEvent) {
+    fun processWhenReceive(event: ReportCreatedEvent) {
         val userChallenge = userChallengeService.findById(event.userChallengeId)
 
-        val userRank = 1L // TODO: UserChallenge에서 랭킹을 가져오는 로직 추가 필요
+        val userRank = rankQueryService.execute(
+            userId = userChallenge.userId,
+            challengeId = userChallenge.challenge.id!!,
+        )
         val reportDto = ReportDto(
             userChallengeId = userChallenge.id!!,
             totalDays = userChallenge.participantDays,
@@ -71,7 +60,7 @@ class UserChallengeEventListener(
             successDays = userChallenge.totalParticipationDayCount.toInt(),
             reportMessage = userChallenge.reportMessage!!,
             maxConsecutiveParticipationDays = userChallenge.maxConsecutiveParticipationDayCount,
-            challengeRanking = userRank,
+            challengeRanking = userRank.userRankInfo.rank.toLong(),
             certificationDataList = mapCertificationDataList(userChallenge.getUserChallengeHistories())
         )
 

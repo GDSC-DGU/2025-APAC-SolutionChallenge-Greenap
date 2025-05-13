@@ -19,18 +19,10 @@ class FeedEventListener(
 
     @EventListener
     fun handleCreatedFeedEvent(createdEvent: FeedCreatedEvent) {
-        try {
-            CoroutineScope(Dispatchers.Default + SupervisorJob()).launch {
-                createdFeedProjectionFrom(createdEvent)
-            }
-        }
-        catch (e: Exception) {
-            // TODO : 실패 시 보상 트랜잭션 이벤트 제공 필요
-            throw e
-        }
+        createdFeedProjectionFrom(createdEvent)
     }
 
-    suspend fun createdFeedProjectionFrom(createdEvent: FeedCreatedEvent): FeedProjection {
+    fun createdFeedProjectionFrom(createdEvent: FeedCreatedEvent): FeedProjection {
         return feedProjectionCommandService.createReadOnlyFeed(
             authorUserId = createdEvent.userId,
             feed = createdEvent.feed,
@@ -40,31 +32,11 @@ class FeedEventListener(
 
     @EventListener
     fun handleDeletedFeedEvent(deletedEvent: FeedDeletedEvent) {
-        try {
-            CoroutineScope(Dispatchers.IO + SupervisorJob()).launch {
-                feedProjectionCommandService.deleteReadOnlyFeed(
-                    feed = deletedEvent.feed,
-                )
-            }
-        }
-        catch (e: Exception) {
-            // TODO : 실패 시 보상 트랜잭션 이벤트 제공 필요
-            throw e
-        }
+        feedProjectionCommandService.deleteReadOnlyFeed(deletedEvent.feed)
     }
 
     @EventListener
     fun handleModifiedFeedEvent(modifiedEvent: FeedModifiedEvent) {
-        try {
-            CoroutineScope(Dispatchers.IO + SupervisorJob()).launch {
-                feedProjectionCommandService.updateReadOnlyFeed(
-                    feed = modifiedEvent.feed
-                )
-            }
-        }
-        catch (e: Exception) {
-            // TODO : 실패 시 보상 트랜잭션 이벤트 제공 필요
-            throw e
-        }
+       feedProjectionCommandService.updateReadOnlyFeed(modifiedEvent.feed)
     }
 }
