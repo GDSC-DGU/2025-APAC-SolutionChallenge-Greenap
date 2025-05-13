@@ -3,7 +3,6 @@ import 'package:greenap/domain/models/my_challenge.dart';
 import 'package:greenap/domain/enums/challenge.dart';
 import 'package:greenap/config/color_system.dart';
 import 'package:greenap/config/font_system.dart';
-import 'package:greenap/domain/models/challenge_category.dart';
 import 'package:get/get.dart';
 
 class MyChallengeCard extends StatelessWidget {
@@ -14,7 +13,7 @@ class MyChallengeCard extends StatelessWidget {
   Color getStatusColor(ChallengeStatus status) {
     switch (status) {
       case ChallengeStatus.running:
-        return ColorSystem.mint!;
+        return ColorSystem.mint;
       case ChallengeStatus.completed:
         return Colors.grey;
     }

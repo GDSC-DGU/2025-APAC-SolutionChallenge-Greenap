@@ -4,6 +4,7 @@ import 'package:greenap/domain/models/challenge_category.dart';
 import 'package:greenap/data/provider/challenge/my_challenge_provider.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:greenap/data/provider/notification/encourage_provider.dart';
+import 'package:greenap/domain/models/my_challenge.dart';
 
 class HomeViewModel extends GetxController {
   final RxList<ChallengeCategoryModel> challengeCategories =
@@ -14,6 +15,7 @@ class HomeViewModel extends GetxController {
   final Rxn<String> nickname = Rxn<String>();
   final Rxn<String> encourageMessage = Rxn<String>();
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
+  final RxList<MyChallengeModel> myChallengeList = <MyChallengeModel>[].obs;
 
   @override
   void onInit() {
@@ -47,7 +49,6 @@ class HomeViewModel extends GetxController {
   }
 
   Future<void> fetchChallengeCategories() async {
-    // 1. 데이터 조회
     final categoryResponse = await _challengeProvider.getChallengeCategories();
     final myChallengeResponse = await _myChallengeProvider.getMyChallenges();
 
@@ -59,12 +60,12 @@ class HomeViewModel extends GetxController {
     final categories = categoryResponse.data!;
     final myChallenges = myChallengeResponse.data!;
 
-    final Map<String, int> categoryCountMap = {};
+    myChallengeList.assignAll(myChallenges.map((dto) => dto.toModel()));
 
+    final Map<String, int> categoryCountMap = {};
     for (final challenge in myChallenges) {
-      final categoryName = challenge.category;
-      categoryCountMap[categoryName] =
-          (categoryCountMap[categoryName] ?? 0) + 1;
+      categoryCountMap[challenge.category] =
+          (categoryCountMap[challenge.category] ?? 0) + 1;
     }
 
     categories.sort((a, b) {

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:greenap/config/color_system.dart';
 import 'package:greenap/config/font_system.dart';
 import 'package:greenap/domain/models/feed_item.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 
 class FeedCard extends StatelessWidget {
