@@ -30,7 +30,7 @@ class CertificationController(
     fun certificateDailyUserChallenge(
         @PathVariable("userChallengeId") userChallengeId: Long,
         @RequestPart("image") image: MultipartFile,
-        @RequestParam("certificationDate") certificationDate: LocalDate
+        @RequestParam(name = "certification_date", required = false) certificationDate: LocalDate?
     ): ApiResponse<GetCertificatedImageUrlResponseDto> {
 
         val certificationRequestDto = CertificationRequestDto(
@@ -41,7 +41,7 @@ class CertificationController(
         return ApiResponse.success(
             certificationUseCase.execute(
                 certificationRequestDto = certificationRequestDto,
-                certificationDate = certificationDate
+                certificationDate = certificationDate ?: LocalDate.now()
             )
         )
     }
