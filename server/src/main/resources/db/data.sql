@@ -124,7 +124,8 @@ VALUES (1,
 
    인증 마크는 탄소발자국, 재활용 인증, 무독성 성분, 친환경 포장 등을 나타내며, 그 자체로 탄소배출 감소, 오염 방지 효과를 갖습니다.',
         '제품 사진 + 인증 마크가 명확하게 보이도록 촬영1일 1건 업로드 가능',
-        'https://storage.googleapis.com/dgu-gdg-greenap-cloud-storage/challenges/challenge_main/10.png', NULL,
+        'https://storage.googleapis.com/dgu-gdg-greenap-cloud-storage/challenges/challenge_main/10.png',
+        'https://storage.googleapis.com/dgu-gdg-greenap-cloud-storage/challenges/certificate_example/10.jpg'
         '2025-04-21 00:00:00', '2025-04-21 00:00:00', NULL),
        (11,
         3,
