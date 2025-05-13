@@ -3,16 +3,12 @@ package com.app.server.infra
 import com.app.server.common.enums.CommonResultCode
 import com.app.server.common.exception.InternalServerErrorException
 import com.fasterxml.jackson.databind.ObjectMapper
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpEntity
-import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.client.ClientHttpResponse
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
 import org.springframework.web.client.DefaultResponseErrorHandler
-import org.springframework.web.client.HttpStatusCodeException
 import org.springframework.web.client.RestTemplate
 
 /**
@@ -29,9 +25,9 @@ interface ExternalApiClient<Req, Res> {
 abstract class AbstractRestApiClient<Req, Raw, Res>(
     private val baseUrl: String,
     private val restTemplate: RestTemplate = RestTemplate().apply {
-        this.messageConverters.add(0, MappingJackson2HttpMessageConverter().apply {
-            this.supportedMediaTypes = listOf(MediaType.APPLICATION_JSON, MediaType.TEXT_HTML, MediaType.TEXT_PLAIN)
-        })
+        errorHandler = object : DefaultResponseErrorHandler() {
+            override fun hasError(response: ClientHttpResponse): Boolean = false
+        }
     },
     private val objectMapper: ObjectMapper = ObjectMapper()
 ) : ExternalApiClient<Req, Res> {
@@ -45,14 +41,20 @@ abstract class AbstractRestApiClient<Req, Raw, Res>(
     }
 
     /** RestTemplate 호출 후, 받은 원시 응답(Raw 타입) */
-    protected open fun callApi(entity: HttpEntity<String>): ResponseEntity<Raw> =
-        try {
-            restTemplate.postForEntity(baseUrl, entity, rawResponseType())
-        } catch (ex: HttpStatusCodeException) {
+    protected open fun callApi(entity: HttpEntity<String>): ResponseEntity<Raw> {
+        val response = restTemplate.postForEntity(baseUrl, entity, rawResponseType())
+        val status = response.statusCode
+        if (!status.is2xxSuccessful) {
+            val body = response.body
+            // Log the status and raw body for debugging
+            println("External API call failed: HTTP $status, body=$body")
             throw InternalServerErrorException(
-                CommonResultCode.EXTERNAL_SERVER_ERROR, ex.message!!
+                CommonResultCode.EXTERNAL_SERVER_ERROR,
+                "External API returned HTTP $status"
             )
         }
+        return response
+    }
 
     /** from ResponseEntity<Raw> → 최종 변환 Res 타입 */
     protected abstract fun parseResponse(response: ResponseEntity<Raw>): Res

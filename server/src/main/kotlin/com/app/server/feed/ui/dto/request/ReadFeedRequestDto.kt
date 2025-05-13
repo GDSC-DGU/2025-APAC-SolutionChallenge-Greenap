@@ -14,25 +14,13 @@ data class ReadFeedRequestDto(
     @field:ValidFeedScope
     val scope: String?,
     @JsonProperty("user_challenge_id")
-    val userChallengeId: Long,
+    val userChallengeId: Long?,
     @Min(1)
     val page: Int?,
     @Min(1)
     val size: Int?,
     val userId: Long?
-){
-    fun of(userId: Long): ReadFeedRequestDto {
-        return ReadFeedRequestDto(
-            categoryId = this.categoryId,
-            scope = this.scope,
-            userChallengeId = this.userChallengeId,
-            page = this.page,
-            size = this.size,
-            userId = userId
-        )
-    }
-}
-
+)
 class FeedScopeValidator : ConstraintValidator<ValidFeedScope, String> {
     override fun isValid(value: String?, context: ConstraintValidatorContext): Boolean {
         return value == null || (value.equals("all", true) || value.equals("user", true))

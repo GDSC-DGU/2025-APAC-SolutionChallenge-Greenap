@@ -14,25 +14,25 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 @Transactional
-class FeedProjectionCommandService (
+class FeedProjectionCommandService(
     private val userService: UserService,
     private val userChallengeService: UserChallengeService,
     private val challengeService: ChallengeService,
     private val feedProjectionRepository: FeedProjectionRepository,
     private val feedProjectionService: FeedProjectionService,
-){
+) {
 
-    suspend fun createReadOnlyFeed(
-        feed : Feed,
+    fun createReadOnlyFeed(
+        feed: Feed,
         relatedUserChallengeId: Long,
         authorUserId: Long
-    ) : FeedProjection {
+    ): FeedProjection {
         val user = userService.findById(authorUserId)
 
         val participantChallengeTitle = userChallengeService.findById(relatedUserChallengeId).challenge.title
         val challengeCategoryName = challengeService.findByTitle(participantChallengeTitle).challengeCategory.title
 
-        val feedProjection : FeedProjection = createFeedProjectionEntity(
+        val feedProjection: FeedProjection = createFeedProjectionEntity(
             feed = feed,
             challengeTitle = participantChallengeTitle,
             challengeCategoryName = challengeCategoryName,
@@ -45,13 +45,13 @@ class FeedProjectionCommandService (
     }
 
     private fun createFeedProjectionEntity(
-        feed : Feed,
-        challengeTitle : String,
-        challengeCategoryName : String,
-        userName : String,
-        userProfileImageUrl : String?,
-        userNowConsecutiveDays : Long,
-    ) : FeedProjection {
+        feed: Feed,
+        challengeTitle: String,
+        challengeCategoryName: String,
+        userName: String,
+        userProfileImageUrl: String?,
+        userNowConsecutiveDays: Long,
+    ): FeedProjection {
         return FeedProjection.Companion.createEntity(
             feed = feed,
             challengeTitle = challengeTitle,
@@ -62,7 +62,7 @@ class FeedProjectionCommandService (
         )
     }
 
-    suspend fun updateReadOnlyFeed(feed: Feed) : FeedProjection {
+    fun updateReadOnlyFeed(feed: Feed): FeedProjection {
         val feedProjection = feedProjectionService.findById(feed.id!!)
 
         feedProjection.updateContent(
@@ -72,7 +72,7 @@ class FeedProjectionCommandService (
         return feedProjection
     }
 
-    suspend fun deleteReadOnlyFeed(feed: Feed): FeedProjection {
+    fun deleteReadOnlyFeed(feed: Feed): FeedProjection {
         val feedProjection = feedProjectionRepository.findById(feed.id!!).orElseThrow {
             throw NotFoundException(FeedException.NOT_FOUND_FEED_PROJECTION)
         }

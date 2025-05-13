@@ -511,7 +511,7 @@ class FeedQueryServiceTest : IntegrationTestContainer() {
         return userChallengeService.save(userChallenge)
     }
 
-    private suspend fun makeFeedWhenCertificate(userId: Long, userChallengeId: Long, date: LocalDate): FeedProjection {
+    private fun makeFeedWhenCertificate(userId: Long, userChallengeId: Long, date: LocalDate): FeedProjection {
         userChallengeEventListener.processWhenReceive(
             makeCertificationSucceededEvent(
                 certificateDate = date,
