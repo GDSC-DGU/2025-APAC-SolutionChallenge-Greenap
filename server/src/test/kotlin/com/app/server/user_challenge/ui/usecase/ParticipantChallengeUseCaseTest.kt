@@ -24,7 +24,7 @@ import kotlin.test.Test
 @SpringBootTest
 @Transactional
 @Rollback
-class userChallengeCommandServiceTest : IntegrationTestContainer() {
+class ParticipantChallengeUseCaseTest : IntegrationTestContainer() {
     @Autowired
     private lateinit var userChallengeCommandService: UserChallengeCommandService
 
