@@ -74,7 +74,9 @@ class RankController (
         @PathVariable challengeId: Long
     ) : ApiResponse<UserRankInSpecificChallengeTotalRankResponseDto> {
         return ApiResponse.success(
-            getUserSpecificChallengeTotalRankUseCase.execute(userId, challengeId)
+            getUserSpecificChallengeTotalRankUseCase.execute(
+                challengeId = challengeId,
+                userId = userId)
         )
     }
 }

@@ -155,17 +155,20 @@ class UserChallengeCommandServiceImpl(
         // 얼리기 조건 확인 후 업데이트
         userChallenge.validateIncreaseIceCount()
 
-        // 챌린지 종료 여부 확인
-        if (userChallenge.checkIsNotRunning(certificationDto.certificationDate)) {
-            makeReport(userChallenge)
-        }
+        userChallengeService.saveAndFlush(userChallenge)
 
         val event = SavedTodayUserChallengeCertificationEvent(
             userChallengeId = userChallenge.id!!,
             maxConsecutiveParticipationDayCount = userChallenge.maxConsecutiveParticipationDayCount,
             totalParticipationDayCount = userChallenge.totalParticipationDayCount
         )
+
         eventPublisher.publishEvent(event)
+
+        // 챌린지 종료 여부 확인
+        if (userChallenge.checkIsNotRunning(certificationDto.certificationDate)) {
+            makeReport(userChallenge)
+        }
 
         return event
     }
@@ -274,7 +277,9 @@ class UserChallengeCommandServiceImpl(
             consecutiveState = EConsecutiveState.CONSECUTIVE_ONLY
         }
         // 연속 일자 초기화
-        else if (userChallengeHistory.status != EUserChallengeCertificationStatus.FAILED && pastUserChallengeHistory!!.status == EUserChallengeCertificationStatus.FAILED) {
+        else if (userChallengeHistory.status != EUserChallengeCertificationStatus.FAILED &&
+            pastUserChallengeHistory!!.status == EUserChallengeCertificationStatus.FAILED
+        ) {
             consecutiveState = EConsecutiveState.CONSECUTIVE_RESET
         } else {
             throw InternalServerErrorException(UserChallengeException.CANNOT_UPDATE_CONSECUTIVE_PARTICIPATION_DAY_COUNT)
@@ -308,7 +313,7 @@ class UserChallengeCommandServiceImpl(
             }
 
             EConsecutiveState.CONSECUTIVE_RESET -> {
-                userChallenge.updateNowConsecutiveParticipationDayCount(0)
+                userChallenge.updateNowConsecutiveParticipationDayCount(1)
             }
         }
     }
@@ -353,8 +358,9 @@ class UserChallengeCommandServiceImpl(
         userChallengeService.save(userChallenge)
     }
 
-     fun batchUpdateChallengeStatusFromRunningToPending(validateToday: LocalDate) {
-        val runningUserChallengeList : List<UserChallenge> = userChallengeService.findAllByStatus(EUserChallengeStatus.RUNNING)
+    fun batchUpdateChallengeStatusFromRunningToPending(validateToday: LocalDate) {
+        val runningUserChallengeList: List<UserChallenge> =
+            userChallengeService.findAllByStatus(EUserChallengeStatus.RUNNING)
 
         runningUserChallengeList.forEach { userChallenge ->
             if (userChallenge.checkIsNotRunning(validateToday)) {
@@ -363,8 +369,9 @@ class UserChallengeCommandServiceImpl(
         }
     }
 
-     fun batchUpdateChallengeStatusFromPendingToCompleted(validateToday: LocalDate) {
-        val pendingUserChallengeList : List<UserChallenge> = userChallengeService.findAllByStatus(EUserChallengeStatus.PENDING)
+    fun batchUpdateChallengeStatusFromPendingToCompleted(validateToday: LocalDate) {
+        val pendingUserChallengeList: List<UserChallenge> =
+            userChallengeService.findAllByStatus(EUserChallengeStatus.PENDING)
         pendingUserChallengeList.forEach { userChallenge ->
             if (userChallenge.checkIsCompleted(validateToday)) {
                 userChallenge.updateStatus(EUserChallengeStatus.COMPLETED)
@@ -372,8 +379,9 @@ class UserChallengeCommandServiceImpl(
         }
     }
 
-     fun batchUpdateChallengeStatusFromWaitingToCompleted(validateToday: LocalDate) {
-        val waitingUserChallengeList : List<UserChallenge> = userChallengeService.findAllByStatus(EUserChallengeStatus.WAITING)
+    fun batchUpdateChallengeStatusFromWaitingToCompleted(validateToday: LocalDate) {
+        val waitingUserChallengeList: List<UserChallenge> =
+            userChallengeService.findAllByStatus(EUserChallengeStatus.WAITING)
         waitingUserChallengeList.forEach { userChallenge ->
             if (userChallenge.checkIsCompleted(validateToday)) {
                 userChallenge.updateStatus(EUserChallengeStatus.COMPLETED)
