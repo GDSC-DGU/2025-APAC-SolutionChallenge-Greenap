@@ -17,7 +17,7 @@ class CategoryFilter extends GetView<MyChallengeViewModel> {
         mainAxisAlignment: MainAxisAlignment.start,
         children:
             ChallengeFilterStatus.values.map((status) {
-              final isSelected = controller.status.value == status;
+              final isSelected = controller.status == status;
               return GestureDetector(
                 onTap: () => controller.setStatus(status),
                 child: Container(

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:greenap/config/color_system.dart';
 import 'package:greenap/views_model/feed/feed_view_model.dart';
 import 'package:get/get.dart';
 import 'package:greenap/widgets/app_bar/default_app_bar.dart';
@@ -35,7 +34,7 @@ class FeedScreen extends BaseScreen<FeedViewModel> {
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Obx(() {
-              if (viewModel.isLoading.value) {
+              if (viewModel.isLoading) {
                 return const Center(child: CircularProgressIndicator());
               }
 

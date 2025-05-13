@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:greenap/data/dto/user_info_dto.dart';
-import 'package:greenap/domain/models/user.dart';
 import 'package:greenap/data/provider/auth/auth_provider.dart';
 import 'package:greenap/core/network/response_wrapper.dart';
 
@@ -11,11 +10,12 @@ class LoginViewModel extends GetxController {
   final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email', 'profile']);
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
   final isLoading = false.obs;
-  final AuthProvider _authProvider = Get.find<AuthProvider>();
+  late final AuthProvider _authProvider;
 
   @override
   void onInit() {
     super.onInit();
+    _authProvider = Get.find<AuthProvider>();
     _checkLoginStatus();
   }
 

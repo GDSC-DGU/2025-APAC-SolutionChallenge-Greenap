@@ -32,22 +32,4 @@ class ChallengeProvider extends BaseConnect {
       message: response.body['error']?['message'],
     );
   }
-
-  Future<ResponseWrapper> joinChallenge({
-    required int challengeId,
-    required int participantsDate,
-  }) async {
-    final response = await postRequest('/api/v1/challenges', {
-      'challenge_id': challengeId,
-      'participants_date': participantsDate,
-    });
-
-    print('[DEBUG] 챌린지 참여 요청 결과: ${response.body}');
-
-    return ResponseWrapper(
-      code: response.body['code'] ?? '500',
-      data: response.body['data'],
-      message: response.body['message'],
-    );
-  }
 }

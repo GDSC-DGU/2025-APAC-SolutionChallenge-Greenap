@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:greenap/config/color_system.dart';
 import 'package:greenap/views/feed/widgets/feed_card.dart';
 import 'package:get/get.dart';
 import 'package:greenap/views/base/base_screen.dart';
@@ -39,7 +38,7 @@ class MyFeedListScreen extends BaseScreen<MyFeedListViewModel> {
               isMine: true,
               onEdit: () {
                 // 수정 화면으로 이동 또는 수정 기능 처리
-                print('[EDIT] 피드 수정: ${feed.id}');
+                // print('[EDIT] 피드 수정: ${feed.id}');
                 // 예: Get.to(() => EditFeedScreen(feed: feed));
               },
               onDelete: () {

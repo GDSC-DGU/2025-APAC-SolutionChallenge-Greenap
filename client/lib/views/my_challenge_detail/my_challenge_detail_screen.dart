@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:greenap/domain/models/my_challenge.dart';
 import 'package:greenap/domain/enums/challenge.dart';
-import 'package:greenap/config/font_system.dart';
-import 'package:greenap/config/color_system.dart';
 import 'package:greenap/views/base/base_screen.dart';
 import 'package:greenap/views_model/my_challenge_detail/my_challenge_detail_view_model.dart';
 import 'package:greenap/widgets/app_bar/back_app_bar.dart';

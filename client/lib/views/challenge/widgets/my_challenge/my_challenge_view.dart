@@ -3,11 +3,9 @@ import 'package:greenap/domain/models/my_challenge.dart';
 import './widgets/category_filter.dart';
 import 'package:get/get.dart';
 import 'package:greenap/views_model/challenge/my_challenge_view_model.dart';
-import 'package:greenap/domain/models/dummy/my_challenge_dummy.dart';
 import './widgets//my_challenge_card.dart';
-import 'package:greenap/domain/enums/challenge.dart';
 import 'package:greenap/views/base/base_screen.dart';
-import 'package:greenap/domain/models/dummy/challenge_dummy.dart';
+import 'package:greenap/domain/extensions/challenge_ext.dart';
 
 class MyChallengeView extends BaseScreen<MyChallengeViewModel> {
   MyChallengeView({super.key});
@@ -23,25 +21,19 @@ class MyChallengeView extends BaseScreen<MyChallengeViewModel> {
         const SizedBox(height: 24),
         Expanded(
           child: Obx(() {
-            return _buildChallengeList(viewModel.myChallenges);
+            final filterStatus = viewModel.status;
+            final filtered =
+                viewModel.myChallenges.where((challenge) {
+                  final statusToCompare = filterStatus.toChallengeStatus();
+                  if (statusToCompare == null) return true;
+                  return challenge.status == statusToCompare;
+                }).toList();
+
+            return _buildChallengeList(filtered);
           }),
         ),
       ],
     );
-  }
-
-  bool isStatusMatch(
-    MyChallengeModel item,
-    ChallengeFilterStatus filterStatus,
-  ) {
-    if (filterStatus == ChallengeFilterStatus.all) return true;
-
-    final statusToCompare =
-        (filterStatus == ChallengeFilterStatus.running)
-            ? ChallengeStatus.running
-            : ChallengeStatus.completed;
-
-    return item.status == statusToCompare;
   }
 
   Widget _buildChallengeList(List<MyChallengeModel> filtered) {

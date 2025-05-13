@@ -2,10 +2,11 @@ import 'package:get/get.dart';
 import 'package:greenap/domain/models/my_challenge.dart';
 import 'package:greenap/domain/enums/challenge.dart';
 import 'package:greenap/domain/models/feed_item.dart';
-import 'package:greenap/domain/models/dummy/feed_item_dummy.dart';
 import 'package:greenap/domain/models/challenge_report.dart';
 import 'package:greenap/domain/models/dummy/challenge_report_dummy.dart';
 import 'package:greenap/domain/models/dummy/challenge_detail_dummy.dart';
+import 'package:greenap/data/provider/feed/feed_provider.dart';
+
 import 'package:greenap/domain/models/challenge_detail.dart';
 
 class MyChallengeDetailViewModel extends GetxController {
@@ -13,6 +14,7 @@ class MyChallengeDetailViewModel extends GetxController {
 
   final RxList<FeedItemModel> feedList = <FeedItemModel>[].obs;
   ChallengeReportModel? challengeReport;
+  final FeedProvider _feedProvider = Get.find<FeedProvider>();
 
   @override
   void onInit() {
@@ -25,10 +27,18 @@ class MyChallengeDetailViewModel extends GetxController {
     }
   }
 
-  void fetchFeedList() async {
-    // 실제 챌린지 인증 피드 리스트 불러오기로 교체 필요
-    final List<FeedItemModel> fetched = dummyFeedItems;
-    feedList.assignAll(fetched);
+  Future<void> fetchFeedList() async {
+    final response = await _feedProvider.fetchFeeds(
+      null,
+      'user',
+      challenge.id,
+      null,
+      null,
+    );
+
+    if (response.data != null) {
+      feedList.assignAll(response.data!);
+    }
   }
 
   void fetchReport() async {

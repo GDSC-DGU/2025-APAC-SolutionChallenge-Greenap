@@ -32,6 +32,8 @@ class _ChallengeDetailPopupState extends State<ChallengeDetailPopup> {
 
   @override
   Widget build(BuildContext context) {
+    final maxHeight = MediaQuery.of(context).size.height * 0.65;
+
     return BasePopupDialog(
       title: widget.challenge.title,
       actions: [
@@ -46,18 +48,23 @@ class _ChallengeDetailPopupState extends State<ChallengeDetailPopup> {
           onPressed: () => widget.onJoin(selectedDuration),
         ),
       ],
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildImage(),
-          const SizedBox(height: 16),
-          _buildDescription(),
-          const SizedBox(height: 20),
-          _buildCertMethod(),
-          const SizedBox(height: 20),
-          _buildDurationDropdown(),
-        ],
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxHeight: maxHeight),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildImage(),
+              const SizedBox(height: 16),
+              _buildDescription(),
+              const SizedBox(height: 20),
+              _buildCertMethod(),
+              const SizedBox(height: 20),
+              _buildDurationDropdown(),
+            ],
+          ),
+        ),
       ),
     );
   }
