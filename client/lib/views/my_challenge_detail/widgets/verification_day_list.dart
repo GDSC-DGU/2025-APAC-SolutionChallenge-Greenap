@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'verification_day_circle.dart';
-import 'package:intl/intl.dart';
-
 import 'package:greenap/domain/enums/verification.dart';
 import 'package:greenap/domain/extensions/verification_ext.dart';
 
@@ -22,8 +20,6 @@ class VerificationDayListView extends StatelessWidget {
     final double horizontalPadding = 20.0;
 
     final Map<int, VerificationStatus> statusByDay = {};
-    final today = DateTime.now();
-
     for (int i = 0; i < certificationDataList.length; i++) {
       final raw = certificationDataList[i];
       final dynamic statusRaw = raw['is_certificated'];
@@ -92,9 +88,5 @@ class VerificationDayListView extends StatelessWidget {
         );
       },
     );
-  }
-
-  bool _isSameDate(DateTime a, DateTime b) {
-    return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 }

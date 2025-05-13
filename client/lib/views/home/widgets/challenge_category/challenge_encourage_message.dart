@@ -3,10 +3,13 @@ import 'package:flutter_svg/svg.dart';
 import 'package:greenap/config/color_system.dart';
 import 'package:greenap/config/font_system.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
+import 'package:greenap/views_model/home/home_view_model.dart';
 
 class ChallengeEncourageMessage extends StatelessWidget {
-  final String message;
-  const ChallengeEncourageMessage({super.key, required this.message});
+  ChallengeEncourageMessage({super.key});
+  final viewModel = Get.find<HomeViewModel>();
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -29,9 +32,11 @@ class ChallengeEncourageMessage extends StatelessWidget {
           SvgPicture.asset('assets/icons/earth.svg', width: 20, height: 20),
           SizedBox(width: 6),
           Expanded(
-            child: Text(
-              '$message',
-              style: FontSystem.Body3.copyWith(color: ColorSystem.gray[700]),
+            child: Obx(
+              () => Text(
+                viewModel.encourageMessage.value ?? '오늘도 친환경 도전!',
+                style: FontSystem.Body3.copyWith(color: ColorSystem.gray[700]),
+              ),
             ),
           ),
         ],

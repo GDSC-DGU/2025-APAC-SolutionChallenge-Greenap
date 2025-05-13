@@ -5,7 +5,7 @@ import './challenge_category_grid.dart';
 import './challenge_encourage_message.dart';
 
 class ChallengeCategory extends StatelessWidget {
-  const ChallengeCategory({super.key});
+  ChallengeCategory({super.key});
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -15,7 +15,7 @@ class ChallengeCategory extends StatelessWidget {
           style: FontSystem.Head2.copyWith(color: ColorSystem.gray[700]),
         ),
         SizedBox(height: 12),
-        ChallengeEncourageMessage(message: 'AI 생성 독려 메시지가 들어갈 부분입니다!'),
+        ChallengeEncourageMessage(),
 
         SizedBox(height: 12),
         ChallengeCategoryGrid(),
