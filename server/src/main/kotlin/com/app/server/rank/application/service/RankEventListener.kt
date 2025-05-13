@@ -14,7 +14,6 @@ class RankEventListener(
     private val userChallengeService: UserChallengeService
 ) {
 
-
     @EventListener
     fun handleSavedTodayUserChallengeCertificationEventForUpdateSpecificChallengeRank(
         event: SavedTodayUserChallengeCertificationEvent
@@ -65,7 +64,7 @@ class RankEventListener(
         slot: String,
         key: Long
     ): RankState {
-        if (existScore.toLong() < score) {
+        if (existScore.toLong() <= score) {
             val isProcess: Boolean? = rankService.updateValue(slot, key, score)
 
             return isUpdatedRankScore(isProcess)

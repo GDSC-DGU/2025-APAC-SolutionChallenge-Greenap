@@ -307,7 +307,7 @@ class UsingIceUseCaseTest : IntegrationTestContainer() {
             EUserChallengeCertificationStatus.ICE
         )
         assertThat(userChallenge.nowConsecutiveParticipationDayCount).isLessThan(existNowConsecutiveParticipantDayCount)
-        assertThat(userChallenge.nowConsecutiveParticipationDayCount).isZero
+        assertThat(userChallenge.nowConsecutiveParticipationDayCount).isOne
     }
 
 
