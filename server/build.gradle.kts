@@ -3,6 +3,7 @@ plugins {
     kotlin("plugin.spring") version "1.9.25"
     kotlin("plugin.jpa") version "1.9.25"
     id("org.springframework.boot") version "3.4.4"
+    id("jacoco")
     id("io.spring.dependency-management") version "1.1.7"
     id("org.jetbrains.kotlin.plugin.serialization") version "1.9.25"
 }
@@ -96,11 +97,64 @@ kotlin {
     }
 }
 
-tasks.test{
+tasks.test {
     systemProperty("junit.jupiter.execution.parallel.enabled", false)
 }
 
 tasks.withType<Test> {
     useJUnitPlatform()
     systemProperty("spring.profiles.active", "test")
+    finalizedBy("jacocoTestReport")
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test) // 테스트 후에 JaCoCo 리포트 생성
+
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+
+    finalizedBy("jacocoTestCoverageVerification")
+}
+
+tasks.jacocoTestCoverageVerification {
+    dependsOn(tasks.jacocoTestReport)
+
+    violationRules {
+        rule {
+            enabled = true // 이 rule을 적용할 것이다.
+            element = "CLASS" // class 단위로
+
+            // 브랜치 커버리지 최소 60%
+            limit {
+                counter = "BRANCH"
+                value = "COVEREDRATIO"
+                minimum = 0.00.toBigDecimal()
+            }
+
+            limit {
+                counter = "LINE"
+                value = "COVEREDRATIO"
+                minimum = 0.00.toBigDecimal()
+            }
+
+            limit {
+                counter = "LINE"
+                value = "TOTALCOUNT"
+                maximum = 300.toBigDecimal()
+            }
+
+            excludes = listOf(
+                "*.ui.controller.*",
+                "*.dto.*",
+                "*.auth.*",
+                "*.common.*",
+                "*.core.*",
+                "*.infra.*",
+                "*.exception.*",
+                "*.enums.*",
+            )
+        }
+    }
 }
