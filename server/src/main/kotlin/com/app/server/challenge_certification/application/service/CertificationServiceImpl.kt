@@ -3,7 +3,6 @@ package com.app.server.challenge_certification.application.service
 import com.app.server.challenge_certification.application.dto.command.CertificationCommand
 import com.app.server.challenge_certification.port.outbound.CertificationPort
 import com.app.server.challenge_certification.domain.event.CertificationSucceededEvent
-import com.app.server.challenge_certification.ui.dto.response.GetCertificatedImageUrlResponseDto
 import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
 import com.app.server.common.exception.BadRequestException
 import com.app.server.infra.cloud_storage.CloudStorageUtil
