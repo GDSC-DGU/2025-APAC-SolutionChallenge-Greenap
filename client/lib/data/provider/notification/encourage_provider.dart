@@ -11,12 +11,9 @@ class EncourageProvider extends BaseConnect {
 
     if (response.statusCode == 200) {
       final body = response.body;
-      final data = body['data'];
-      final message = EncourageDto.fromJson(data).message;
-
       return ResponseWrapper<String>(
         code: body['code'],
-        data: message,
+        data: body['data']['message'],
         message: body['message'],
       );
     }

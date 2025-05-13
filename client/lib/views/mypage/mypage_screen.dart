@@ -20,6 +20,9 @@ class MypageScreen extends BaseScreen<MypageViewModel> {
   Widget buildBody(BuildContext context) {
     return Obx(() {
       final user = viewModel.user.value;
+      final myRanking = viewModel.myRanking.value;
+      final longestConsecutiveParticipationCount =
+          viewModel.longestConsecutiveParticipationCount.value;
 
       if (user == null) return Center(child: CircularProgressIndicator());
 
@@ -84,9 +87,12 @@ class MypageScreen extends BaseScreen<MypageViewModel> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      _buildRankingItem('챌린지 랭킹', '10'),
+                      _buildRankingItem('챌린지 랭킹', myRanking ?? 0),
                       SizedBox(width: 16),
-                      _buildRankingItem('최장 연속 일수', '10'),
+                      _buildRankingItem(
+                        '최장 연속 일수',
+                        longestConsecutiveParticipationCount ?? 0,
+                      ),
                     ],
                   ),
                 ],
@@ -134,7 +140,7 @@ class MypageScreen extends BaseScreen<MypageViewModel> {
     });
   }
 
-  Widget _buildRankingItem(String title, String value) {
+  Widget _buildRankingItem(String title, int value) {
     return Expanded(
       child: Container(
         padding: EdgeInsets.all(12),
@@ -158,7 +164,7 @@ class MypageScreen extends BaseScreen<MypageViewModel> {
             ),
             const SizedBox(height: 4),
             Text(
-              value,
+              value.toString(),
               style: FontSystem.Body2Bold.copyWith(color: ColorSystem.mint),
             ),
           ],
