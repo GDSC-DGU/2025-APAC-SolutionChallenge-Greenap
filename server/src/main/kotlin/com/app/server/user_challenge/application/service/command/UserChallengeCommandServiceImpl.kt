@@ -388,4 +388,22 @@ class UserChallengeCommandServiceImpl(
             }
         }
     }
+
+    override fun updateUserChallengeStatus(
+        userChallenge: UserChallenge,
+        todayDate: LocalDate
+    ) {
+        val endDate : LocalDate = userChallenge.getUserChallengeHistories().last().date
+
+        if (userChallenge.status == EUserChallengeStatus.PENDING &&
+            todayDate.isBefore(endDate.plusDays(2))
+        ){
+            userChallenge.updateStatus(EUserChallengeStatus.WAITING)
+        }
+        else if (userChallenge.status == EUserChallengeStatus.PENDING &&
+            todayDate.isAfter(endDate.plusDays(1))
+        ){
+            userChallenge.updateStatus(EUserChallengeStatus.COMPLETED)
+        }
+    }
 }
