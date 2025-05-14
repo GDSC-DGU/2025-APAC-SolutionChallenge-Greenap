@@ -231,6 +231,21 @@ class UserChallengeCommandServiceImpl(
         // 연속 참여 일수 증가
         readyForValidateCanIncreaseConsecutiveParticipantDays(userChallenge, certificationDate)
 
+        userChallengeService.saveAndFlush(userChallenge)
+
+        val event = SavedTodayUserChallengeCertificationEvent(
+            userChallengeId = userChallenge.id!!,
+            totalParticipationDayCount = userChallenge.totalParticipationDayCount,
+            maxConsecutiveParticipationDayCount = userChallenge.maxConsecutiveParticipationDayCount
+        )
+
+        eventPublisher.publishEvent(event)
+
+        // 챌린지 종료 여부 확인
+        if (userChallenge.checkIsNotRunning(certificationDate)) {
+            makeReport(userChallenge)
+        }
+
         return userChallenge
     }
 

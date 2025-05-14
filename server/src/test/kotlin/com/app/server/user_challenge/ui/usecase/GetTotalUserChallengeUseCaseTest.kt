@@ -192,7 +192,7 @@ class GetTotalUserChallengeUseCaseTest : IntegrationTestContainer() {
         assertThat(getTotalUserChallengeResponseDto.userChallenges.last().totalDays)
             .isEqualTo(newUserChallenge.participantDays)
         assertThat(getTotalUserChallengeResponseDto.userChallenges.last().status)
-            .isEqualTo(newUserChallenge.status.content)
+            .isEqualTo(newUserChallenge.status.name.uppercase())
 
     }
 

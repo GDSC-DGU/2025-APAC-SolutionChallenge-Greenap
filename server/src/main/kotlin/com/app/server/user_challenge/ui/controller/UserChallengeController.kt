@@ -67,14 +67,15 @@ class UserChallengeController(
     )
     @PostMapping("/challenges/user/{userChallengeId}/ice")
     fun iceDailyUserChallenge(
-        @PathVariable userChallengeId: Long
+        @PathVariable userChallengeId: Long,
+        @RequestParam(name = "today_date", required = false) todayDate: LocalDate?
     ): ApiResponse<ResultCode> {
         val iceRequest = UserChallengeIceRequestDto(
             userChallengeId = userChallengeId
         )
         usingIceUseCase.processAfterCertificateIce(
             iceRequestDto = iceRequest,
-            certificationDate = LocalDate.now()
+            certificationDate = todayDate ?: LocalDate.now()
         )
 
         return ApiResponse.success(CommonResultCode.SUCCESS)
