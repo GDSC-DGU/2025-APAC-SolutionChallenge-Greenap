@@ -1,23 +1,12 @@
 package com.app.server.user_challenge.ui.controller
 
-import com.app.server.user_challenge.ui.dto.response.ReportDto
-import com.app.server.common.enums.CommonResultCode
 import com.app.server.common.response.ApiResponse
+import com.app.server.user_challenge.ui.dto.response.ReportDto
 import com.app.server.user_challenge.ui.usecase.GetUserChallengeReportUseCase
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
-import org.springframework.scheduling.annotation.Scheduled
-import org.springframework.scheduling.annotation.EnableScheduling
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.context.request.async.DeferredResult
+import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
-import java.util.concurrent.Executors
-import java.util.concurrent.ScheduledExecutorService
-import java.util.concurrent.TimeUnit
 
 @RestController
 @Tag(name = "Report API", description = "챌린지 레포트 발급 관련 API")
