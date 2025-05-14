@@ -2,15 +2,13 @@ package com.app.server.user_challenge.application.service.command
 
 import com.app.server.challenge.application.service.ChallengeService
 import com.app.server.challenge.ui.usecase.dto.request.ChallengeParticipantDto
-import com.app.server.challenge_certification.enums.EConsecutiveState
 import com.app.server.challenge_certification.application.dto.CertificationDataDto
 import com.app.server.challenge_certification.ui.dto.request.UserChallengeIceRequestDto
 import com.app.server.common.exception.InternalServerErrorException
+import com.app.server.infra.api.report.dto.request.SendToReportServerRequestDto
 import com.app.server.user_challenge.application.dto.CreateUserChallengeDto
 import com.app.server.user_challenge.application.dto.response.GetReportResponseDto
-import com.app.server.infra.api.report.dto.request.SendToReportServerRequestDto
 import com.app.server.user_challenge.application.dto.response.UserChallengeResponseDto
-import com.app.server.user_challenge.application.service.command.UserChallengeHistoryCommandService
 import com.app.server.user_challenge.application.service.UserChallengeService
 import com.app.server.user_challenge.domain.enums.EUserChallengeCertificationStatus
 import com.app.server.user_challenge.domain.enums.EUserChallengeStatus
@@ -240,21 +238,18 @@ class UserChallengeCommandServiceImpl(
         userChallenge: UserChallenge,
         certificationDate: LocalDate
     ) {
-        val userChallengeHistory: UserChallengeHistory? = userChallenge.getUserChallengeHistoryWhen(certificationDate)
         val pastUserChallengeHistory: UserChallengeHistory? =
             userChallenge.getUserChallengeHistoryWhen(certificationDate.minusDays(1))
 
         validateUserChallenge(
             userChallenge = userChallenge,
             pastUserChallengeHistory = pastUserChallengeHistory,
-            userChallengeHistory = userChallengeHistory!!,
         )
     }
 
     private fun validateUserChallenge(
         userChallenge: UserChallenge,
         pastUserChallengeHistory: UserChallengeHistory?,
-        userChallengeHistory: UserChallengeHistory,
     ) {
 
         val nowCount = userChallenge.nowConsecutiveParticipationDayCount
