@@ -21,7 +21,11 @@ extension ChallengeFilterExtension on ChallengeFilterStatus {
       case ChallengeFilterStatus.running:
         return {ChallengeStatus.running};
       case ChallengeFilterStatus.completed:
-        return {ChallengeStatus.completed, ChallengeStatus.waiting};
+        return {
+          ChallengeStatus.completed,
+          ChallengeStatus.waiting,
+          ChallengeStatus.pending,
+        };
       case ChallengeFilterStatus.all:
         return null;
     }
@@ -31,11 +35,13 @@ extension ChallengeFilterExtension on ChallengeFilterStatus {
 extension ChallengeStatusMapper on String {
   ChallengeStatus toChallengeStatus() {
     switch (this) {
-      case '챌린지 진행 중':
+      case 'RUNNING':
         return ChallengeStatus.running;
-      case '리포트 확인 대기 중':
+      case 'PENDING':
+        return ChallengeStatus.pending;
+      case 'WAITING':
         return ChallengeStatus.waiting;
-      case '진행완료':
+      case 'COMPLETED':
         return ChallengeStatus.completed;
       default:
         // 예외 상황을 명확히 처리하거나 디폴트

@@ -4,6 +4,7 @@ import 'package:greenap/domain/models/my_challenge.dart';
 import 'package:greenap/domain/enums/challenge.dart';
 import 'package:greenap/domain/models/feed_item.dart';
 import 'package:greenap/domain/models/challenge_report.dart';
+import 'package:greenap/core/network/response_wrapper.dart';
 import 'package:greenap/domain/models/dummy/challenge_report_dummy.dart';
 import 'package:greenap/data/provider/feed/feed_provider.dart';
 import 'package:greenap/domain/models/challenge_detail.dart';
@@ -42,9 +43,10 @@ class MyChallengeDetailViewModel extends GetxController {
       null,
       null,
     );
-
+    print('디버깅 response: ${response.data}');
     if (response.data != null) {
       feedList.assignAll(response.data!);
+      print('디버깅2 response: ${response.data}');
     }
   }
 

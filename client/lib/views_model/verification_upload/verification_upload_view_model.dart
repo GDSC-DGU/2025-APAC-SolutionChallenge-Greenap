@@ -10,6 +10,7 @@ class VerificationUploadViewModel extends GetxController {
   final RxBool isChecked = false.obs;
   final Rx<File?> selectedImage = Rx<File?>(null);
   final RxBool isLoading = false.obs;
+  final RxnString uploadedImageUrl = RxnString();
 
   final challengeDetail = Rxn<ChallengeDetailModel>();
   late final VerificationProvider _provider;
@@ -57,6 +58,9 @@ class VerificationUploadViewModel extends GetxController {
         userChallengeId: userChallengeId,
         imageFile: selectedImage.value!,
       );
+      if (response.message != 'failure') {
+        uploadedImageUrl.value = response.data;
+      }
       return response.message;
     } catch (e) {
       return '인증 요청 중 오류가 발생했습니다.';

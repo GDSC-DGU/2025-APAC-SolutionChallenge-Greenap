@@ -73,36 +73,12 @@ class FeedCard extends StatelessWidget {
             title: Text(feed.user.nickname),
             subtitle: Text(feed.content),
           ),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: Image.asset(
-              feed.imageUrl,
-              fit: BoxFit.cover,
-              width: double.infinity,
-              height: 300,
-            ),
+          Image.network(
+            feed.imageUrl,
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: 300,
           ),
-          if (isMine)
-            Row(
-              children: [
-                IconButton(
-                  icon: Icon(
-                    Icons.edit,
-                    size: 20,
-                    color: ColorSystem.gray[500],
-                  ),
-                  onPressed: onEdit,
-                ),
-                IconButton(
-                  icon: Icon(
-                    Icons.delete_outline,
-                    size: 20,
-                    color: ColorSystem.red,
-                  ),
-                  onPressed: onDelete,
-                ),
-              ],
-            ),
         ],
       ),
     );

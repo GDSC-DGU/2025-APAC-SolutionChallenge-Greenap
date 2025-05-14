@@ -16,6 +16,7 @@ class HomeViewModel extends GetxController {
   final Rxn<String> encourageMessage = Rxn<String>();
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
   final RxList<MyChallengeModel> myChallengeList = <MyChallengeModel>[].obs;
+  final RxBool isLoading = true.obs;
 
   @override
   void onInit() {
@@ -23,9 +24,22 @@ class HomeViewModel extends GetxController {
     _myChallengeProvider = Get.find<MyChallengeProvider>();
     _challengeProvider = Get.find<ChallengeProvider>();
     _encourageProvider = Get.find<EncourageProvider>();
-    fetchEncourageMessage();
-    fetchChallengeCategories();
-    userInfo();
+    loadData();
+  }
+
+  Future<void> loadData() async {
+    isLoading.value = true;
+    try {
+      await Future.wait([
+        fetchEncourageMessage(),
+        fetchChallengeCategories(),
+        userInfo(),
+      ]);
+    } catch (e) {
+      print('[ERROR] 홈 화면 데이터 로딩 실패: $e');
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   Future<void> fetchEncourageMessage() async {

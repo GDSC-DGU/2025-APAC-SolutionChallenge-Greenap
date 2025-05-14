@@ -17,45 +17,46 @@ class HomeScreen extends BaseScreen<HomeViewModel> {
 
   @override
   Widget buildBody(BuildContext context) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            UserInfo(),
-            const SizedBox(height: 24),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '오늘의 Habit',
-                  style: FontSystem.Head1.copyWith(color: ColorSystem.mint),
-                ),
-                const SizedBox(height: 12),
-                Obx(() {
-                  final challengeList = viewModel.myChallengeList;
-                  return TodayHabitCard(
+    return Obx(() {
+      if (viewModel.isLoading.value) {
+        return const Center(child: CircularProgressIndicator()); // ✅ 로딩 중
+      }
+
+      return SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              UserInfo(),
+              const SizedBox(height: 24),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '오늘의 Habit',
+                    style: FontSystem.Head1.copyWith(color: ColorSystem.mint),
+                  ),
+                  const SizedBox(height: 12),
+                  TodayHabitCard(
                     challenges:
-                        challengeList.map((challenge) {
+                        viewModel.myChallengeList.map((challenge) {
                           return {
                             'name': challenge.title,
                             'isCerficated':
                                 challenge.isCerficatedInToday ==
-                                        ChallengeCertificated.SUCCESS
-                                    ? true
-                                    : false,
+                                ChallengeCertificated.SUCCESS,
                           };
                         }).toList(),
-                  );
-                }),
-              ],
-            ),
-            const SizedBox(height: 32),
-            ChallengeCategory(),
-          ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 32),
+              ChallengeCategory(),
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 }

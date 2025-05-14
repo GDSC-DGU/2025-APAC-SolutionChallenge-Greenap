@@ -9,7 +9,7 @@ class ReportProvider extends BaseConnect {
   ) async {
     print('[DEBUG] getMyChallenges() 실행됨');
     final response = await getRequest(
-      '/api/v1/challenges/user/$uderChallengeId/report?today_date=2025-05-19',
+      '/api/v1/challenges/user/$uderChallengeId/report',
     );
 
     print('[DEBUG] 전체 응답 body: ${response.body}');

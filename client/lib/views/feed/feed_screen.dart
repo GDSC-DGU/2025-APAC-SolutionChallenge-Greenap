@@ -14,8 +14,7 @@ class FeedScreen extends BaseScreen<FeedViewModel> {
     return DefaultAppBar(title: '챌린지 피드');
   }
 
-  final RxString selectedCategory = '전체'.obs;
-  final categories = ['전체', '자원절약', '교통절감', '재사용', '친환경'];
+  final categories = ['전체', '자원 절약', '교통 절감', '재사용', '친환경'];
 
   @override
   Widget buildBody(BuildContext context) {
@@ -24,10 +23,7 @@ class FeedScreen extends BaseScreen<FeedViewModel> {
         const SizedBox(height: 20),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: FeedCategoryFilter(
-            selectedCategory: selectedCategory,
-            categories: categories,
-          ),
+          child: FeedCategoryFilter(categories: categories),
         ),
         const SizedBox(height: 12),
         Expanded(
@@ -38,16 +34,10 @@ class FeedScreen extends BaseScreen<FeedViewModel> {
                 return const Center(child: CircularProgressIndicator());
               }
 
-              final filteredList =
-                  selectedCategory.value == '전체'
-                      ? viewModel.feedList
-                      : viewModel.feedList
-                          .where(
-                            (item) => item.category == selectedCategory.value,
-                          )
-                          .toList();
+              final filteredList = viewModel.filteredList;
 
               if (filteredList.isEmpty) {
+                print("siodjfowiejfwef$filteredList");
                 return const Center(child: Text("해당 카테고리의 피드가 없습니다."));
               }
 

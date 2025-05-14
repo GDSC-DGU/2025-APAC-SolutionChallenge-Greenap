@@ -5,7 +5,7 @@ import 'package:greenap/views/base/base_screen.dart';
 import 'package:greenap/widgets/app_bar/back_app_bar.dart';
 import 'package:greenap/views_model/my_feed_list/my_feed_list_view_model.dart';
 import './widgets/delete_popup.dart';
-import 'package:greenap/views/feed/widgets/feed_category_filter.dart';
+import './widgets/feed_category_filter.dart';
 
 class MyFeedListScreen extends BaseScreen<MyFeedListViewModel> {
   MyFeedListScreen({super.key});
@@ -15,8 +15,7 @@ class MyFeedListScreen extends BaseScreen<MyFeedListViewModel> {
     return BackAppBar(title: "내 피드");
   }
 
-  final RxString selectedCategory = '전체'.obs;
-  final categories = ['전체', '자원절약', '교통절감', '재사용', '친환경'];
+  final categories = ['자원 절약', '교통 절감', '재사용', '친환경'];
 
   @override
   Widget buildBody(BuildContext context) {
@@ -25,10 +24,7 @@ class MyFeedListScreen extends BaseScreen<MyFeedListViewModel> {
         const SizedBox(height: 20),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: FeedCategoryFilter(
-            selectedCategory: selectedCategory,
-            categories: categories,
-          ),
+          child: FeedCategoryFilter(categories: categories),
         ),
         const SizedBox(height: 12),
         Expanded(
@@ -38,7 +34,6 @@ class MyFeedListScreen extends BaseScreen<MyFeedListViewModel> {
               if (viewModel.isLoading) {
                 return const Center(child: CircularProgressIndicator());
               }
-
               if (viewModel.feedList.isEmpty) {
                 return const Center(child: Text("해당 카테고리의 피드가 없습니다."));
               }

@@ -6,7 +6,7 @@ class FeedItemDto {
   final String challengeTitle;
   final String imageUrl;
   final String content;
-  final DateTime createdAt;
+  final List<dynamic> createdAt;
   final FeedUserDto user;
 
   FeedItemDto({
@@ -21,10 +21,10 @@ class FeedItemDto {
   factory FeedItemDto.fromJson(Map<String, dynamic> json) {
     return FeedItemDto(
       category: json['category'] ?? '',
-      challengeTitle: json['challenge_title'] ?? '',
-      imageUrl: json['image_url'] ?? '',
+      challengeTitle: json['challengeTitle'] ?? '',
+      imageUrl: json['imageUrl'] ?? '',
       content: json['content'] ?? '',
-      createdAt: DateTime.parse(json['createdAt']),
+      createdAt: json['createdAt'],
       user: FeedUserDto.fromJson(json['user']),
     );
   }
@@ -35,7 +35,13 @@ class FeedItemDto {
       challengeTitle: challengeTitle,
       imageUrl: imageUrl,
       content: content,
-      createdAt: createdAt,
+      createdAt: DateTime(
+        createdAt[0],
+        createdAt[1],
+        createdAt[2],
+        createdAt[3],
+        createdAt[4],
+      ),
       user: user.toModel(),
     );
   }
@@ -54,9 +60,9 @@ class FeedUserDto {
 
   factory FeedUserDto.fromJson(Map<String, dynamic> json) {
     return FeedUserDto(
-      nickname: json['nickname'] ?? '',
-      profileImageUrl: json['profileImageUrl'] ?? '',
-      burningLevel: json['burningLevel'] ?? 0,
+      nickname: json['nickname'],
+      profileImageUrl: json['profileImageUrl'],
+      burningLevel: json['burningLevel'],
     );
   }
 

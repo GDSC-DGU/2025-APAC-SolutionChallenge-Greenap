@@ -11,6 +11,7 @@ import 'package:greenap/views/category_detail/category_detail_screen.dart';
 import 'package:greenap/views/my_challenge_detail/my_challenge_detail_screen.dart';
 import 'package:greenap/views/verification_upload/verification_upload_screen.dart';
 import 'package:greenap/views/ranking/ranking_screen.dart';
+import 'package:greenap/views/feed_post/feed_post_screen.dart';
 import 'package:greenap/bindings/my_challenge_detail_binding.dart';
 import 'package:greenap/bindings/root_binding.dart';
 import 'package:greenap/bindings/category_detail_binding.dart';
@@ -19,6 +20,7 @@ import 'package:greenap/views/my_feed_list/my_feed_list_screen.dart';
 import 'package:greenap/bindings/my_feed_list_binding.dart';
 import 'package:greenap/bindings/login_binding.dart';
 import 'package:greenap/bindings/ranking_binding.dart';
+import 'package:greenap/bindings/feed_post_binding.dart';
 import 'app_routes.dart';
 
 abstract class AppPages {
@@ -64,6 +66,11 @@ abstract class AppPages {
       name: AppRoutes.VERIFICATIONUPLOAD,
       page: () => VerificationUploadScreen(),
       binding: VerificationUploadBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.FEEDPOST,
+      page: () => FeedPostScreen(),
+      binding: FeedPostBinding(),
     ),
   ];
 }
