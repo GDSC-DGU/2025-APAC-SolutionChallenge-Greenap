@@ -24,10 +24,10 @@ class VerificationProvider extends BaseConnect {
     );
 
     final Response response = await post(
-      '/api/v1/challenges/user/$userChallengeId/certification?certification_date=2025-05-19',
+      '/api/v1/challenges/user/$userChallengeId/certification',
       form,
 
-      contentType: 'multipart/form-data', // 명시적으로 지정
+      contentType: 'multipart/form-data',
     );
 
     print('[DEBUG] 전체 응답 body: ${response.body}');

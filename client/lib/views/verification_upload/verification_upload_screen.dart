@@ -75,7 +75,7 @@ class VerificationUploadScreen extends BaseScreen<VerificationUploadViewModel> {
 
     await Future.delayed(const Duration(milliseconds: 100));
 
-    final isSuccess = resultMessage == null || resultMessage == "Success";
+    final isSuccess = resultMessage == "Success";
 
     await showDialog(
       context: Get.context!,
@@ -89,11 +89,17 @@ class VerificationUploadScreen extends BaseScreen<VerificationUploadViewModel> {
                     },
                     onUploadFeed: () {
                       Navigator.pop(Get.context!);
-                      Get.offAllNamed('/root', arguments: {'initialTab': 1});
+                      Get.toNamed(
+                        '/feed-post',
+                        arguments: {
+                          'imageUrl': viewModel.uploadedImageUrl.value,
+                          'userChallengeId': viewModel.userChallengeId,
+                        },
+                      );
                     },
                   )
                   : VerificationFailPopup(
-                    reason: resultMessage ?? '알 수 없는 이유로 인증에 실패했어요.',
+                    reason: '재 인증이 필요합니다.',
                     onViewFeed: () {
                       Navigator.pop(Get.context!);
                       Get.offAllNamed('/root', arguments: {'initialTab': 1});

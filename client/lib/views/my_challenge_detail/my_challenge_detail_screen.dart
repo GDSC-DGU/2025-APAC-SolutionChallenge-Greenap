@@ -34,7 +34,7 @@ class MyChallengeDetailScreen extends BaseScreen<MyChallengeDetailViewModel> {
           challenge.status == ChallengeStatus.completed ||
                   challenge.status == ChallengeStatus.waiting
               ? ReportView()
-              : FeedView(feeds: viewModel.feedList),
+              : FeedView(),
         ],
       ),
     );

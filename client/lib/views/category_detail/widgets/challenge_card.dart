@@ -6,6 +6,8 @@ import 'challenge_detail_popup.dart';
 import 'package:greenap/views_model/category_detail/category_detail_view_model.dart';
 import 'package:get/get.dart';
 import 'challenge_start_popup.dart';
+import 'package:greenap/widgets/common/base_popup_dialog.dart';
+import 'package:greenap/widgets/common/popup_action_button.dart';
 
 class ChallengeCard extends StatelessWidget {
   final ChallengeItemModel challenge;
@@ -28,37 +30,59 @@ class ChallengeCard extends StatelessWidget {
             challenge: detail,
             onCancel: () => Navigator.pop(context),
             onJoin: (duration) async {
-              Navigator.pop(context);
+              Navigator.pop(Get.context!);
               final response = await viewModel.joinChallenge(
                 challengeId: challenge.id,
                 duration: duration,
               );
-              final userChallengeId = response.data;
+              if (response.data == null) {
+                // 다음 프레임에서 실행되도록 함
+                Future.delayed(Duration.zero, () {
+                  showDialog(
+                    context: context,
+                    builder:
+                        (_) => BasePopupDialog(
+                          title: response.message,
+                          actions: [
+                            PopupActionButton(
+                              text: '확인',
+                              type: ButtonStyleType.disabled,
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                            ),
+                          ],
+                        ),
+                  );
+                });
+              } else {
+                final userChallengeId = response;
 
-              // 다음 프레임에서 실행되도록 함
-              Future.delayed(Duration.zero, () {
-                showDialog(
-                  context: context,
-                  builder:
-                      (_) => ChallengeStartPopup(
-                        challenge: detail,
-                        selectedDuration: duration,
-                        onChecked: () {
-                          Navigator.pop(context);
-                        },
-                        goVerification: () {
-                          Navigator.pop(context);
-                          Get.toNamed(
-                            '/verification-upload',
-                            arguments: {
-                              'challengeId': challenge.id,
-                              'userChallengeId': userChallengeId,
-                            },
-                          );
-                        },
-                      ),
-                );
-              });
+                // 다음 프레임에서 실행되도록 함
+                Future.delayed(Duration.zero, () {
+                  showDialog(
+                    context: context,
+                    builder:
+                        (_) => ChallengeStartPopup(
+                          challenge: detail,
+                          selectedDuration: duration,
+                          onChecked: () {
+                            Navigator.pop(context);
+                          },
+                          goVerification: () {
+                            Navigator.pop(context);
+                            Get.toNamed(
+                              '/verification-upload',
+                              arguments: {
+                                'challengeId': challenge.id,
+                                'userChallengeId': userChallengeId,
+                              },
+                            );
+                          },
+                        ),
+                  );
+                });
+              }
             },
           ),
     );

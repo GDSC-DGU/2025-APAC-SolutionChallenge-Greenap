@@ -13,7 +13,7 @@ class AppBinding extends Bindings {
   @override
   void dependencies() {
     // Provider
-    Get.lazyPut<AuthProvider>(() => AuthProvider());
+    Get.lazyPut<AuthProvider>(() => AuthProvider(), fenix: true);
     Get.lazyPut<ChallengeProvider>(() => ChallengeProvider(), fenix: true);
     Get.lazyPut<MyChallengeProvider>(() => MyChallengeProvider(), fenix: true);
     Get.lazyPut<CategoryDetailProvider>(

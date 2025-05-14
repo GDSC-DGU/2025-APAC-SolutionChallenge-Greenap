@@ -30,13 +30,18 @@ class CategoryDetailProvider extends BaseConnect {
     );
   }
 
-  Future<ResponseWrapper<int>> joinChallenge({
+  Future<ResponseWrapper<dynamic>> joinChallenge({
     required int challengeId,
     required int participantsDate,
   }) async {
+    final today = DateTime.now();
+    final formattedDate =
+        "${today.year.toString().padLeft(4, '0')}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}";
+
     final response = await postRequest('/api/v1/challenges', {
       'challenge_id': challengeId,
       'participants_date': participantsDate,
+      'participants_start_date': formattedDate,
     });
 
     print('[DEBUG] 챌린지 참여 요청 결과: ${response.body}');
@@ -54,7 +59,7 @@ class CategoryDetailProvider extends BaseConnect {
       return ResponseWrapper(
         code: response.body['code'] ?? '500',
         data: null,
-        message: response.body['message'] ?? '참여 실패',
+        message: response.body['message'] ?? '참여에 실패하였습니다',
       );
     }
   }

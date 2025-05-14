@@ -27,7 +27,7 @@ class CategoryDetailViewModel extends GetxController {
     }
   }
 
-  Future<ResponseWrapper<int>> joinChallenge({
+  Future<ResponseWrapper<dynamic>> joinChallenge({
     required int challengeId,
     required int duration,
   }) async {
@@ -37,10 +37,14 @@ class CategoryDetailViewModel extends GetxController {
     );
 
     if (response.data != null) {
-      return response;
+      return ResponseWrapper<dynamic>(
+        code: response.code,
+        data: response.data,
+        message: response.message,
+      );
     } else {
       print('[ERROR]: ${response.message}');
-      return ResponseWrapper(
+      return ResponseWrapper<dynamic>(
         code: response.code,
         data: null,
         message: response.message,

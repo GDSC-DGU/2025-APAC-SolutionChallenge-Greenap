@@ -12,7 +12,7 @@ class FeedProvider extends BaseConnect {
     int? size,
   ) async {
     final query = <String, String>{
-      if (categoryId != null) 'category': categoryId.toString(),
+      if (categoryId != null) 'category_id': categoryId.toString(),
       if (scope != null) 'scope': scope,
       if (userChallengeId != null)
         'user_challenge_id': userChallengeId.toString(),
@@ -35,6 +35,37 @@ class FeedProvider extends BaseConnect {
       return ResponseWrapper(
         code: body['code'],
         data: parsedFeeds,
+        message: body['message'],
+      );
+    }
+
+    return ResponseWrapper(
+      code: response.body['code'] ?? '500',
+      data: null,
+      message: response.body['error']?['message'] ?? '알 수 없는 오류',
+    );
+  }
+
+  Future<ResponseWrapper<int?>> postFeed(
+    int userChallengeId,
+    String imageUrl,
+    String content,
+    String publishDate,
+  ) async {
+    final response = await postRequest('/api/v1/feeds', {
+      'user_challenge_id': userChallengeId,
+      'image_url': imageUrl,
+      'content': content,
+      'publish_date': publishDate,
+    });
+
+    print('[DEBUG] 피드 조회 응답: ${response.body}');
+
+    if (response.statusCode == 200) {
+      final body = response.body;
+      return ResponseWrapper(
+        code: body['code'],
+        data: body['data']['feed_id'],
         message: body['message'],
       );
     }

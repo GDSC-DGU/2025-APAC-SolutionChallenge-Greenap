@@ -18,16 +18,4 @@ class FeedItemModel {
     required this.createdAt,
     required this.user,
   });
-
-  factory FeedItemModel.fromJson(Map<String, dynamic> json) {
-    return FeedItemModel(
-      // id: json['id'],
-      category: json['category'],
-      challengeTitle: json['challengeTitle'],
-      imageUrl: json['imageUrl'],
-      content: json['content'],
-      createdAt: DateTime.parse(json['createdAt']),
-      user: UserModel.fromJson(json['user']),
-    );
-  }
 }

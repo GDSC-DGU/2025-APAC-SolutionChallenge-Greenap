@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:greenap/config/color_system.dart';
 import 'package:greenap/config/font_system.dart';
 import 'package:get/get.dart';
-import 'package:greenap/views_model/feed/feed_view_model.dart';
+import 'package:greenap/views_model/my_feed_list/my_feed_list_view_model.dart';
 
 class FeedCategoryFilter extends StatelessWidget {
   final List<String> categories;
-  final viewModel = Get.find<FeedViewModel>();
+  final viewModel = Get.find<MyFeedListViewModel>();
 
   FeedCategoryFilter({super.key, required this.categories});
 

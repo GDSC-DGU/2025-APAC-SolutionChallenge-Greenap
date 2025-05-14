@@ -1,4 +1,4 @@
-enum ChallengeStatus { running, completed, waiting }
+enum ChallengeStatus { running, completed, waiting, pending }
 
 enum ChallengeFilterStatus { all, running, completed }
 
