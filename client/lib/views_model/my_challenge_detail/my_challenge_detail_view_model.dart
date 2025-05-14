@@ -7,6 +7,8 @@ import 'package:greenap/domain/models/challenge_report.dart';
 import 'package:greenap/domain/models/dummy/challenge_report_dummy.dart';
 import 'package:greenap/data/provider/feed/feed_provider.dart';
 import 'package:greenap/domain/models/challenge_detail.dart';
+import 'package:greenap/domain/models/challenge_report.dart';
+import 'package:greenap/data/provider/report/report_provider.dart';
 
 class MyChallengeDetailViewModel extends GetxController {
   late final MyChallengeModel challenge;
@@ -15,11 +17,13 @@ class MyChallengeDetailViewModel extends GetxController {
   ChallengeReportModel? challengeReport;
   late final FeedProvider _feedProvider;
   late final CategoryDetailProvider _categoryDetailProvider;
+  late final ReportProvider _reportProvider;
 
   @override
   void onInit() {
     super.onInit();
     _feedProvider = Get.find<FeedProvider>();
+    _reportProvider = Get.find<ReportProvider>();
     _categoryDetailProvider = Get.find<CategoryDetailProvider>();
     challenge = Get.arguments as MyChallengeModel;
     // fetchChallengeDetail(challenge.challengeId);
@@ -44,10 +48,16 @@ class MyChallengeDetailViewModel extends GetxController {
     }
   }
 
-  void fetchReport() async {
-    // 실제 API 호출로 교체 예정
-    challengeReport = dummyChallengeReport;
-    update(); // GetBuilder 사용 시 필요
+  Future<void> fetchReport() async {
+    final response = await _reportProvider.getMyChallengeReport(challenge.id);
+
+    if (response.data != null) {
+      challengeReport = response.data;
+    } else {
+      print('[ERROR] 챌린지 리포트 조회 실패: ${response.message}');
+    }
+
+    update(); // GetBuilder 사용 시 UI 갱신
   }
 
   bool get isCompleted => challenge.status == ChallengeStatus.completed;

@@ -4,13 +4,14 @@ import 'package:greenap/domain/models/all_ranking.dart';
 import 'package:greenap/domain/models/challenge_ranking.dart';
 import 'package:greenap/data/dto/all_ranking_dto.dart';
 import 'package:greenap/data/dto/challenge_ranking_dto.dart';
+import 'package:greenap/data/dto/my_rank_dto.dart';
 
 class RankProvider extends BaseConnect {
   Future<ResponseWrapper<RankingModel>> getAllRanking() async {
     final response = await getRequest('/api/v1/ranks');
 
     print('[DEBUG] 전체 응답 body: ${response.body}');
-
+    print('[DEBUG] 전체 응답 statusCode: ${response.statusCode}');
     if (response.statusCode == 200) {
       final body = response.body;
       final data = AllRankingDto.fromJson(body['data']).toModel();
@@ -76,6 +77,23 @@ class RankProvider extends BaseConnect {
         data: dto.toModel(), // 모델 매핑 구현 필요
       );
     }
+    return ResponseWrapper(code: 'ERROR', message: '불러오기 실패', data: null);
+  }
+
+  Future<ResponseWrapper<MyChallengeRankingModel>> getUserChallengeRanking(
+    int challengeId,
+  ) async {
+    final response = await getRequest('/api/v1/ranks/user/$challengeId');
+
+    if (response.statusCode == 200) {
+      final dto = MyChallengeRankingDto.fromJson(response.body['data']);
+      return ResponseWrapper(
+        code: response.body['code'],
+        message: response.body['message'],
+        data: dto.toModel(),
+      );
+    }
+
     return ResponseWrapper(code: 'ERROR', message: '불러오기 실패', data: null);
   }
 }

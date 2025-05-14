@@ -1,5 +1,6 @@
 import 'all_ranking_dto.dart';
 import 'package:greenap/domain/models/challenge_ranking.dart';
+import 'package:greenap/domain/models/all_ranking.dart';
 
 class ChallengeRankingDto {
   final String challengeTitle;

@@ -1,6 +1,7 @@
 import './certification_data_dto.dart';
 import 'package:greenap/domain/models/my_challenge.dart';
 import 'package:greenap/domain/enums/challenge.dart';
+import 'package:greenap/domain/extensions/challenge_ext.dart';
 
 class MyChallengeDto {
   final int id;
@@ -64,10 +65,7 @@ class MyChallengeDto {
         (e) => e.name.toUpperCase() == isCertificatedInToday.toUpperCase(),
         orElse: () => ChallengeCertificated.FAILED,
       ),
-      status: ChallengeStatus.values.firstWhere(
-        (e) => e.name.toUpperCase() == status.toUpperCase(),
-        orElse: () => ChallengeStatus.running,
-      ),
+      status: status.toChallengeStatus(),
       certificationDataList:
           certificationDataList
               .map((e) => {'date': e.date, 'is_certificated': e.isCertificated})

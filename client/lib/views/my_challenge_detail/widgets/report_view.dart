@@ -10,31 +10,45 @@ import 'package:greenap/views_model/my_challenge_detail/my_challenge_detail_view
 import 'challenge_restart_popup.dart';
 
 class ReportView extends StatelessWidget {
-  final ChallengeReportModel report;
-
-  ReportView({super.key, required this.report});
+  ReportView({super.key});
+  final MyChallengeDetailViewModel viewModel = Get.find();
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        _buildTitle(),
-        const SizedBox(height: 12),
-        _buildReportCard(context),
-        const SizedBox(height: 20),
-      ],
+    if (viewModel.challengeReport == null) {
+      // 비동기 호출을 다음 프레임으로 미룸 (중복 호출 방지)
+      Future.microtask(() => viewModel.fetchReport());
+    }
+
+    return GetBuilder<MyChallengeDetailViewModel>(
+      builder: (_) {
+        final report = viewModel.challengeReport;
+
+        if (report == null) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            _buildTitle(report),
+            const SizedBox(height: 12),
+            _buildReportCard(context, report),
+            const SizedBox(height: 20),
+          ],
+        );
+      },
     );
   }
 
-  Widget _buildTitle() {
+  Widget _buildTitle(ChallengeReportModel report) {
     return Text(
       "챌린지 리포트",
       style: FontSystem.Head2.copyWith(color: ColorSystem.gray[700]),
     );
   }
 
-  Widget _buildReportCard(BuildContext context) {
+  Widget _buildReportCard(BuildContext context, ChallengeReportModel report) {
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -66,7 +80,7 @@ class ReportView extends StatelessWidget {
             style: FontSystem.Head3.copyWith(color: ColorSystem.gray[700]),
           ),
           const SizedBox(height: 24),
-          _buildMessageBox(),
+          _buildMessageBox(report),
           const SizedBox(height: 24),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -80,13 +94,13 @@ class ReportView extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
-          _buildButtons(context),
+          _buildButtons(context, report),
         ],
       ),
     );
   }
 
-  Widget _buildMessageBox() {
+  Widget _buildMessageBox(ChallengeReportModel report) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
@@ -108,7 +122,7 @@ class ReportView extends StatelessWidget {
     );
   }
 
-  Widget _buildButtons(BuildContext context) {
+  Widget _buildButtons(BuildContext context, ChallengeReportModel report) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -120,13 +134,16 @@ class ReportView extends StatelessWidget {
         const SizedBox(width: 12),
         PopupActionButton(
           text: report.status != "COMPLETED" ? "재도전 하기" : "계속 도전하기",
-          onPressed: () => _handleJoinChallenge(context),
+          onPressed: () => _handleJoinChallenge(context, report),
         ),
       ],
     );
   }
 
-  void _handleJoinChallenge(BuildContext context) async {
+  void _handleJoinChallenge(
+    BuildContext context,
+    ChallengeReportModel report,
+  ) async {
     final viewModel = Get.find<MyChallengeDetailViewModel>();
     await viewModel.fetchChallengeDetail(report.userChallengeId);
     final challengeDetail = viewModel.challengeDetail.value;

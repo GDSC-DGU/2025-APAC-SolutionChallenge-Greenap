@@ -47,12 +47,14 @@ class Top100ParticipantDto {
 class ParticipantUserDto {
   final String nickname;
   final String profileImageUrl;
-  final int longestConsecutiveParticipationCount;
+  final int? longestConsecutiveParticipationCount;
+  final int? totalParticipationCount;
 
   ParticipantUserDto({
     required this.nickname,
     required this.profileImageUrl,
     required this.longestConsecutiveParticipationCount,
+    required this.totalParticipationCount,
   });
 
   factory ParticipantUserDto.fromJson(Map<String, dynamic> json) {
@@ -60,7 +62,8 @@ class ParticipantUserDto {
       nickname: json['nickname'] ?? '',
       profileImageUrl: json['profile_image_url'] ?? '',
       longestConsecutiveParticipationCount:
-          json['longest_consecutive_participation_count'] ?? 0,
+          json['longest_consecutive_participation_count'],
+      totalParticipationCount: json['total_participation_count'],
     );
   }
   ParticipantUserModel toModel() {
@@ -69,6 +72,7 @@ class ParticipantUserDto {
       profileImageUrl: profileImageUrl,
       longestConsecutiveParticipationCount:
           longestConsecutiveParticipationCount,
+      totalParticipationCount: totalParticipationCount,
     );
   }
 }

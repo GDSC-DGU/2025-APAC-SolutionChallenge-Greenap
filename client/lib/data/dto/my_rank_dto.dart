@@ -46,3 +46,28 @@ class MyRankDto {
     return ParticipantModel(rank: rank, user: user.toModel());
   }
 }
+
+class MyChallengeRankingDto {
+  final String challengeTitle;
+  final MyRankDto userRankInfo;
+
+  MyChallengeRankingDto({
+    required this.challengeTitle,
+    required this.userRankInfo,
+  });
+
+  factory MyChallengeRankingDto.fromJson(Map<String, dynamic> json) {
+    return MyChallengeRankingDto(
+      challengeTitle: json['challenge_title'],
+      userRankInfo: MyRankDto.fromJson(json['user_rank_info']),
+    );
+  }
+
+  /// 모델 변환 함수 (뷰모델에서 사용)
+  MyChallengeRankingModel toModel() {
+    return MyChallengeRankingModel(
+      challengeTitle: challengeTitle,
+      userRankInfo: userRankInfo.toModel(),
+    );
+  }
+}

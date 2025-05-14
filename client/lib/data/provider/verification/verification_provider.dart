@@ -24,8 +24,9 @@ class VerificationProvider extends BaseConnect {
     );
 
     final Response response = await post(
-      '/api/v1/challenges/user/$userChallengeId/certification',
+      '/api/v1/challenges/user/$userChallengeId/certification?certification_date=2025-05-19',
       form,
+
       contentType: 'multipart/form-data', // 명시적으로 지정
     );
 
@@ -37,7 +38,7 @@ class VerificationProvider extends BaseConnect {
       final body = response.body;
       return ResponseWrapper(
         code: body['code'],
-        data: body['data']?['image_url'], // 성공 시 image_url
+        data: body['data']?['image_url'],
         message: body['message'],
       );
     } else {
@@ -64,6 +65,33 @@ class VerificationProvider extends BaseConnect {
       return ResponseWrapper<ChallengeDetailModel>(
         code: body['code'],
         data: ChallengeDetailDto.fromJson(challenge).toModel(),
+        message: body['message'],
+      );
+    }
+
+    return ResponseWrapper(
+      code: response.body['code'] ?? '500',
+      data: null,
+      message: response.body['error']?['message'] ?? '데이터 없음',
+    );
+  }
+
+  Future<ResponseWrapper<ChallengeDetailModel>> postIce(
+    int userChallengeId,
+  ) async {
+    print('[DEBUG] postIce() 실행됨');
+
+    final response = await postRequest(
+      '/api/v1/challenges/user/$userChallengeId/ice',
+      {},
+    );
+    print('[DEBUG] 전체 응답 body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      final body = response.body;
+      return ResponseWrapper<ChallengeDetailModel>(
+        code: body['code'],
+        data: body['data']['message'],
         message: body['message'],
       );
     }

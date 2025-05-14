@@ -1,0 +1,1 @@
+enum RankType { all, challenge }

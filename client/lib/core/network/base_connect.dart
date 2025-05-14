@@ -69,7 +69,7 @@ abstract class BaseConnect extends GetConnect {
   }
 
   /// 안전한 POST 요청
-  Future<Response> postRequest(String url, dynamic body) async {
+  Future<Response> postRequest(String url, dynamic? body) async {
     var response = await post(url, body);
 
     if (_shouldRefresh(response)) {

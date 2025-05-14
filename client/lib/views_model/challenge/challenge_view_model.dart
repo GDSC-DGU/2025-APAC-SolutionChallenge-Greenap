@@ -3,8 +3,8 @@ import 'package:greenap/data/provider/challenge/challenge_provider.dart';
 import 'package:greenap/domain/models/challenge_category.dart';
 
 class ChallengeViewModel extends GetxController {
-  final challengeList = <ChallengeCategoryModel>[].obs;
-
+  final RxList<ChallengeCategoryModel> challengeList =
+      <ChallengeCategoryModel>[].obs;
   final isLeftSelected = true.obs;
   final isLoading = false.obs;
 
