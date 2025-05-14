@@ -159,8 +159,8 @@ class UserChallengeCommandServiceImpl(
 
         val event = SavedTodayUserChallengeCertificationEvent(
             userChallengeId = userChallenge.id!!,
-            maxConsecutiveParticipationDayCount = userChallenge.maxConsecutiveParticipationDayCount,
-            totalParticipationDayCount = userChallenge.totalParticipationDayCount
+            totalParticipationDayCount = userChallenge.totalParticipationDayCount,
+            maxConsecutiveParticipationDayCount = userChallenge.maxConsecutiveParticipationDayCount
         )
 
         eventPublisher.publishEvent(event)
@@ -256,65 +256,31 @@ class UserChallengeCommandServiceImpl(
         pastUserChallengeHistory: UserChallengeHistory?,
         userChallengeHistory: UserChallengeHistory,
     ) {
-        val nowCount: Long = userChallenge.nowConsecutiveParticipationDayCount
-        var consecutiveState: EConsecutiveState
 
-        // 첫 날인 경우
-        if (pastUserChallengeHistory == null && userChallengeHistory.status != EUserChallengeCertificationStatus.FAILED) {
-            consecutiveState = EConsecutiveState.FIRST_DAY
-        }
-        // 연속 일자 증가
-        else if (
-            userChallengeHistory.status != EUserChallengeCertificationStatus.FAILED &&
-            pastUserChallengeHistory!!.status != EUserChallengeCertificationStatus.FAILED &&
-            userChallenge.nowConsecutiveParticipationDayCount == userChallenge.maxConsecutiveParticipationDayCount
-        ) {
-            consecutiveState = EConsecutiveState.CONSECUTIVE_MAX
-        } else if (
-            userChallengeHistory.status != EUserChallengeCertificationStatus.FAILED &&
-            pastUserChallengeHistory!!.status != EUserChallengeCertificationStatus.FAILED
-        ) {
-            consecutiveState = EConsecutiveState.CONSECUTIVE_ONLY
-        }
-        // 연속 일자 초기화
-        else if (userChallengeHistory.status != EUserChallengeCertificationStatus.FAILED &&
-            pastUserChallengeHistory!!.status == EUserChallengeCertificationStatus.FAILED
-        ) {
-            consecutiveState = EConsecutiveState.CONSECUTIVE_RESET
-        } else {
-            throw InternalServerErrorException(UserChallengeException.CANNOT_UPDATE_CONSECUTIVE_PARTICIPATION_DAY_COUNT)
+        val nowCount = userChallenge.nowConsecutiveParticipationDayCount
+
+        // 이전 기록이 없는 경우 (첫 날인 경우)
+        if (pastUserChallengeHistory == null || userChallenge.maxConsecutiveParticipationDayCount == 0L) {
+            userChallenge.updateNowConsecutiveParticipationDayCount(nowCount + 1)
+            userChallenge.updateMaxConsecutiveParticipationDayCount(
+                maxOf(nowCount + 1, userChallenge.maxConsecutiveParticipationDayCount)
+            )
+            return
         }
 
-        updateParticipantDaysState(
-            userChallenge = userChallenge,
-            consecutiveState = consecutiveState,
-            nowCount = nowCount
-        )
-    }
+        // 이전 기록이 실패한 경우 (연속 깨짐, 다시 시작)
+        if (pastUserChallengeHistory.status == EUserChallengeCertificationStatus.FAILED) {
+            userChallenge.updateNowConsecutiveParticipationDayCount(1)
+            return
+        }
 
-    private fun updateParticipantDaysState(
-        userChallenge: UserChallenge,
-        consecutiveState: EConsecutiveState,
-        nowCount: Long
-    ) {
-        when (consecutiveState) {
-            EConsecutiveState.FIRST_DAY -> {
-                userChallenge.updateNowConsecutiveParticipationDayCount(nowCount + 1)
-                userChallenge.updateMaxConsecutiveParticipationDayCount(nowCount + 1)
-            }
+        // 이전 기록도 성공이고 현재도 성공인 경우 (연속 유지)
+        val newConsecutiveCount = userChallenge.nowConsecutiveParticipationDayCount + 1
+        userChallenge.updateNowConsecutiveParticipationDayCount(newConsecutiveCount)
 
-            EConsecutiveState.CONSECUTIVE_ONLY -> {
-                userChallenge.updateNowConsecutiveParticipationDayCount(nowCount + 1)
-            }
-
-            EConsecutiveState.CONSECUTIVE_MAX -> {
-                userChallenge.updateNowConsecutiveParticipationDayCount(nowCount + 1)
-                userChallenge.updateMaxConsecutiveParticipationDayCount(nowCount + 1)
-            }
-
-            EConsecutiveState.CONSECUTIVE_RESET -> {
-                userChallenge.updateNowConsecutiveParticipationDayCount(1)
-            }
+        // 현재 연속 일수가 최대 연속 일수보다 크면 최대값 업데이트
+        if (newConsecutiveCount > userChallenge.maxConsecutiveParticipationDayCount) {
+            userChallenge.updateMaxConsecutiveParticipationDayCount(newConsecutiveCount)
         }
     }
 
@@ -393,16 +359,15 @@ class UserChallengeCommandServiceImpl(
         userChallenge: UserChallenge,
         todayDate: LocalDate
     ) {
-        val endDate : LocalDate = userChallenge.getUserChallengeHistories().last().date
+        val endDate: LocalDate = userChallenge.getUserChallengeHistories().last().date
 
         if (userChallenge.status == EUserChallengeStatus.PENDING &&
             todayDate.isBefore(endDate.plusDays(2))
-        ){
+        ) {
             userChallenge.updateStatus(EUserChallengeStatus.WAITING)
-        }
-        else if (userChallenge.status == EUserChallengeStatus.PENDING &&
+        } else if (userChallenge.status == EUserChallengeStatus.PENDING &&
             todayDate.isAfter(endDate.plusDays(1))
-        ){
+        ) {
             userChallenge.updateStatus(EUserChallengeStatus.COMPLETED)
         }
     }
