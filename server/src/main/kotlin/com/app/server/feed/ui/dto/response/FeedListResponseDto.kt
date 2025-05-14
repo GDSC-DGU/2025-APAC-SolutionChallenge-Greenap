@@ -20,7 +20,7 @@ data class FeedListResponseDto(
                     challengeTitle = projection.challengeTitle,
                     imageUrl = projection.feedImageUrl,
                     content = projection.feedContent,
-                    createdAt = projection.createdAt!!,
+                    createdAt = projection.publishDate,
                     user = FeedUserDto(
                         nickname = projection.userName,
                         profileImageUrl = projection.userProfileImageUrl,

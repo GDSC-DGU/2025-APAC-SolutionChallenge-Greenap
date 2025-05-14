@@ -43,6 +43,7 @@ import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.web.multipart.MultipartFile
 import java.time.LocalDate
+import java.time.LocalDateTime
 import kotlin.test.Test
 
 @SpringBootTest
@@ -434,7 +435,7 @@ class FeedQueryServiceTest : IntegrationTestContainer() {
         assertThat(feedListResponseDto.feedList.first().user.nickname).isEqualTo(userName)
     }
 
-    private fun makeFeedRequestDto(userId: Long, userChallengeId: Long, content: String?, publishDate: LocalDate): CreateFeedCommand {
+    private fun makeFeedRequestDto(userId: Long, userChallengeId: Long, content: String?, publishDate: LocalDateTime): CreateFeedCommand {
         return CreateFeedCommand(
             userChallengeId = userChallengeId,
             content = content,
@@ -528,7 +529,7 @@ class FeedQueryServiceTest : IntegrationTestContainer() {
                 userId = userId,
                 userChallengeId = userChallengeId,
                 content = feedContent,
-                publishDate = date)
+                publishDate = date.atTime(0,0,0))
         )
         return feedEventListener.createdFeedProjectionFrom(
             createdEvent = FeedCreatedEvent(
