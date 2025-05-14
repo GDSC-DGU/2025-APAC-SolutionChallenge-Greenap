@@ -10,6 +10,8 @@ data class ChallengeParticipantRequestDto(
     val challengeId: Long,
     @JsonProperty("participants_date")
     val participantsDate: Int,
+    @JsonProperty("participants_start_date")
+    val participantsStartDate: LocalDate,
 )
 {
     fun toChallengeParticipantDto(userId: Long) = ChallengeParticipantDto(
@@ -17,6 +19,6 @@ data class ChallengeParticipantRequestDto(
         challengeId = challengeId,
         participantsTotalDays = participantsDate,
         status = EUserChallengeStatus.RUNNING,
-        participantsStartDate = LocalDate.now(),
+        participantsStartDate = participantsStartDate,
     )
 }

@@ -65,7 +65,7 @@ class UserChallengeCommandServiceImpl(
                 nowConsecutiveDays = userChallenge.nowConsecutiveParticipationDayCount,
                 totalConsecutiveDays = userChallenge.totalParticipationDayCount,
                 iceCount = userChallenge.iceCount,
-                challengeStartDate = userChallenge.createdAt!!.toLocalDate().toString(),
+                challengeStartDate = userChallenge.getUserChallengeHistories().first().date.toString(),
                 progressFromTotal = userChallenge.calculateProgressFromTotalParticipationDays(
                     challengeParticipantDto.participantsStartDate
                 ),
@@ -115,7 +115,7 @@ class UserChallengeCommandServiceImpl(
             nowConsecutiveDays = userChallenge.nowConsecutiveParticipationDayCount,
             totalConsecutiveDays = userChallenge.totalParticipationDayCount,
             iceCount = userChallenge.iceCount,
-            challengeStartDate = userChallenge.createdAt!!.toLocalDate().toString(),
+            challengeStartDate = userChallenge.getUserChallengeHistories().first().date.toString(),
             progressFromTotal = userChallenge.calculateProgressFromTotalParticipationDays(
                 challengeParticipantDto.participantsStartDate
             ),

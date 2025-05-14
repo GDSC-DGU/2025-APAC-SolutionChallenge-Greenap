@@ -47,6 +47,7 @@ import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.web.multipart.MultipartFile
 import java.time.LocalDate
+import java.time.LocalDateTime
 import kotlin.test.Test
 
 @SpringBootTest
@@ -94,6 +95,8 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
         userChallengeId = userChallengeId,
         image = mock(MultipartFile::class.java)
     )
+
+     val participantsStartDateTime = participantsStartDate.atStartOfDay()
 
     var sendToCertificationServerRequestDto = SendToCertificationServerRequestDto(
         imageUrl,
@@ -154,7 +157,7 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
         )
         // when
         val feed = createFeedUseCase.execute(
-            makeFeedRequestDto(content = "testContent", publishDate = participantsStartDate)
+            makeFeedRequestDto(content = "testContent", publishDate = participantsStartDateTime)
         )
         // then
         assertThat(feed).isNotNull
@@ -174,7 +177,7 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
         )
         // when
         val feed = createFeedUseCase.execute(
-            makeFeedRequestDto(content = "testContent", publishDate = participantsStartDate)
+            makeFeedRequestDto(content = "testContent", publishDate = participantsStartDateTime)
         )
         // then
         assertThat(feed).isNotNull
@@ -194,7 +197,7 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
         )
         // when
         val feed = createFeedUseCase.execute(
-            makeFeedRequestDto(content = "testContent", publishDate = participantsStartDate)
+            makeFeedRequestDto(content = "testContent", publishDate = participantsStartDateTime)
         )
         // then
         assertThat(feed).isNotNull
@@ -215,7 +218,7 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
             val feedContent = "test".repeat(251)
             assertThat(feedContent.length).isGreaterThan(1000)
             createFeedUseCase.execute(
-                makeFeedRequestDto(content = feedContent, publishDate = participantsStartDate)
+                makeFeedRequestDto(content = feedContent, publishDate = participantsStartDateTime)
             )
         }
         // then
@@ -233,7 +236,7 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
         )
         // when
         val feed = createFeedUseCase.execute(
-            makeFeedRequestDto(content = null, publishDate = participantsStartDate)
+            makeFeedRequestDto(content = null, publishDate = participantsStartDateTime)
         )
         // then
         assertThat(feed).isNotNull
@@ -247,7 +250,7 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
         )
         // when
         val nextFeed = createFeedUseCase.execute(
-            makeFeedRequestDto(content = "", publishDate = participantsStartDate.plusDays(1))
+            makeFeedRequestDto(content = "", publishDate = participantsStartDateTime.plusDays(1))
         )
         assertThat(nextFeed).isNotNull
         assertThat(nextFeed.content).isBlank
@@ -263,7 +266,7 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
             )
         )
         val feed = feedCommandService.execute(
-            makeFeedRequestDto(content = null, publishDate = participantsStartDate)
+            makeFeedRequestDto(content = null, publishDate = participantsStartDateTime)
         )
         // when
         val feedProjection = feedEventListener.createdFeedProjectionFrom(
@@ -289,7 +292,7 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
         )
         val feedContent = "test"
         val feed = feedCommandService.execute(
-            makeFeedRequestDto(content = feedContent, publishDate = participantsStartDate)
+            makeFeedRequestDto(content = feedContent, publishDate = participantsStartDateTime)
         )
         assertThat(feed.content).isEqualTo(feedContent)
         // when
@@ -316,7 +319,7 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
         )
         val feedContent = "test".repeat(250)
         val feed = createFeedUseCase.execute(
-            makeFeedRequestDto(content = feedContent, publishDate = participantsStartDate)
+            makeFeedRequestDto(content = feedContent, publishDate = participantsStartDateTime)
         )
         // when
         val exception = assertThrows<BadRequestException> {
@@ -342,7 +345,7 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
         )
         val feedContent = "test".repeat(250)
         val feed = createFeedUseCase.execute(
-            makeFeedRequestDto(content = feedContent, publishDate = participantsStartDate)
+            makeFeedRequestDto(content = feedContent, publishDate = participantsStartDateTime)
         )
         // when
         deleteFeedUseCase.execute(feedId = feed.feedId)
@@ -364,7 +367,7 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
         )
         val feedContent = "test".repeat(250)
         val feed = createFeedUseCase.execute(
-            makeFeedRequestDto(content = feedContent, publishDate = participantsStartDate)
+            makeFeedRequestDto(content = feedContent, publishDate = participantsStartDateTime)
         )
         // when
         deleteFeedUseCase.execute(feedId = feed.feedId)
@@ -375,7 +378,7 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
         assertThat(exception.message).isEqualTo(FeedException.NOT_FOUND_FEED_PROJECTION.message)
     }
 
-    private fun makeFeedRequestDto(content: String?, publishDate: LocalDate): CreateFeedCommand {
+    private fun makeFeedRequestDto(content: String?, publishDate: LocalDateTime): CreateFeedCommand {
         return CreateFeedCommand(
             userChallengeId = savedUserChallenge!!.id!!,
             content = content,

@@ -6,6 +6,7 @@ import com.app.server.feed.ui.dto.response.CreateFeedResponseDto
 import org.springframework.stereotype.Component
 
 interface CreateFeedUseCase {
+
     fun execute(createFeedCommand : CreateFeedCommand) : CreateFeedResponseDto
 }
 
@@ -13,6 +14,7 @@ interface CreateFeedUseCase {
 class CreateFeedUseCaseImpl(
     private val feedCommandService: FeedCommandServiceImpl
 ) : CreateFeedUseCase {
+
     override fun execute(createFeedCommand: CreateFeedCommand): CreateFeedResponseDto {
         val response =  feedCommandService.execute(createFeedCommand)
         return CreateFeedResponseDto(

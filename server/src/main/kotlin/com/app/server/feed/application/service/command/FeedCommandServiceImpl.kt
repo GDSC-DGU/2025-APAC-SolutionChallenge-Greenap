@@ -8,7 +8,6 @@ import com.app.server.feed.domain.event.FeedModifiedEvent
 import com.app.server.feed.domain.model.command.Feed
 import com.app.server.feed.exception.FeedException
 import com.app.server.feed.ui.dto.CreateFeedCommand
-import com.app.server.feed.ui.usecase.CreateFeedUseCase
 import com.app.server.feed.ui.usecase.DeleteFeedUseCase
 import com.app.server.feed.ui.usecase.UpdateFeedUseCase
 import com.app.server.user_challenge.application.service.UserChallengeService
@@ -16,7 +15,7 @@ import com.app.server.user_challenge.domain.enums.EUserChallengeCertificationSta
 import jakarta.transaction.Transactional
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Service
 @Transactional
@@ -25,22 +24,23 @@ class FeedCommandServiceImpl(
     private val userChallengeService: UserChallengeService,
     private val eventPublisher: ApplicationEventPublisher,
 ) : FeedCommandService, UpdateFeedUseCase, DeleteFeedUseCase {
+
     override fun execute(createFeedCommand: CreateFeedCommand): Feed {
 
         val userChallengeId : Long = createFeedCommand.userChallengeId
-        val createFeedDate : LocalDate = createFeedCommand.publishDate
+        val createFeedDate : LocalDateTime = createFeedCommand.publishDate
         val feedImageUrl : String = createFeedCommand.imageUrl
         val feedContent : String? = createFeedCommand.content
 
         // 인증 여부 확인
         if (
-            userChallengeService.isCertificatedWhen(userChallengeId, createFeedDate)
+            userChallengeService.isCertificatedWhen(userChallengeId, createFeedDate.toLocalDate())
              != EUserChallengeCertificationStatus.SUCCESS
         ) {
             throw BadRequestException(FeedException.NOT_CERTIFICATED_THIS_USER_CHALLENGE)
         }
         // 사진 일치 여부 확인
-        if (userChallengeService.getUserChallengeImageUrl(userChallengeId, createFeedDate)
+        if (userChallengeService.getUserChallengeImageUrl(userChallengeId, createFeedDate.toLocalDate())
             != feedImageUrl){
             throw BadRequestException(FeedException.NOT_MATCHED_IMAGE_URL)
         }
@@ -66,7 +66,8 @@ class FeedCommandServiceImpl(
             userId = createFeedCommand.userId,
             userChallengeId = createFeedCommand.userChallengeId,
             imageUrl = createFeedCommand.imageUrl,
-            content = createFeedCommand.content
+            content = createFeedCommand.content,
+            publishDate = createFeedCommand.publishDate
         )
     }
 
