@@ -4,6 +4,7 @@ import com.app.server.challenge_certification.application.dto.command.Certificat
 import com.app.server.challenge_certification.application.service.CertificationService
 import com.app.server.challenge_certification.ui.dto.request.CertificationRequestDto
 import com.app.server.challenge_certification.ui.dto.response.GetCertificatedImageUrlResponseDto
+import com.app.server.user_challenge.application.service.UserChallengeService
 import org.springframework.stereotype.Component
 import java.time.LocalDate
 
@@ -18,7 +19,8 @@ interface CertificationUseCase {
 
 @Component
 class CertificationUseCaseImpl(
-    private val certificationService: CertificationService
+    private val certificationService: CertificationService,
+    private val userChallengeService: UserChallengeService
 ) : CertificationUseCase {
 
     override fun execute(
@@ -34,7 +36,10 @@ class CertificationUseCaseImpl(
 
         val result = certificationService.certificateImage(command)
 
-        val isFinishedDay = LocalDate.now().isEqual(certificationDate)
+        val finishDate = userChallengeService.findById(certificationRequestDto.userChallengeId)
+            .getUserChallengeHistories().last().date
+
+        val isFinishedDay = certificationDate.isEqual(finishDate)
 
         return GetCertificatedImageUrlResponseDto(
             imageUrl = result,
