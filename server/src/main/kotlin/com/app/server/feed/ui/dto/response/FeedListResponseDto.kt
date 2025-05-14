@@ -16,6 +16,7 @@ data class FeedListResponseDto(
         fun fromPage(feedProjectionPage: Page<FeedProjection>): FeedListResponseDto {
             val feedList = feedProjectionPage.content.map { projection ->
                 FeedDto(
+                    id = projection.id!!,
                     category = projection.challengeCategoryTitle,
                     challengeTitle = projection.challengeTitle,
                     imageUrl = projection.feedImageUrl,
@@ -42,6 +43,7 @@ data class FeedListResponseDto(
 }
 
 data class FeedDto(
+    val id: Long,
     val category: String,
     val challengeTitle: String,
     val imageUrl: String,
