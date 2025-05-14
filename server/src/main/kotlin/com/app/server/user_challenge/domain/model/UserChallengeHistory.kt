@@ -8,8 +8,14 @@ import jakarta.persistence.*
 import java.time.LocalDate
 
 @Entity
-@Table(name = "user_challenge_histories")
-// TODO : Index 적용 고려
+@Table(
+    name = "user_challenge_histories",
+    indexes = [Index(
+        name = "idx_user_challenge_history_id_user_challenge_id",
+        columnList = "user_challenge_history_id, user_challenge_id",
+        unique = true
+    )]
+)
 class UserChallengeHistory(
 
     @Id
@@ -30,7 +36,7 @@ class UserChallengeHistory(
     var certificatedImageUrl: String?
 
 ) : BaseEntity() {
-    
+
     fun updateStatus(status: EUserChallengeCertificationStatus) {
         if (this.status == status) {
             throw BadRequestException(UserChallengeException.ALREADY_CERTIFICATED)
