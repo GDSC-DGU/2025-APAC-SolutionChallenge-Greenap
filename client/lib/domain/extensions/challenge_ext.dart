@@ -16,14 +16,30 @@ extension ChallengeDurationExtension on ChallengeDuration {
 }
 
 extension ChallengeFilterExtension on ChallengeFilterStatus {
-  ChallengeStatus? toChallengeStatus() {
+  Set<ChallengeStatus>? toChallengeStatus() {
     switch (this) {
       case ChallengeFilterStatus.running:
-        return ChallengeStatus.running;
+        return {ChallengeStatus.running};
       case ChallengeFilterStatus.completed:
-        return ChallengeStatus.completed;
+        return {ChallengeStatus.completed, ChallengeStatus.waiting};
       case ChallengeFilterStatus.all:
         return null;
+    }
+  }
+}
+
+extension ChallengeStatusMapper on String {
+  ChallengeStatus toChallengeStatus() {
+    switch (this) {
+      case '챌린지 진행 중':
+        return ChallengeStatus.running;
+      case '리포트 확인 대기 중':
+        return ChallengeStatus.waiting;
+      case '진행완료':
+        return ChallengeStatus.completed;
+      default:
+        // 예외 상황을 명확히 처리하거나 디폴트
+        return ChallengeStatus.running;
     }
   }
 }

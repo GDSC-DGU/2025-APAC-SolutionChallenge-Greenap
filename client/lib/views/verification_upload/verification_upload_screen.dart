@@ -131,7 +131,7 @@ class VerificationUploadScreen extends BaseScreen<VerificationUploadViewModel> {
       aspectRatio: 1,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(4),
-        child: Image.asset(
+        child: Image.network(
           challenge.certificationExampleImageUrl,
           fit: BoxFit.cover,
           width: double.infinity,

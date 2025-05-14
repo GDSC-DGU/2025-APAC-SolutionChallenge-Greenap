@@ -20,9 +20,12 @@ class MypageScreen extends BaseScreen<MypageViewModel> {
   Widget buildBody(BuildContext context) {
     return Obx(() {
       final myRanking = viewModel.myRanking.value;
+
       if (myRanking == null) {
-        return Center(child: CircularProgressIndicator());
+        // 1. 아직 데이터가 안 왔을 때 로딩
+        return const Center(child: CircularProgressIndicator());
       }
+
       return SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -83,20 +86,26 @@ class MypageScreen extends BaseScreen<MypageViewModel> {
                       ],
                     ),
                     SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        _buildRankingItem('챌린지 랭킹', myRanking!.rank ?? 0),
-                        SizedBox(width: 16),
-                        _buildRankingItem(
-                          '최장 연속 일수',
-                          myRanking!
-                                  .user
-                                  .longestConsecutiveParticipationCount ??
-                              0,
+                    myRanking.rank == null ||
+                            myRanking
+                                    .user
+                                    .longestConsecutiveParticipationCount ==
+                                null
+                        ? Text("나의 챌린지 랭킹 정보가 없습니다.")
+                        : Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            _buildRankingItem('챌린지 랭킹', myRanking.rank ?? 0),
+                            SizedBox(width: 16),
+                            _buildRankingItem(
+                              '최장 연속 일수',
+                              myRanking
+                                      .user
+                                      .longestConsecutiveParticipationCount ??
+                                  0,
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
                   ],
                 ),
               ),

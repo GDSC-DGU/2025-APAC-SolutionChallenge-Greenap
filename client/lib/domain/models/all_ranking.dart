@@ -10,8 +10,18 @@ class RankingModel {
   });
 }
 
+class MyChallengeRankingModel {
+  final String challengeTitle;
+  final ParticipantModel userRankInfo;
+
+  MyChallengeRankingModel({
+    required this.challengeTitle,
+    required this.userRankInfo,
+  });
+}
+
 class ParticipantModel {
-  final int rank;
+  final int? rank;
   final ParticipantUserModel user;
 
   ParticipantModel({required this.rank, required this.user});
@@ -20,11 +30,13 @@ class ParticipantModel {
 class ParticipantUserModel {
   final String nickname;
   final String profileImageUrl;
-  final int longestConsecutiveParticipationCount;
+  final int? longestConsecutiveParticipationCount;
+  final int? totalParticipationCount;
 
   ParticipantUserModel({
     required this.nickname,
     required this.profileImageUrl,
-    required this.longestConsecutiveParticipationCount,
+    this.longestConsecutiveParticipationCount,
+    this.totalParticipationCount,
   });
 }

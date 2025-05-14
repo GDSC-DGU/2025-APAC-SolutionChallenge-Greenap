@@ -4,6 +4,7 @@ import 'package:greenap/domain/models/my_challenge.dart';
 import 'package:greenap/views_model/challenge/challenge_view_model.dart';
 import 'package:greenap/data/provider/challenge/my_challenge_provider.dart';
 import 'package:collection/collection.dart';
+import 'package:greenap/data/provider/verification/verification_provider.dart';
 
 class VerificationViewModel extends GetxController {
   final RxList<MyChallengeModel> myChallenges = <MyChallengeModel>[].obs;
@@ -11,12 +12,14 @@ class VerificationViewModel extends GetxController {
 
   late final MyChallengeProvider _provider;
   late final ChallengeViewModel _challengeViewModel;
+  late final VerificationProvider _verificationProvider;
 
   @override
   void onInit() {
     super.onInit();
     _provider = Get.find<MyChallengeProvider>();
     _challengeViewModel = Get.find<ChallengeViewModel>();
+    _verificationProvider = Get.find<VerificationProvider>();
     fetchMyChallenges();
   }
 
@@ -43,5 +46,20 @@ class VerificationViewModel extends GetxController {
     return _challengeViewModel.challengeList
         .expand((category) => category.challenges)
         .firstWhereOrNull((item) => item.id == challengeId);
+  }
+
+  Future<bool> useIce(int userChallengeId) async {
+    try {
+      final result = await _verificationProvider.postIce(userChallengeId);
+      if (result.code == '200') {
+        return true;
+      } else {
+        Get.snackbar('얼리기 실패', result.message ?? '알 수 없는 오류');
+        return false;
+      }
+    } catch (e) {
+      Get.snackbar('에러', '서버 요청 실패: $e');
+      return false;
+    }
   }
 }

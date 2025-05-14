@@ -4,19 +4,23 @@ import 'package:greenap/domain/models/all_ranking.dart';
 import 'package:greenap/domain/models/challenge_ranking.dart';
 import 'package:greenap/views_model/challenge/challenge_view_model.dart';
 import 'package:greenap/domain/models/challenge_category.dart';
+import 'package:greenap/domain/models/challenge_item.dart';
 
 class RankingViewModel extends GetxController {
   final isLeftSelected = true.obs;
   final isLoading = false.obs;
   late final RankProvider _provider;
   final Rxn<RankingModel> allRanking = Rxn<RankingModel>();
+  final Rxn<ParticipantModel> myChallengeRanking = Rxn<ParticipantModel>();
   final Rxn<ParticipantModel> myRanking = Rxn<ParticipantModel>();
+
   final selectedChallengeId = Rxn<int>();
   final Rxn<ChallengeRankingModel> challengeRanking =
       Rxn<ChallengeRankingModel>();
   final RxList<ChallengeCategoryModel> availableChallenges =
       <ChallengeCategoryModel>[].obs;
   late final challengeViewModel;
+  final RxList<ChallengeItemModel> challengeList = <ChallengeItemModel>[].obs;
 
   @override
   void onInit() {
@@ -37,36 +41,31 @@ class RankingViewModel extends GetxController {
       );
     }
 
-    // 챌린지 데이터 준비 완료될 때까지 대기
-    ever<bool>(challengeViewModel.isLoading, (loading) {
-      if (loading == false) {
-        if (isLeftSelected.value) {
-          getAllRanking();
-        } else {
-          final firstChallenge =
-              availableChallenges.isNotEmpty ? availableChallenges.first : null;
+    // 🔥 챌린지 리스트 연결
+    availableChallenges.value = challengeViewModel.challengeList.toList();
+    challengeList.value =
+        availableChallenges
+            .expand((category) => category.challenges) // 모든 챌린지를 하나의 리스트로 평탄화
+            .toList();
 
-          if (firstChallenge != null) {
-            selectedChallengeId.value = firstChallenge.id;
-            fetchCumulativeRanking(firstChallenge.id);
-          } else {
-            print('[WARN] 선택 가능한 챌린지가 없습니다.');
-          }
+    ever(isLeftSelected, (bool leftSelected) {
+      if (leftSelected) {
+        getAllRanking();
+      } else {
+        if (availableChallenges.isNotEmpty) {
+          selectedChallengeId.value = availableChallenges.first.id;
+          fetchCumulativeRanking(availableChallenges.first.id);
         }
       }
     });
 
+    // 최초 상태 처리
     if (isLeftSelected.value) {
       getAllRanking();
     } else {
-      final firstChallenge =
-          availableChallenges.isNotEmpty ? availableChallenges.first : null;
-
-      if (firstChallenge != null) {
-        selectedChallengeId.value = firstChallenge.id;
-        fetchCumulativeRanking(firstChallenge.id);
-      } else {
-        print('[WARN] 선택 가능한 챌린지가 없습니다.');
+      if (availableChallenges.isNotEmpty) {
+        selectedChallengeId.value = availableChallenges.first.id;
+        fetchCumulativeRanking(availableChallenges.first.id);
       }
     }
   }
@@ -82,18 +81,43 @@ class RankingViewModel extends GetxController {
     if (response.data != null) {
       allRanking.value = response.data;
     } else {
+      allRanking.value = null;
       print('[ERROR] 랭킹 정보 로딩 실패: ${response.message}');
     }
     isLoading.value = false;
   }
 
   Future<void> fetchCumulativeRanking(int challengeId) async {
-    final response = await _provider.getChallengeRanking(challengeId);
+    final allChallengeResponse = await _provider.getChallengeRanking(
+      challengeId,
+    );
+    final userChallengeResponse = await _provider.getUserChallengeRanking(
+      challengeId,
+    );
 
-    if (response.data != null) {
-      challengeRanking.value = response.data;
+    if (allChallengeResponse.data != null) {
+      challengeRanking.value = allChallengeResponse.data;
     } else {
-      print('[ERROR] 누적 랭킹 불러오기 실패: ${response.message}');
+      challengeRanking.value = null;
+      print('[ERROR] 누적 랭킹 불러오기 실패: ${allChallengeResponse.message}');
+    }
+    if (userChallengeResponse.data != null) {
+      myChallengeRanking.value = ParticipantModel(
+        rank: userChallengeResponse.data!.userRankInfo.rank,
+        user: ParticipantUserModel(
+          nickname: userChallengeResponse.data!.userRankInfo.user.nickname,
+          profileImageUrl:
+              userChallengeResponse.data!.userRankInfo.user.profileImageUrl,
+          totalParticipationCount:
+              userChallengeResponse
+                  .data!
+                  .userRankInfo
+                  .user
+                  .totalParticipationCount,
+        ),
+      );
+    } else {
+      print('[ERROR] 누적 랭킹 불러오기 실패: ${allChallengeResponse.message}');
     }
   }
 }

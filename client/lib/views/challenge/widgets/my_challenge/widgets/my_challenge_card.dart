@@ -16,6 +16,8 @@ class MyChallengeCard extends StatelessWidget {
         return ColorSystem.mint;
       case ChallengeStatus.completed:
         return Colors.grey;
+      case ChallengeStatus.waiting:
+        return Colors.grey;
     }
   }
 
@@ -29,6 +31,8 @@ class MyChallengeCard extends StatelessWidget {
         return "진행중";
       case ChallengeStatus.completed:
         return "진행완료";
+      case ChallengeStatus.waiting:
+        return "리포트 조회 대기중";
     }
   }
 

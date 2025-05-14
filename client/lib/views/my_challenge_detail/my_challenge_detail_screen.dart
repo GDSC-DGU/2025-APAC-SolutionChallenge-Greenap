@@ -31,10 +31,9 @@ class MyChallengeDetailScreen extends BaseScreen<MyChallengeDetailViewModel> {
             certificationDataList: challenge.certificationDataList,
           ),
           const SizedBox(height: 24),
-          challenge.status == ChallengeStatus.completed
-              ? ReportView(
-                report: viewModel.challengeReport!, // report는 미리 fetch된 상태라고 가정
-              )
+          challenge.status == ChallengeStatus.completed ||
+                  challenge.status == ChallengeStatus.waiting
+              ? ReportView()
               : FeedView(feeds: viewModel.feedList),
         ],
       ),

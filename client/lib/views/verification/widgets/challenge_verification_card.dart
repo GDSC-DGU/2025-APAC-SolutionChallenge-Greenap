@@ -109,9 +109,14 @@ class ChallengeVerificationCard extends StatelessWidget {
                                         onClose: () {
                                           Navigator.pop(context);
                                         },
-                                        onUse: () {
-                                          // 얼리기 사용 로직
-                                          Navigator.pop(context);
+                                        onUse: () async {
+                                          final result = await viewModel.useIce(
+                                            challenge.id,
+                                          );
+                                          if (result) {
+                                            Get.snackbar('성공', '챌린지를 얼렸습니다.');
+                                            Navigator.pop(context);
+                                          }
                                         },
                                       ),
                                 );

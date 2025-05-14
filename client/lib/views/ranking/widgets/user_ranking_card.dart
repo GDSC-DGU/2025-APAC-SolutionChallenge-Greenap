@@ -2,13 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:greenap/config/color_system.dart';
 import 'package:greenap/config/font_system.dart';
 import 'package:greenap/domain/models/all_ranking.dart';
+import 'package:greenap/domain/enums/ranking.dart';
 
 class UserRankingCard extends StatelessWidget {
   final ParticipantModel rankingUser;
-  const UserRankingCard({super.key, required this.rankingUser});
+  final RankType rankType;
+  const UserRankingCard({
+    super.key,
+    required this.rankingUser,
+    required this.rankType,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final nickname = rankingUser.user.nickname;
+    final profileImageUrl = rankingUser.user.profileImageUrl;
+
+    String subtitleText = '';
+    switch (rankType) {
+      case RankType.all:
+        subtitleText =
+            '최장 연속 일수 ${rankingUser.user.longestConsecutiveParticipationCount}일';
+        break;
+      case RankType.challenge:
+        subtitleText = '총 ${rankingUser.user.totalParticipationCount}회 참여';
+        break;
+    }
+
     return Container(
       padding: const EdgeInsets.all(8),
       margin: const EdgeInsets.only(bottom: 24),
@@ -35,14 +55,14 @@ class UserRankingCard extends StatelessWidget {
               minLeadingWidth: 0,
               leading: CircleAvatar(
                 radius: 24,
-                backgroundImage: NetworkImage(rankingUser.user.profileImageUrl),
+                backgroundImage: NetworkImage(profileImageUrl),
               ),
               title: Text(
-                rankingUser.user.nickname,
+                nickname,
                 style: FontSystem.Head3.copyWith(color: ColorSystem.gray[700]),
               ),
               subtitle: Text(
-                '최장 연속 일수 ${rankingUser.user.longestConsecutiveParticipationCount}일',
+                subtitleText,
                 style: FontSystem.Body2.copyWith(color: ColorSystem.gray[600]),
               ),
             ),
