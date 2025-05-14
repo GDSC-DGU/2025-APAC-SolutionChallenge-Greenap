@@ -5,10 +5,12 @@ import com.app.server.rank.enums.RankState
 import com.app.server.rank.exception.RankException
 import com.app.server.user_challenge.application.service.UserChallengeService
 import com.app.server.user_challenge.domain.event.SavedTodayUserChallengeCertificationEvent
+import jakarta.transaction.Transactional
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component
 
 @Component
+@Transactional
 class RankEventListener(
     private val rankService: RankService,
     private val userChallengeService: UserChallengeService
@@ -49,23 +51,23 @@ class RankEventListener(
 
     fun updateTotalRank(userChallengeId: Long, maxConsecutiveParticipationDayCount: Long): RankState {
         val userChallenge = userChallengeService.findById(userChallengeId)
-        val key = userChallenge.userId
+        val value = userChallenge.userId
 
-        val slot = "rank:total"
+        val key = "rank:total"
 
-        val existScore = rankService.getScore(slot, key)
+        val existScore = rankService.getScore(key, value)
 
-        return updateRankScoreIfNeeded(existScore, maxConsecutiveParticipationDayCount, slot, key)
+        return updateRankScoreIfNeeded(existScore, maxConsecutiveParticipationDayCount, key, value)
     }
 
     private fun updateRankScoreIfNeeded(
         existScore: Double,
         score: Long,
-        slot: String,
-        key: Long
+        key: String,
+        value: Long
     ): RankState {
         if (existScore.toLong() <= score) {
-            val isProcess: Boolean? = rankService.updateValue(slot, key, score)
+            val isProcess: Boolean? = rankService.updateValue(key, value, score)
 
             return isUpdatedRankScore(isProcess)
         }
