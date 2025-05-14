@@ -203,7 +203,7 @@ class UserChallenge(
 
     fun checkIsNotRunning(todayDate: LocalDate): Boolean {
         // status가 running인데, 오늘 날짜와 챌린지 종료 날짜가 같은 상황에서 인증이 완료되었거나, 챌린지 종료 날짜가 지난 경우
-        val endDate = this.createdAt!!.toLocalDate().plusDays(participantDays - 1L)
+        val endDate = this.getUserChallengeHistories().last().date
 
         return this.status == EUserChallengeStatus.RUNNING &&
                 (
