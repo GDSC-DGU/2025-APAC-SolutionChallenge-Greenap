@@ -2,11 +2,9 @@ package com.app.server.feed.domain.model.command
 
 import com.app.server.common.model.BaseEntity
 import jakarta.persistence.*
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Entity
-// TODO : Index 적용 고려
 @Table(name = "feeds")
 class Feed (
 
