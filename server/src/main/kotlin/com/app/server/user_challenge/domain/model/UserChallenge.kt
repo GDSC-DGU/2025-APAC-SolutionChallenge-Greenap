@@ -193,7 +193,8 @@ class UserChallenge(
     }
 
     fun isCertificatedToday(todayDate: LocalDate): EUserChallengeCertificationStatus {
-        return userChallengeHistories.find { it.date.isEqual(todayDate) }!!.status
+        val history = userChallengeHistories.find { it.date.isEqual(todayDate) }
+        return history?.status ?: EUserChallengeCertificationStatus.FAILED
     }
 
     fun getUserChallengeHistoriesBeforeToday(todayDate: LocalDate): List<UserChallengeHistory> {
