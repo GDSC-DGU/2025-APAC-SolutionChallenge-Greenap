@@ -248,7 +248,6 @@ class UserChallengeCommandServiceImpl(
             userChallenge = userChallenge,
             pastUserChallengeHistory = pastUserChallengeHistory,
             userChallengeHistory = userChallengeHistory!!,
-            certificationDate = certificationDate
         )
     }
 
@@ -256,16 +255,12 @@ class UserChallengeCommandServiceImpl(
         userChallenge: UserChallenge,
         pastUserChallengeHistory: UserChallengeHistory?,
         userChallengeHistory: UserChallengeHistory,
-        certificationDate: LocalDate
     ) {
         val nowCount: Long = userChallenge.nowConsecutiveParticipationDayCount
         var consecutiveState: EConsecutiveState
 
-        if (userChallenge.getUserChallengeHistories().last().date == certificationDate){
-            consecutiveState = EConsecutiveState.FINAL_DAY
-        }
         // 첫 날인 경우
-        else if (pastUserChallengeHistory == null && userChallengeHistory.status != EUserChallengeCertificationStatus.FAILED) {
+        if (pastUserChallengeHistory == null && userChallengeHistory.status != EUserChallengeCertificationStatus.FAILED) {
             consecutiveState = EConsecutiveState.FIRST_DAY
         }
         // 연속 일자 증가
@@ -319,10 +314,6 @@ class UserChallengeCommandServiceImpl(
 
             EConsecutiveState.CONSECUTIVE_RESET -> {
                 userChallenge.updateNowConsecutiveParticipationDayCount(1)
-            }
-
-            EConsecutiveState.FINAL_DAY -> {
-                // Do nothing
             }
         }
     }
