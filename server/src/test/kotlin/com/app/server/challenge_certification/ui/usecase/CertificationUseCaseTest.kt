@@ -422,8 +422,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
             savedUserChallenge!!.nowConsecutiveParticipationDayCount
         // then
         assertThat(todayUserChallengeNowConsecutiveParticipationDayCount)
-            .isLessThan(pastUserChallengeMaxConsecutiveParticipationDayCount)
-            .isZero()
+            .isOne
     }
 
     @Test

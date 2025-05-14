@@ -1,9 +1,9 @@
 package com.app.server.feed.domain.model.command
 
 import com.app.server.common.model.BaseEntity
-import com.app.server.user.domain.model.User
-import com.app.server.user_challenge.domain.model.UserChallenge
 import jakarta.persistence.*
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Entity
 // TODO : Index 적용 고려
@@ -24,7 +24,10 @@ class Feed (
     @Column(name = "image_url")
     val imageUrl: String,
 
-    var content: String?
+    var content: String?,
+
+    @Column(name = "publish_date", nullable = false)
+    val publishDate: LocalDateTime
 
 ) : BaseEntity() {
 
@@ -32,13 +35,15 @@ class Feed (
         userId: Long,
         userChallengeId: Long,
         imageUrl: String,
-        content: String?
+        content: String?,
+        publishDate: LocalDateTime?
     ) : this(
         id = null,
         userId = userId,
         userChallengeId = userChallengeId,
         imageUrl = imageUrl,
-        content = content
+        content = content,
+        publishDate = publishDate ?: LocalDateTime.now()
     )
 
     companion object{
@@ -46,13 +51,15 @@ class Feed (
             userId: Long,
             userChallengeId: Long,
             imageUrl: String,
-            content: String?
+            content: String?,
+            publishDate: LocalDateTime
         ): Feed {
             return Feed(
                 userId = userId,
                 userChallengeId = userChallengeId,
                 imageUrl = imageUrl,
-                content = content
+                content = content,
+                publishDate = publishDate
             )
         }
     }

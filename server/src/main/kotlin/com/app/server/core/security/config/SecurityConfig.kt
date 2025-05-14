@@ -5,16 +5,12 @@ import com.app.server.core.security.JwtAuthEntryPoint
 import com.app.server.core.security.filter.CustomLogoutFilter
 import com.app.server.core.security.filter.JwtAuthenticationFilter
 import com.app.server.core.security.filter.JwtExceptionFilter
-import com.app.server.core.security.handler.CustomOAuth2FailureHandler
-import com.app.server.core.security.handler.CustomOAuth2SuccessHandler
-import com.app.server.core.security.service.CustomOAuth2UserService
-import com.app.server.core.security.handler.CustomSignOutProcessHandler
-import com.app.server.core.security.handler.CustomSignOutResultHandler
-import com.app.server.core.security.handler.JwtAccessDeniedHandler
+import com.app.server.core.security.handler.*
 import com.app.server.core.security.provider.JwtAuthenticationProvider
+import com.app.server.core.security.service.CustomOAuth2UserService
 import com.app.server.core.security.service.CustomUserDetailsService
 import com.app.server.core.security.util.JwtUtil
-import org.springframework.aot.generate.ValueCodeGenerator.withDefaults
+import jakarta.servlet.DispatcherType
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.Customizer
@@ -43,6 +39,7 @@ class SecurityConfig(
 
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
+
         http
             .csrf { it.disable() }
             .httpBasic { it.disable() }
@@ -51,6 +48,7 @@ class SecurityConfig(
             }
             .authorizeHttpRequests { auth ->
                 auth.requestMatchers(*Constants.NO_NEED_AUTH_URLS.toTypedArray()).permitAll()
+                    .dispatcherTypeMatchers(DispatcherType.ASYNC).permitAll()
                     .requestMatchers("/api/admin/**").hasRole("ADMIN")
                     .anyRequest().authenticated()
             }

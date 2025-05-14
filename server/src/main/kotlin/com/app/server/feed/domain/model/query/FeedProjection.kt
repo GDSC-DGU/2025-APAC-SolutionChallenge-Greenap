@@ -3,6 +3,8 @@ package com.app.server.feed.domain.model.query
 import com.app.server.common.model.BaseEntity
 import com.app.server.feed.domain.model.command.Feed
 import jakarta.persistence.*
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Entity
 // TODO : Index 적용 고려
@@ -34,6 +36,8 @@ class FeedProjection (
     val feedImageUrl: String,
     @Column(name = "feed_content")
     var feedContent: String?,
+    @Column(name = "publish_date")
+    val publishDate: LocalDateTime
 
     ) : BaseEntity(){
 
@@ -55,7 +59,8 @@ class FeedProjection (
                 userProfileImageUrl = userProfileImageUrl,
                 userNowMaxConsecutiveParticipationDayCount = userNowMaxConsecutiveParticipationDayCount,
                 feedImageUrl = feed.imageUrl,
-                feedContent = feed.content
+                feedContent = feed.content,
+                publishDate = feed.publishDate
             )
         }
     }

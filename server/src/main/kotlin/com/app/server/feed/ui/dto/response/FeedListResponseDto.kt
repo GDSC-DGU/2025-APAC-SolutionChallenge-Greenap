@@ -1,4 +1,4 @@
-package com.app.server.feed.ui.dto
+package com.app.server.feed.ui.dto.response
 
 import com.app.server.feed.domain.model.query.FeedProjection
 import org.springframework.data.domain.Page
@@ -16,11 +16,12 @@ data class FeedListResponseDto(
         fun fromPage(feedProjectionPage: Page<FeedProjection>): FeedListResponseDto {
             val feedList = feedProjectionPage.content.map { projection ->
                 FeedDto(
+                    id = projection.id!!,
                     category = projection.challengeCategoryTitle,
                     challengeTitle = projection.challengeTitle,
                     imageUrl = projection.feedImageUrl,
                     content = projection.feedContent,
-                    createdAt = projection.createdAt!!,
+                    createdAt = projection.publishDate,
                     user = FeedUserDto(
                         nickname = projection.userName,
                         profileImageUrl = projection.userProfileImageUrl,
@@ -42,6 +43,7 @@ data class FeedListResponseDto(
 }
 
 data class FeedDto(
+    val id: Long,
     val category: String,
     val challengeTitle: String,
     val imageUrl: String,

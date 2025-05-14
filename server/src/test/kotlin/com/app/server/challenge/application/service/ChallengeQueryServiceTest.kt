@@ -12,7 +12,7 @@ import org.springframework.test.annotation.Rollback
 @Transactional
 @Rollback
 @SpringBootTest
-class wChallengeQueryServiceTest : IntegrationTestContainer() {
+class ChallengeQueryServiceTest : IntegrationTestContainer() {
 
     @Autowired
     private lateinit var challengeQueryService: ChallengeQueryService

@@ -2,15 +2,13 @@ package com.app.server.user_challenge.application.service.command
 
 import com.app.server.challenge.application.service.ChallengeService
 import com.app.server.challenge.ui.usecase.dto.request.ChallengeParticipantDto
-import com.app.server.challenge_certification.enums.EConsecutiveState
 import com.app.server.challenge_certification.application.dto.CertificationDataDto
 import com.app.server.challenge_certification.ui.dto.request.UserChallengeIceRequestDto
 import com.app.server.common.exception.InternalServerErrorException
+import com.app.server.infra.api.report.dto.request.SendToReportServerRequestDto
 import com.app.server.user_challenge.application.dto.CreateUserChallengeDto
 import com.app.server.user_challenge.application.dto.response.GetReportResponseDto
-import com.app.server.infra.api.report.dto.request.SendToReportServerRequestDto
 import com.app.server.user_challenge.application.dto.response.UserChallengeResponseDto
-import com.app.server.user_challenge.application.service.command.UserChallengeHistoryCommandService
 import com.app.server.user_challenge.application.service.UserChallengeService
 import com.app.server.user_challenge.domain.enums.EUserChallengeCertificationStatus
 import com.app.server.user_challenge.domain.enums.EUserChallengeStatus
@@ -65,7 +63,7 @@ class UserChallengeCommandServiceImpl(
                 nowConsecutiveDays = userChallenge.nowConsecutiveParticipationDayCount,
                 totalConsecutiveDays = userChallenge.totalParticipationDayCount,
                 iceCount = userChallenge.iceCount,
-                challengeStartDate = userChallenge.createdAt!!.toLocalDate().toString(),
+                challengeStartDate = userChallenge.getUserChallengeHistories().first().date.toString(),
                 progressFromTotal = userChallenge.calculateProgressFromTotalParticipationDays(
                     challengeParticipantDto.participantsStartDate
                 ),
@@ -115,7 +113,7 @@ class UserChallengeCommandServiceImpl(
             nowConsecutiveDays = userChallenge.nowConsecutiveParticipationDayCount,
             totalConsecutiveDays = userChallenge.totalParticipationDayCount,
             iceCount = userChallenge.iceCount,
-            challengeStartDate = userChallenge.createdAt!!.toLocalDate().toString(),
+            challengeStartDate = userChallenge.getUserChallengeHistories().first().date.toString(),
             progressFromTotal = userChallenge.calculateProgressFromTotalParticipationDays(
                 challengeParticipantDto.participantsStartDate
             ),
@@ -155,17 +153,20 @@ class UserChallengeCommandServiceImpl(
         // 얼리기 조건 확인 후 업데이트
         userChallenge.validateIncreaseIceCount()
 
+        userChallengeService.saveAndFlush(userChallenge)
+
+        val event = SavedTodayUserChallengeCertificationEvent(
+            userChallengeId = userChallenge.id!!,
+            totalParticipationDayCount = userChallenge.totalParticipationDayCount,
+            maxConsecutiveParticipationDayCount = userChallenge.maxConsecutiveParticipationDayCount
+        )
+
+        eventPublisher.publishEvent(event)
+
         // 챌린지 종료 여부 확인
         if (userChallenge.checkIsNotRunning(certificationDto.certificationDate)) {
             makeReport(userChallenge)
         }
-
-        val event = SavedTodayUserChallengeCertificationEvent(
-            userChallengeId = userChallenge.id!!,
-            maxConsecutiveParticipationDayCount = userChallenge.maxConsecutiveParticipationDayCount,
-            totalParticipationDayCount = userChallenge.totalParticipationDayCount
-        )
-        eventPublisher.publishEvent(event)
 
         return event
     }
@@ -230,6 +231,21 @@ class UserChallengeCommandServiceImpl(
         // 연속 참여 일수 증가
         readyForValidateCanIncreaseConsecutiveParticipantDays(userChallenge, certificationDate)
 
+        userChallengeService.saveAndFlush(userChallenge)
+
+        val event = SavedTodayUserChallengeCertificationEvent(
+            userChallengeId = userChallenge.id!!,
+            totalParticipationDayCount = userChallenge.totalParticipationDayCount,
+            maxConsecutiveParticipationDayCount = userChallenge.maxConsecutiveParticipationDayCount
+        )
+
+        eventPublisher.publishEvent(event)
+
+        // 챌린지 종료 여부 확인
+        if (userChallenge.checkIsNotRunning(certificationDate)) {
+            makeReport(userChallenge)
+        }
+
         return userChallenge
     }
 
@@ -237,79 +253,44 @@ class UserChallengeCommandServiceImpl(
         userChallenge: UserChallenge,
         certificationDate: LocalDate
     ) {
-        val userChallengeHistory: UserChallengeHistory? = userChallenge.getUserChallengeHistoryWhen(certificationDate)
         val pastUserChallengeHistory: UserChallengeHistory? =
             userChallenge.getUserChallengeHistoryWhen(certificationDate.minusDays(1))
 
         validateUserChallenge(
             userChallenge = userChallenge,
             pastUserChallengeHistory = pastUserChallengeHistory,
-            userChallengeHistory = userChallengeHistory!!
         )
     }
 
     private fun validateUserChallenge(
         userChallenge: UserChallenge,
         pastUserChallengeHistory: UserChallengeHistory?,
-        userChallengeHistory: UserChallengeHistory
     ) {
-        val nowCount: Long = userChallenge.nowConsecutiveParticipationDayCount
-        var consecutiveState: EConsecutiveState
 
-        // 첫 날인 경우
-        if (pastUserChallengeHistory == null && userChallengeHistory.status != EUserChallengeCertificationStatus.FAILED) {
-            consecutiveState = EConsecutiveState.FIRST_DAY
-        }
-        // 연속 일자 증가
-        else if (
-            userChallengeHistory.status != EUserChallengeCertificationStatus.FAILED &&
-            pastUserChallengeHistory!!.status != EUserChallengeCertificationStatus.FAILED &&
-            userChallenge.nowConsecutiveParticipationDayCount == userChallenge.maxConsecutiveParticipationDayCount
-        ) {
-            consecutiveState = EConsecutiveState.CONSECUTIVE_MAX
-        } else if (
-            userChallengeHistory.status != EUserChallengeCertificationStatus.FAILED &&
-            pastUserChallengeHistory!!.status != EUserChallengeCertificationStatus.FAILED
-        ) {
-            consecutiveState = EConsecutiveState.CONSECUTIVE_ONLY
-        }
-        // 연속 일자 초기화
-        else if (userChallengeHistory.status != EUserChallengeCertificationStatus.FAILED && pastUserChallengeHistory!!.status == EUserChallengeCertificationStatus.FAILED) {
-            consecutiveState = EConsecutiveState.CONSECUTIVE_RESET
-        } else {
-            throw InternalServerErrorException(UserChallengeException.CANNOT_UPDATE_CONSECUTIVE_PARTICIPATION_DAY_COUNT)
+        val nowCount = userChallenge.nowConsecutiveParticipationDayCount
+
+        // 이전 기록이 없는 경우 (첫 날인 경우)
+        if (pastUserChallengeHistory == null || userChallenge.maxConsecutiveParticipationDayCount == 0L) {
+            userChallenge.updateNowConsecutiveParticipationDayCount(nowCount + 1)
+            userChallenge.updateMaxConsecutiveParticipationDayCount(
+                maxOf(nowCount + 1, userChallenge.maxConsecutiveParticipationDayCount)
+            )
+            return
         }
 
-        updateParticipantDaysState(
-            userChallenge = userChallenge,
-            consecutiveState = consecutiveState,
-            nowCount = nowCount
-        )
-    }
+        // 이전 기록이 실패한 경우 (연속 깨짐, 다시 시작)
+        if (pastUserChallengeHistory.status == EUserChallengeCertificationStatus.FAILED) {
+            userChallenge.updateNowConsecutiveParticipationDayCount(1)
+            return
+        }
 
-    private fun updateParticipantDaysState(
-        userChallenge: UserChallenge,
-        consecutiveState: EConsecutiveState,
-        nowCount: Long
-    ) {
-        when (consecutiveState) {
-            EConsecutiveState.FIRST_DAY -> {
-                userChallenge.updateNowConsecutiveParticipationDayCount(nowCount + 1)
-                userChallenge.updateMaxConsecutiveParticipationDayCount(nowCount + 1)
-            }
+        // 이전 기록도 성공이고 현재도 성공인 경우 (연속 유지)
+        val newConsecutiveCount = userChallenge.nowConsecutiveParticipationDayCount + 1
+        userChallenge.updateNowConsecutiveParticipationDayCount(newConsecutiveCount)
 
-            EConsecutiveState.CONSECUTIVE_ONLY -> {
-                userChallenge.updateNowConsecutiveParticipationDayCount(nowCount + 1)
-            }
-
-            EConsecutiveState.CONSECUTIVE_MAX -> {
-                userChallenge.updateNowConsecutiveParticipationDayCount(nowCount + 1)
-                userChallenge.updateMaxConsecutiveParticipationDayCount(nowCount + 1)
-            }
-
-            EConsecutiveState.CONSECUTIVE_RESET -> {
-                userChallenge.updateNowConsecutiveParticipationDayCount(0)
-            }
+        // 현재 연속 일수가 최대 연속 일수보다 크면 최대값 업데이트
+        if (newConsecutiveCount > userChallenge.maxConsecutiveParticipationDayCount) {
+            userChallenge.updateMaxConsecutiveParticipationDayCount(newConsecutiveCount)
         }
     }
 
@@ -353,8 +334,9 @@ class UserChallengeCommandServiceImpl(
         userChallengeService.save(userChallenge)
     }
 
-     fun batchUpdateChallengeStatusFromRunningToPending(validateToday: LocalDate) {
-        val runningUserChallengeList : List<UserChallenge> = userChallengeService.findAllByStatus(EUserChallengeStatus.RUNNING)
+    fun batchUpdateChallengeStatusFromRunningToPending(validateToday: LocalDate) {
+        val runningUserChallengeList: List<UserChallenge> =
+            userChallengeService.findAllByStatus(EUserChallengeStatus.RUNNING)
 
         runningUserChallengeList.forEach { userChallenge ->
             if (userChallenge.checkIsNotRunning(validateToday)) {
@@ -363,8 +345,9 @@ class UserChallengeCommandServiceImpl(
         }
     }
 
-     fun batchUpdateChallengeStatusFromPendingToCompleted(validateToday: LocalDate) {
-        val pendingUserChallengeList : List<UserChallenge> = userChallengeService.findAllByStatus(EUserChallengeStatus.PENDING)
+    fun batchUpdateChallengeStatusFromPendingToCompleted(validateToday: LocalDate) {
+        val pendingUserChallengeList: List<UserChallenge> =
+            userChallengeService.findAllByStatus(EUserChallengeStatus.PENDING)
         pendingUserChallengeList.forEach { userChallenge ->
             if (userChallenge.checkIsCompleted(validateToday)) {
                 userChallenge.updateStatus(EUserChallengeStatus.COMPLETED)
@@ -372,12 +355,30 @@ class UserChallengeCommandServiceImpl(
         }
     }
 
-     fun batchUpdateChallengeStatusFromWaitingToCompleted(validateToday: LocalDate) {
-        val waitingUserChallengeList : List<UserChallenge> = userChallengeService.findAllByStatus(EUserChallengeStatus.WAITING)
+    fun batchUpdateChallengeStatusFromWaitingToCompleted(validateToday: LocalDate) {
+        val waitingUserChallengeList: List<UserChallenge> =
+            userChallengeService.findAllByStatus(EUserChallengeStatus.WAITING)
         waitingUserChallengeList.forEach { userChallenge ->
             if (userChallenge.checkIsCompleted(validateToday)) {
                 userChallenge.updateStatus(EUserChallengeStatus.COMPLETED)
             }
+        }
+    }
+
+    override fun updateUserChallengeStatus(
+        userChallenge: UserChallenge,
+        todayDate: LocalDate
+    ) {
+        val endDate: LocalDate = userChallenge.getUserChallengeHistories().last().date
+
+        if (userChallenge.status == EUserChallengeStatus.PENDING &&
+            todayDate.isBefore(endDate.plusDays(2))
+        ) {
+            userChallenge.updateStatus(EUserChallengeStatus.WAITING)
+        } else if (userChallenge.status == EUserChallengeStatus.PENDING &&
+            todayDate.isAfter(endDate.plusDays(1))
+        ) {
+            userChallenge.updateStatus(EUserChallengeStatus.COMPLETED)
         }
     }
 }

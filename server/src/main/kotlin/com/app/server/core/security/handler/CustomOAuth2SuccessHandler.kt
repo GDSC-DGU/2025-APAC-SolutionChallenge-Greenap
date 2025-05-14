@@ -1,6 +1,5 @@
 package com.app.server.core.security.handler
 
-import com.app.server.common.enums.CommonResultCode
 import com.app.server.common.response.ApiResponse
 import com.app.server.core.security.dto.UserInfoResponseDto
 import com.app.server.core.security.util.JwtUtil
@@ -9,9 +8,7 @@ import com.app.server.user.domain.model.User
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken
