@@ -19,24 +19,24 @@ interface FeedProjectionRepository : JpaRepository<FeedProjection, Long> {
     @Query("SELECT fp FROM FeedProjection fp " +
             "WHERE fp.id IN :feedIds " +
             "AND fp.deletedAt IS NULL " +
-            "ORDER BY fp.createdAt DESC ")
+            "ORDER BY fp.publishDate DESC ")
     fun findByIdIn(feedIds: List<Long>, pageable: Pageable) : Page<FeedProjection>
 
     @Query("SELECT fp FROM FeedProjection fp " +
             "WHERE fp.deletedAt IS NULL " +
-            "ORDER BY fp.createdAt DESC ")
+            "ORDER BY fp.publishDate DESC ")
     override fun findAll(pageable: Pageable) : Page<FeedProjection>
 
     @Query("SELECT fp FROM FeedProjection fp " +
             "WHERE fp.challengeCategoryTitle = :categoryName " +
             "AND fp.deletedAt IS NULL " +
-            "ORDER BY fp.createdAt DESC ")
+            "ORDER BY fp.publishDate DESC ")
     fun findAllByCategoryName(categoryName: String, pageable: Pageable): Page<FeedProjection>
 
     @Query("SELECT fp FROM FeedProjection fp " +
             "WHERE fp.userId = :userId " +
             "AND fp.challengeCategoryTitle = :categoryName " +
             "AND fp.deletedAt IS NULL " +
-            "ORDER BY fp.createdAt DESC ")
+            "ORDER BY fp.publishDate DESC ")
     fun findByUserIdAndCategoryName(userId: Long, categoryName: String, pageable: Pageable): Page<FeedProjection>
 }

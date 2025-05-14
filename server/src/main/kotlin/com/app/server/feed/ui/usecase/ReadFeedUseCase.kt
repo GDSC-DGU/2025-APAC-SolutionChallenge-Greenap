@@ -1,7 +1,7 @@
 package com.app.server.feed.ui.usecase
 
 import com.app.server.feed.application.service.query.FeedProjectionQueryService
-import com.app.server.feed.ui.dto.FeedListResponseDto
+import com.app.server.feed.ui.dto.response.FeedListResponseDto
 import com.app.server.feed.ui.dto.ReadFeedProjectionQuery
 import com.app.server.feed.ui.dto.request.ReadFeedRequestDto
 import org.springframework.stereotype.Component

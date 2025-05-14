@@ -6,5 +6,8 @@ import java.time.LocalDate
 
 interface UsingIceUseCase {
 
-    fun processAfterCertificateIce(iceRequestDto: UserChallengeIceRequestDto, certificationDate: LocalDate) : UserChallenge
+    fun processAfterCertificateIce(
+        iceRequestDto: UserChallengeIceRequestDto,
+        certificationDate: LocalDate
+    ): UserChallenge
 }

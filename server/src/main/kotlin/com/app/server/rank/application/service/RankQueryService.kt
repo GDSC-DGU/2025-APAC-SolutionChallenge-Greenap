@@ -55,7 +55,7 @@ class RankQueryService(
     }
 
     override fun execute(challengeId: Long): SpecificChallengeTotalRankResponseDto {
-        val key = "rank:challenge:$challengeId"
+        val key = "rank:challenge:${challengeId}"
         val challengeTitle = challengeService.findById(challengeId).title
         val totalParticipants = rankService.count(key) ?: 0
 
@@ -99,12 +99,13 @@ class RankQueryService(
         )
     }
 
+
     override fun execute(challengeId: Long, userId: Long): UserRankInSpecificChallengeTotalRankResponseDto {
-        val key = "rank:challenge:$challengeId"
+        val key = "rank:challenge:${challengeId}"
         val value = userId
 
-        val rank = rankService.getRank(key, value)
         val score = rankService.getScore(key, value)
+        val rank = rankService.getRank(key, value)
 
         val user = userService.findById(userId)
         val challengeTitle = challengeService.findById(challengeId).title

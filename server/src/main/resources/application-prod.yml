@@ -9,5 +9,5 @@ spring:
 
   data:
     redis:
-      host: ENC(lHdZ2eBPAjSOpK5sxo5K7KhsoaoxqqLz)
+      host: ENC(ztVg9v254/t7JtTRgXq9/yTns6CYpRtm)
       port: 6379

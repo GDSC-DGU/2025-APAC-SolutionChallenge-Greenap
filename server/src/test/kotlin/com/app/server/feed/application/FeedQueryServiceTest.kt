@@ -10,6 +10,7 @@ import com.app.server.challenge_certification.ui.dto.request.SendToCertification
 import com.app.server.feed.application.service.FeedEventListener
 import com.app.server.feed.application.service.FeedProjectionService
 import com.app.server.feed.application.service.FeedService
+import com.app.server.feed.application.service.command.FeedCommandService
 import com.app.server.feed.application.service.query.FeedProjectionQueryService
 import com.app.server.feed.domain.event.FeedCreatedEvent
 import com.app.server.feed.domain.model.query.FeedProjection
@@ -42,12 +43,16 @@ import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.web.multipart.MultipartFile
 import java.time.LocalDate
+import java.time.LocalDateTime
 import kotlin.test.Test
 
 @SpringBootTest
 @Transactional
 @Rollback
 class FeedQueryServiceTest : IntegrationTestContainer() {
+
+    @Autowired
+    private lateinit var feedCommandService: FeedCommandService
 
     @Autowired
     private lateinit var feedProjectionQueryService: FeedProjectionQueryService
@@ -430,7 +435,7 @@ class FeedQueryServiceTest : IntegrationTestContainer() {
         assertThat(feedListResponseDto.feedList.first().user.nickname).isEqualTo(userName)
     }
 
-    private fun makeFeedRequestDto(userId: Long, userChallengeId: Long, content: String?, publishDate: LocalDate): CreateFeedCommand {
+    private fun makeFeedRequestDto(userId: Long, userChallengeId: Long, content: String?, publishDate: LocalDateTime): CreateFeedCommand {
         return CreateFeedCommand(
             userChallengeId = userChallengeId,
             content = content,
@@ -519,12 +524,12 @@ class FeedQueryServiceTest : IntegrationTestContainer() {
             )
         )
         val feedContent = "test".repeat(250)
-        val feed = createFeedUseCase.execute(
+        val feed = feedCommandService.execute(
             makeFeedRequestDto(
                 userId = userId,
                 userChallengeId = userChallengeId,
                 content = feedContent,
-                publishDate = date)
+                publishDate = date.atTime(0,0,0))
         )
         return feedEventListener.createdFeedProjectionFrom(
             createdEvent = FeedCreatedEvent(

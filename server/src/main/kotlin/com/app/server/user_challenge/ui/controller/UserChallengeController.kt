@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDate
 
@@ -48,11 +49,14 @@ class UserChallengeController(
         description = "사용자가 참여한 챌린지 내역을 조회합니다."
     )
     @GetMapping("/challenges/user")
-    fun getTotalUserChallenge(@UserId userId: Long): ApiResponse<GetTotalUserChallengeResponseDto> {
+    fun getTotalUserChallenge(
+        @UserId userId: Long,
+        @RequestParam (name="search_date", required = false)searchDate: LocalDate?
+    ): ApiResponse<GetTotalUserChallengeResponseDto> {
         val totalUserChallenge: GetTotalUserChallengeResponseDto =
             getTotalUserChallengeUseCase.execute(
                 userId,
-                LocalDate.now()
+                searchDate ?: LocalDate.now()
             )
         return ApiResponse.success(totalUserChallenge)
     }
@@ -63,14 +67,15 @@ class UserChallengeController(
     )
     @PostMapping("/challenges/user/{userChallengeId}/ice")
     fun iceDailyUserChallenge(
-        @PathVariable userChallengeId: Long
+        @PathVariable userChallengeId: Long,
+        @RequestParam(name = "today_date", required = false) todayDate: LocalDate?
     ): ApiResponse<ResultCode> {
         val iceRequest = UserChallengeIceRequestDto(
             userChallengeId = userChallengeId
         )
         usingIceUseCase.processAfterCertificateIce(
             iceRequestDto = iceRequest,
-            certificationDate = LocalDate.now()
+            certificationDate = todayDate ?: LocalDate.now()
         )
 
         return ApiResponse.success(CommonResultCode.SUCCESS)

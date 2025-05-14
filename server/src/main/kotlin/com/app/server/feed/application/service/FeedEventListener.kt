@@ -5,10 +5,6 @@ import com.app.server.feed.domain.event.FeedCreatedEvent
 import com.app.server.feed.domain.event.FeedDeletedEvent
 import com.app.server.feed.domain.event.FeedModifiedEvent
 import com.app.server.feed.domain.model.query.FeedProjection
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component
 

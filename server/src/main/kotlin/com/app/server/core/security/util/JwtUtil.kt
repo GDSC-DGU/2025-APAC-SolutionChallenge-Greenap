@@ -80,6 +80,13 @@ class JwtUtil(
 
     fun getUserIdFromToken(token: String?): Long {
         val claims = validateAndGetClaimsFromToken(token)
-        return claims.get(Constants.USER_ID_CLAIM_NAME, Long::class.java)
+        val userId = claims.get(Constants.USER_ID_CLAIM_NAME)
+        return if (userId is Int) {
+            userId.toLong()
+        } else if (userId is Long) {
+            userId
+        } else {
+            throw IllegalArgumentException("Invalid user ID type in token")
+        }
     }
 }

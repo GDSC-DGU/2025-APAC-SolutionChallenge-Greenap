@@ -25,5 +25,6 @@ data class ReportDto (
 
 data class CertificationReportDataDto(
     val date: LocalDate,
+    @JsonProperty("is_certificated")
     val isCertificated: String
 )
