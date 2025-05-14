@@ -70,7 +70,7 @@ class UserChallengeQueryService(
             successDays = successDays,
             reportMessage = userChallenge.reportMessage!!,
             maxConsecutiveParticipationDays = userChallenge.maxConsecutiveParticipationDayCount,
-            challengeRanking = userRank,
+            challengeRanking = userRank + 1,
             certificationDataList = mapCertificationReportDataList(userChallenge.getUserChallengeHistories())
         )
 

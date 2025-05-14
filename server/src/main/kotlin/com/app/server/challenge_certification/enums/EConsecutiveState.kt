@@ -5,6 +5,5 @@ enum class EConsecutiveState {
     CONSECUTIVE_ONLY,
     CONSECUTIVE_MAX,
     CONSECUTIVE_RESET,
-    FINAL_DAY,
 
 }
