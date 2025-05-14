@@ -92,7 +92,7 @@ class UserChallengeQueryService(
             challengeId = userChallenge.challenge.id!!,
             title = userChallenge.challenge.title,
             category = userChallenge.challenge.challengeCategory.title, // TODO: 캐싱 필요
-            status = userChallenge.status.content,
+            status = userChallenge.status.name.uppercase(),
             totalDays = userChallenge.participantDays,
             iceCount = userChallenge.iceCount,
             elapsedDays = elapsedDays,
