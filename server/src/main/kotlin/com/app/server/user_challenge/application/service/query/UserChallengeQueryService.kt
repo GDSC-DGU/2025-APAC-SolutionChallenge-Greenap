@@ -3,16 +3,12 @@ package com.app.server.user_challenge.application.service.query
 import com.app.server.common.exception.BadRequestException
 import com.app.server.rank.application.service.RankService
 import com.app.server.user_challenge.application.service.UserChallengeService
+import com.app.server.user_challenge.application.service.command.UserChallengeCommandService
 import com.app.server.user_challenge.domain.enums.EUserChallengeCertificationStatus
-import com.app.server.user_challenge.domain.enums.EUserChallengeStatus
 import com.app.server.user_challenge.domain.exception.UserChallengeException
 import com.app.server.user_challenge.domain.model.UserChallenge
 import com.app.server.user_challenge.domain.model.UserChallengeHistory
-import com.app.server.user_challenge.ui.dto.response.CertificationData
-import com.app.server.user_challenge.ui.dto.response.CertificationReportDataDto
-import com.app.server.user_challenge.ui.dto.response.GetTotalUserChallengeResponseDto
-import com.app.server.user_challenge.ui.dto.response.ReportDto
-import com.app.server.user_challenge.ui.dto.response.UserChallengeQuery
+import com.app.server.user_challenge.ui.dto.response.*
 import com.app.server.user_challenge.ui.usecase.GetTotalUserChallengeUseCase
 import com.app.server.user_challenge.ui.usecase.GetUserChallengeReportUseCase
 import org.springframework.stereotype.Service
@@ -21,6 +17,7 @@ import java.time.LocalDate
 @Service
 class UserChallengeQueryService(
     private val userChallengeService: UserChallengeService,
+    private val userChallengeCommandService: UserChallengeCommandService,
     private val rankService: RankService
 ) : GetTotalUserChallengeUseCase, GetUserChallengeReportUseCase {
     fun getChallengeCompletedUserPercent(challengeId: Long): Double {
@@ -61,7 +58,7 @@ class UserChallengeQueryService(
 
         val userRank = rankService.getRank(key, value)
 
-        updateUserChallengeStatus(userChallenge, todayDate)
+        userChallengeCommandService.updateUserChallengeStatus(userChallenge, todayDate)
 
         return ReportDto(
             userChallengeId = userChallenge.id!!,
@@ -74,25 +71,6 @@ class UserChallengeQueryService(
             certificationDataList = mapCertificationReportDataList(userChallenge.getUserChallengeHistories())
         )
 
-    }
-
-    private fun updateUserChallengeStatus(
-        userChallenge: UserChallenge,
-        todayDate: LocalDate
-    ) {
-        val endDate : LocalDate = userChallenge.createdAt!!.toLocalDate()
-            .plusDays(userChallenge.participantDays-1L)
-
-        if (userChallenge.status == EUserChallengeStatus.PENDING &&
-            todayDate.isBefore(endDate.plusDays(2))
-            ){
-            userChallenge.updateStatus(EUserChallengeStatus.WAITING)
-        }
-        else if (userChallenge.status == EUserChallengeStatus.PENDING &&
-            todayDate.isAfter(endDate.plusDays(1))
-            ){
-            userChallenge.updateStatus(EUserChallengeStatus.COMPLETED)
-        }
     }
 
     private fun isReportReceivedFrom(userChallenge: UserChallenge): Boolean {
@@ -120,7 +98,7 @@ class UserChallengeQueryService(
             elapsedDays = elapsedDays,
             progress = progress,
             isCertificatedInToday = certificationToday,
-            mainImageUrl = userChallenge.challenge.mainImageUrl!!,
+            mainImageUrl = userChallenge.challenge.mainImageUrl,
             certificationDataList = certificationDataList
         )
     }
