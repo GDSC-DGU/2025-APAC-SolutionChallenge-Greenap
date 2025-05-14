@@ -3,17 +3,17 @@ package com.app.server.feed.application
 import com.app.server.IntegrationTestContainer
 import com.app.server.challenge.application.service.ChallengeService
 import com.app.server.challenge_certification.domain.event.CertificationSucceededEvent
-import com.app.server.challenge_certification.ui.dto.request.CertificationRequestDto
-import com.app.server.challenge_certification.ui.dto.request.SendToCertificationServerRequestDto
 import com.app.server.challenge_certification.enums.EUserCertificatedResultCode
 import com.app.server.challenge_certification.port.outbound.CertificationPort
+import com.app.server.challenge_certification.ui.dto.request.CertificationRequestDto
+import com.app.server.challenge_certification.ui.dto.request.SendToCertificationServerRequestDto
 import com.app.server.common.exception.BadRequestException
 import com.app.server.common.exception.NotFoundException
 import com.app.server.feed.application.service.FeedEventListener
 import com.app.server.feed.application.service.FeedProjectionService
 import com.app.server.feed.application.service.FeedService
+import com.app.server.feed.application.service.command.FeedCommandService
 import com.app.server.feed.domain.event.FeedCreatedEvent
-import com.app.server.feed.domain.model.command.Feed
 import com.app.server.feed.exception.FeedException
 import com.app.server.feed.ui.dto.CreateFeedCommand
 import com.app.server.feed.ui.dto.request.CreateFeedRequestDto
@@ -36,9 +36,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.assertThrows
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.mock
-import org.mockito.kotlin.eq
 import org.mockito.kotlin.reset
-import org.mockito.kotlin.verify
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.TestConfiguration
@@ -55,6 +53,9 @@ import kotlin.test.Test
 @Transactional
 @Rollback
 class FeedCommandServiceTest : IntegrationTestContainer() {
+
+    @Autowired
+    private lateinit var feedCommandService: FeedCommandService
 
     @Autowired
     private lateinit var feedService: FeedService
@@ -152,7 +153,7 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
             )
         )
         // when
-        val feed: Feed = createFeedUseCase.execute(
+        val feed = createFeedUseCase.execute(
             makeFeedRequestDto(content = "testContent", publishDate = participantsStartDate)
         )
         // then
@@ -172,7 +173,7 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
             )
         )
         // when
-        val feed: Feed = createFeedUseCase.execute(
+        val feed = createFeedUseCase.execute(
             makeFeedRequestDto(content = "testContent", publishDate = participantsStartDate)
         )
         // then
@@ -192,7 +193,7 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
             )
         )
         // when
-        val feed: Feed = createFeedUseCase.execute(
+        val feed = createFeedUseCase.execute(
             makeFeedRequestDto(content = "testContent", publishDate = participantsStartDate)
         )
         // then
@@ -231,7 +232,7 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
             )
         )
         // when
-        val feed: Feed = createFeedUseCase.execute(
+        val feed = createFeedUseCase.execute(
             makeFeedRequestDto(content = null, publishDate = participantsStartDate)
         )
         // then
@@ -245,7 +246,7 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
             )
         )
         // when
-        val nextFeed: Feed = createFeedUseCase.execute(
+        val nextFeed = createFeedUseCase.execute(
             makeFeedRequestDto(content = "", publishDate = participantsStartDate.plusDays(1))
         )
         assertThat(nextFeed).isNotNull
@@ -261,17 +262,16 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
                 certificateDate = participantsStartDate,
             )
         )
-        val feed = createFeedUseCase.execute(
+        val feed = feedCommandService.execute(
             makeFeedRequestDto(content = null, publishDate = participantsStartDate)
         )
-        verify(applicationEventPublisher).publishEvent(eq(FeedCreatedEvent.fromEntity(feed)))
         // when
         val feedProjection = feedEventListener.createdFeedProjectionFrom(
             FeedCreatedEvent.fromEntity(feed)
         )
         // then
         assertThat(feedProjection).isNotNull
-        assertThat(feedProjection.id).isEqualTo(feed.id!!)
+        assertThat(feedProjection.id).isEqualTo(feed.id)
         assertThat(feedProjection.feedContent).isEqualTo(feed.content)
         assertThat(feedProjection.challengeTitle).isEqualTo(savedUserChallenge!!.challenge.title)
         assertThat(feedProjection.challengeCategoryTitle).isEqualTo(savedUserChallenge!!.challenge.challengeCategory.title)
@@ -288,7 +288,7 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
             )
         )
         val feedContent = "test"
-        val feed = createFeedUseCase.execute(
+        val feed = feedCommandService.execute(
             makeFeedRequestDto(content = feedContent, publishDate = participantsStartDate)
         )
         assertThat(feed.content).isEqualTo(feedContent)
@@ -323,7 +323,7 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
             val newFeedContent = "test".repeat(251)
             assertThat(newFeedContent.length).isGreaterThan(1000)
             updateFeedUseCase.execute(
-                feedId = feed.id!!,
+                feedId = feed.feedId,
                 feedContent = newFeedContent
             )
         }
@@ -345,10 +345,10 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
             makeFeedRequestDto(content = feedContent, publishDate = participantsStartDate)
         )
         // when
-        deleteFeedUseCase.execute(feedId = feed.id!!)
+        deleteFeedUseCase.execute(feedId = feed.feedId)
         // then
         val exception = assertThrows<NotFoundException> {
-            feedService.findById(feed.id!!)
+            feedService.findById(feed.feedId)
         }
         assertThat(exception.message).isEqualTo(FeedException.NOT_FOUND_FEED.message)
     }
@@ -367,10 +367,10 @@ class FeedCommandServiceTest : IntegrationTestContainer() {
             makeFeedRequestDto(content = feedContent, publishDate = participantsStartDate)
         )
         // when
-        deleteFeedUseCase.execute(feedId = feed.id!!)
+        deleteFeedUseCase.execute(feedId = feed.feedId)
         // then
         val exception = assertThrows<NotFoundException> {
-            feedProjectionService.findById(feed.id!!)
+            feedProjectionService.findById(feed.feedId)
         }
         assertThat(exception.message).isEqualTo(FeedException.NOT_FOUND_FEED_PROJECTION.message)
     }

@@ -4,9 +4,10 @@ import com.app.server.common.annotation.UserId
 import com.app.server.common.enums.CommonResultCode
 import com.app.server.common.enums.ResultCode
 import com.app.server.common.response.ApiResponse
-import com.app.server.feed.ui.dto.FeedListResponseDto
+import com.app.server.feed.ui.dto.response.FeedListResponseDto
 import com.app.server.feed.ui.dto.request.CreateFeedRequestDto
 import com.app.server.feed.ui.dto.request.ReadFeedRequestDto
+import com.app.server.feed.ui.dto.response.CreateFeedResponseDto
 import com.app.server.feed.ui.usecase.CreateFeedUseCase
 import com.app.server.feed.ui.usecase.DeleteFeedUseCase
 import com.app.server.feed.ui.usecase.ReadFeedUseCase
@@ -65,11 +66,11 @@ class FeedController(
     fun createFeed(
         @UserId userId: Long,
         @RequestBody createFeedRequestDto: CreateFeedRequestDto
-    ) : ApiResponse<ResultCode> {
-        createFeedUseCase.execute(
+    ) : ApiResponse<CreateFeedResponseDto> {
+        val response = createFeedUseCase.execute(
             createFeedCommand = createFeedRequestDto.toCommand(userId)
         )
-        return ApiResponse.success(CommonResultCode.SUCCESS)
+        return ApiResponse.success(response)
     }
 
     @PutMapping("/{feedId}")
