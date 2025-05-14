@@ -8,7 +8,7 @@ import com.app.server.feed.domain.model.query.FeedProjection
 import com.app.server.feed.enums.EFeedReadRequestState
 import com.app.server.feed.enums.EFeedScope
 import com.app.server.feed.exception.FeedException
-import com.app.server.feed.ui.dto.FeedListResponseDto
+import com.app.server.feed.ui.dto.response.FeedListResponseDto
 import com.app.server.feed.ui.dto.ReadFeedProjectionQuery
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest

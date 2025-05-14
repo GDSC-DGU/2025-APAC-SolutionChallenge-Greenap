@@ -10,6 +10,7 @@ import com.app.server.challenge_certification.ui.dto.request.SendToCertification
 import com.app.server.feed.application.service.FeedEventListener
 import com.app.server.feed.application.service.FeedProjectionService
 import com.app.server.feed.application.service.FeedService
+import com.app.server.feed.application.service.command.FeedCommandService
 import com.app.server.feed.application.service.query.FeedProjectionQueryService
 import com.app.server.feed.domain.event.FeedCreatedEvent
 import com.app.server.feed.domain.model.query.FeedProjection
@@ -48,6 +49,9 @@ import kotlin.test.Test
 @Transactional
 @Rollback
 class FeedQueryServiceTest : IntegrationTestContainer() {
+
+    @Autowired
+    private lateinit var feedCommandService: FeedCommandService
 
     @Autowired
     private lateinit var feedProjectionQueryService: FeedProjectionQueryService
@@ -519,7 +523,7 @@ class FeedQueryServiceTest : IntegrationTestContainer() {
             )
         )
         val feedContent = "test".repeat(250)
-        val feed = createFeedUseCase.execute(
+        val feed = feedCommandService.execute(
             makeFeedRequestDto(
                 userId = userId,
                 userChallengeId = userChallengeId,

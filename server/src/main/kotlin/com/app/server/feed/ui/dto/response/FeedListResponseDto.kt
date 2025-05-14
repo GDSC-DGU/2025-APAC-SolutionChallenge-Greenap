@@ -1,4 +1,4 @@
-package com.app.server.feed.ui.dto
+package com.app.server.feed.ui.dto.response
 
 import com.app.server.feed.domain.model.query.FeedProjection
 import org.springframework.data.domain.Page
