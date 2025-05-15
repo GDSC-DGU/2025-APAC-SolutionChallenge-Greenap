@@ -15,17 +15,16 @@ class ChallengeItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final completeBackgroundColor = ColorSystem.mint;
-    final completeTextColor = ColorSystem.white;
-    final uncompleteBackgroundColor = ColorSystem.white;
-    final uncompleteTextColor = ColorSystem.gray[700]!;
+    final backgroundColor = ColorSystem.white;
+    final textColor = ColorSystem.gray[700]!;
+    final completeIconColor = ColorSystem.mint;
+    final unCompleteIconColor = ColorSystem.gray[700]!;
 
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
 
       decoration: BoxDecoration(
-        color:
-            isCerficated ? completeBackgroundColor : uncompleteBackgroundColor,
+        color: backgroundColor,
 
         borderRadius: BorderRadius.circular(4),
         boxShadow: [
@@ -44,16 +43,14 @@ class ChallengeItem extends StatelessWidget {
             width: 16,
             height: 16,
             colorFilter: ColorFilter.mode(
-              isCerficated ? completeTextColor : uncompleteTextColor,
+              isCerficated ? completeIconColor : unCompleteIconColor,
               BlendMode.srcIn,
             ),
           ),
           const SizedBox(width: 6),
           Text(
             '$challengeName',
-            style: FontSystem.Body3.copyWith(
-              color: isCerficated ? completeTextColor : uncompleteTextColor,
-            ),
+            style: FontSystem.Body3.copyWith(color: textColor),
           ),
         ],
       ),

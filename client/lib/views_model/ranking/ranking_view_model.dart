@@ -97,9 +97,10 @@ class RankingViewModel extends GetxController {
 
     if (allChallengeResponse.data != null) {
       challengeRanking.value = allChallengeResponse.data;
+      print('[ERROR] 누적 랭킹 불러오기 성공: ${challengeRanking.value}');
     } else {
       challengeRanking.value = null;
-      print('[ERROR] 누적 랭킹 불러오기 실패: ${allChallengeResponse.message}');
+      print('누적 챌린지 랭킹이 없습니다.');
     }
     if (userChallengeResponse.data != null) {
       myChallengeRanking.value = ParticipantModel(
@@ -116,8 +117,10 @@ class RankingViewModel extends GetxController {
                   .totalParticipationCount,
         ),
       );
+      print('[ERROR] 누적 랭킹 불러오기 성공: ${myChallengeRanking.value}');
     } else {
-      print('[ERROR] 누적 랭킹 불러오기 실패: ${allChallengeResponse.message}');
+      myChallengeRanking.value = null;
+      print('아직 챌린지를 참여하지 않았습니다.');
     }
   }
 }

@@ -16,7 +16,7 @@ class LoginViewModel extends GetxController {
   void onInit() {
     super.onInit();
     _authProvider = Get.find<AuthProvider>();
-    _checkLoginStatus();
+    // _checkLoginStatus();
   }
 
   Future<void> _checkLoginStatus() async {
@@ -31,6 +31,7 @@ class LoginViewModel extends GetxController {
 
   Future<void> signInWithGoogle() async {
     isLoading.value = true;
+    await _googleSignIn.signOut();
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       if (googleUser == null) {

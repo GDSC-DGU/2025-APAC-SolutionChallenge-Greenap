@@ -19,7 +19,7 @@ class HomeScreen extends BaseScreen<HomeViewModel> {
   Widget buildBody(BuildContext context) {
     return Obx(() {
       if (viewModel.isLoading.value) {
-        return const Center(child: CircularProgressIndicator()); // ✅ 로딩 중
+        return const Center(child: CircularProgressIndicator());
       }
 
       return SingleChildScrollView(

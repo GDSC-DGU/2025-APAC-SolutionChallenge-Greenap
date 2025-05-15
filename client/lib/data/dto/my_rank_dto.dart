@@ -3,12 +3,14 @@ import 'package:greenap/domain/models/all_ranking.dart';
 class UserRankDto {
   final String nickname;
   final String profileImageUrl;
-  final int longestConsecutiveParticipationCount;
+  final int? longestConsecutiveParticipationCount;
+  final int? totalParticipationCount;
 
   UserRankDto({
     required this.nickname,
     required this.profileImageUrl,
     required this.longestConsecutiveParticipationCount,
+    required this.totalParticipationCount,
   });
 
   factory UserRankDto.fromJson(Map<String, dynamic> json) {
@@ -17,6 +19,7 @@ class UserRankDto {
       profileImageUrl: json['profile_image_url'],
       longestConsecutiveParticipationCount:
           json['longest_consecutive_participation_count'],
+      totalParticipationCount: json['total_participation_count'],
     );
   }
   ParticipantUserModel toModel() {
@@ -25,12 +28,13 @@ class UserRankDto {
       profileImageUrl: profileImageUrl,
       longestConsecutiveParticipationCount:
           longestConsecutiveParticipationCount,
+      totalParticipationCount: totalParticipationCount,
     );
   }
 }
 
 class MyRankDto {
-  final int rank;
+  final int? rank;
   final UserRankDto user;
 
   MyRankDto({required this.rank, required this.user});

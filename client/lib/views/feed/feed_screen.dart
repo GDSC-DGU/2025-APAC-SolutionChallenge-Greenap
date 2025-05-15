@@ -19,39 +19,39 @@ class FeedScreen extends BaseScreen<FeedViewModel> {
   @override
   Widget buildBody(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 20),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: FeedCategoryFilter(categories: categories),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 20),
+
+        // 🔽 이 부분만 스크롤 되도록 Expanded + Obx(ListView) 구성
         Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Obx(() {
-              if (viewModel.isLoading) {
-                return const Center(child: CircularProgressIndicator());
-              }
+          child: Obx(() {
+            if (viewModel.isLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-              final filteredList = viewModel.filteredList;
+            final filteredList = viewModel.filteredList;
 
-              if (filteredList.isEmpty) {
-                print("siodjfowiejfwef$filteredList");
-                return const Center(child: Text("해당 카테고리의 피드가 없습니다."));
-              }
+            if (filteredList.isEmpty) {
+              return const Center(child: Text("해당 카테고리의 피드가 없습니다."));
+            }
 
-              return ListView.separated(
-                clipBehavior: Clip.none,
-                itemCount: filteredList.length,
-                separatorBuilder: (_, __) => const SizedBox(height: 24),
-                itemBuilder: (context, index) {
-                  final feed = filteredList[index];
-                  return FeedCard(feed: feed, isMine: false);
-                },
-              );
-            }),
-          ),
+            return ListView.separated(
+              controller: viewModel.scrollController,
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              itemCount: filteredList.length,
+              separatorBuilder: (_, __) => const SizedBox(height: 24),
+              itemBuilder: (context, index) {
+                final feed = filteredList[index];
+                return FeedCard(feed: feed, isMine: false);
+              },
+            );
+          }),
         ),
       ],
     );

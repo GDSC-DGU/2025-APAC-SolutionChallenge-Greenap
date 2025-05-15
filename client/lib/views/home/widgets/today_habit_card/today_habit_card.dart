@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:greenap/config/color_system.dart';
 import 'package:greenap/config/font_system.dart';
 import 'challenge_item.dart';
+import 'package:intl/intl.dart';
 
 class TodayHabitCard extends StatelessWidget {
   final List<Map<String, dynamic>> challenges;
@@ -50,7 +51,7 @@ class TodayHabitCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "2025.4.10 (목)",
+                DateFormat('yyyy.MM.dd (E)', 'ko_KR').format(DateTime.now()),
                 style: FontSystem.Caption.copyWith(
                   color: ColorSystem.gray[700],
                 ),

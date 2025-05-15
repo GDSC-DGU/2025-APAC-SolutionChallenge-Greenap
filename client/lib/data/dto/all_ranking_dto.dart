@@ -27,7 +27,7 @@ class AllRankingDto {
 }
 
 class Top100ParticipantDto {
-  final int rank;
+  final int? rank;
   final ParticipantUserDto user;
 
   Top100ParticipantDto({required this.rank, required this.user});

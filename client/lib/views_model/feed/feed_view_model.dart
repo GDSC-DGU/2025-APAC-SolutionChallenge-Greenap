@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:greenap/domain/models/feed_item.dart';
 import 'package:greenap/data/provider/feed/feed_provider.dart';
+import 'package:flutter/widgets.dart';
 
 class FeedViewModel extends GetxController {
   final RxList<FeedItemModel> _feedList = <FeedItemModel>[].obs;
@@ -12,6 +13,7 @@ class FeedViewModel extends GetxController {
   bool get isLoading => _isLoading.value;
 
   late final FeedProvider _provider;
+  final scrollController = ScrollController();
 
   @override
   void onInit() {
@@ -29,6 +31,13 @@ class FeedViewModel extends GetxController {
     } else {
       filteredList.assignAll(
         _feedList.where((item) => item.category == selectedCategory.value),
+      );
+    }
+    if (scrollController.hasClients) {
+      scrollController.animateTo(
+        0,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeOut,
       );
     }
   }

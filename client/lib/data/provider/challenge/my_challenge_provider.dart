@@ -5,7 +5,7 @@ import 'package:greenap/data/dto/my_challenge_dto.dart';
 class MyChallengeProvider extends BaseConnect {
   Future<ResponseWrapper<List<MyChallengeDto>>> getMyChallenges() async {
     print('[DEBUG] getMyChallenges() 실행됨');
-    final response = await getRequest('/api/v1/challenges/user?search_date');
+    final response = await getRequest('/api/v1/challenges/user');
 
     print('[DEBUG] 전체 응답 body: ${response.body}');
     if (response.statusCode == 200) {

@@ -8,7 +8,7 @@ import 'package:greenap/domain/models/challenge_detail.dart';
 import 'package:greenap/data/dto/challege_detail_dto.dart';
 
 class VerificationProvider extends BaseConnect {
-  Future<ResponseWrapper<String>> uploadVerificationImage({
+  Future<ResponseWrapper<dynamic>> uploadVerificationImage({
     required int userChallengeId,
     required File imageFile,
   }) async {
@@ -38,7 +38,7 @@ class VerificationProvider extends BaseConnect {
       final body = response.body;
       return ResponseWrapper(
         code: body['code'],
-        data: body['data']?['image_url'],
+        data: body['data'],
         message: body['message'],
       );
     } else {
@@ -76,9 +76,7 @@ class VerificationProvider extends BaseConnect {
     );
   }
 
-  Future<ResponseWrapper<ChallengeDetailModel>> postIce(
-    int userChallengeId,
-  ) async {
+  Future<ResponseWrapper<String>> postIce(int userChallengeId) async {
     print('[DEBUG] postIce() 실행됨');
 
     final response = await postRequest(
@@ -88,11 +86,11 @@ class VerificationProvider extends BaseConnect {
     print('[DEBUG] 전체 응답 body: ${response.body}');
 
     if (response.statusCode == 200) {
-      final body = response.body;
-      return ResponseWrapper<ChallengeDetailModel>(
-        code: body['code'],
-        data: body['data']['message'],
-        message: body['message'],
+      final body = response.body as Map<String, dynamic>;
+      return ResponseWrapper<String>(
+        code: body['code'] ?? '',
+        data: body['data']?.toString(),
+        message: body['message'] ?? '',
       );
     }
 
