@@ -21,6 +21,7 @@ class FeedCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: EdgeInsets.symmetric(vertical: 4),
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         boxShadow: [

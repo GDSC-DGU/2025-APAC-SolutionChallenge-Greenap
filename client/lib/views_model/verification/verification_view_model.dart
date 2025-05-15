@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:greenap/domain/models/challenge_item.dart';
 import 'package:greenap/domain/models/my_challenge.dart';
@@ -5,6 +6,7 @@ import 'package:greenap/views_model/challenge/challenge_view_model.dart';
 import 'package:greenap/data/provider/challenge/my_challenge_provider.dart';
 import 'package:collection/collection.dart';
 import 'package:greenap/data/provider/verification/verification_provider.dart';
+import 'package:greenap/views_model/challenge/my_challenge_view_model.dart';
 
 class VerificationViewModel extends GetxController {
   final RxList<MyChallengeModel> myChallenges = <MyChallengeModel>[].obs;
@@ -49,16 +51,14 @@ class VerificationViewModel extends GetxController {
   }
 
   Future<bool> useIce(int userChallengeId) async {
-    try {
-      final result = await _verificationProvider.postIce(userChallengeId);
-      if (result.code == '200') {
-        return true;
-      } else {
-        Get.snackbar('얼리기 실패', result.message ?? '알 수 없는 오류');
-        return false;
-      }
-    } catch (e) {
-      Get.snackbar('에러', '서버 요청 실패: $e');
+    final result = await _verificationProvider.postIce(userChallengeId);
+    if (result.message != null) {
+      await fetchMyChallenges();
+      final myChallengeViewModel = Get.find<MyChallengeViewModel>();
+      await myChallengeViewModel.loadMyChallenges(); // 화면에 그려지는 상태도 갱신
+      return true;
+    } else {
+      Get.snackbar('얼리기 실패', result.message ?? '알 수 없는 오류');
       return false;
     }
   }

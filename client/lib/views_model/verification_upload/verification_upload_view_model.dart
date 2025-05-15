@@ -3,14 +3,24 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:greenap/data/provider/verification/verification_provider.dart';
 import 'package:greenap/domain/models/challenge_detail.dart';
+import 'package:greenap/domain/models/my_challenge.dart';
 
 class VerificationUploadViewModel extends GetxController {
-  late final int challengeId;
-  late final int userChallengeId;
+  final int challengeId;
+  final int userChallengeId;
+  final MyChallengeModel? myChallengeModel;
+
+  VerificationUploadViewModel({
+    required this.challengeId,
+    required this.userChallengeId,
+    this.myChallengeModel,
+  });
+
   final RxBool isChecked = false.obs;
   final Rx<File?> selectedImage = Rx<File?>(null);
   final RxBool isLoading = false.obs;
   final RxnString uploadedImageUrl = RxnString();
+  final RxBool isFinished = false.obs;
 
   final challengeDetail = Rxn<ChallengeDetailModel>();
   late final VerificationProvider _provider;
@@ -18,10 +28,6 @@ class VerificationUploadViewModel extends GetxController {
   @override
   void onInit() {
     super.onInit();
-
-    final args = Get.arguments as Map<String, dynamic>;
-    challengeId = args['challengeId'];
-    userChallengeId = args['userChallengeId'];
     _provider = Get.find<VerificationProvider>();
 
     fetchChallengeDetail();
@@ -59,7 +65,10 @@ class VerificationUploadViewModel extends GetxController {
         imageFile: selectedImage.value!,
       );
       if (response.message != 'failure') {
-        uploadedImageUrl.value = response.data;
+        uploadedImageUrl.value = response.data['image_url'];
+        isFinished.value = response.data['is_finished'];
+        print("is_finished : ${isFinished.value}");
+        print("image_url : ${uploadedImageUrl.value}");
       }
       return response.message;
     } catch (e) {

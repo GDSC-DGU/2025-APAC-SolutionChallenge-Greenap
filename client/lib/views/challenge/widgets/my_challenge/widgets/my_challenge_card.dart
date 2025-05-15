@@ -34,9 +34,9 @@ class MyChallengeCard extends StatelessWidget {
       case ChallengeStatus.completed:
         return "진행완료";
       case ChallengeStatus.waiting:
-        return "이어하기 대기중";
+        return "진행완료";
       case ChallengeStatus.pending:
-        return "리포트 조회 대기중";
+        return "진행완료";
     }
   }
 

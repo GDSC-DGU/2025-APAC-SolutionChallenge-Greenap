@@ -133,7 +133,7 @@ class ReportView extends StatelessWidget {
         ),
         const SizedBox(width: 12),
         PopupActionButton(
-          text: report.status != "COMPLETED" ? "재도전 하기" : "계속 도전하기",
+          text: report.status != "WAITING" ? "재도전 하기" : "계속 도전하기",
           onPressed: () => _handleJoinChallenge(context, report),
         ),
       ],
@@ -145,8 +145,10 @@ class ReportView extends StatelessWidget {
     ChallengeReportModel report,
   ) async {
     final viewModel = Get.find<MyChallengeDetailViewModel>();
-    await viewModel.fetchChallengeDetail(report.userChallengeId);
+    final challengeId = viewModel.challenge.value!.id;
+    await viewModel.fetchChallengeDetail(challengeId);
     final challengeDetail = viewModel.challengeDetail.value;
+    print(challengeDetail);
 
     if (challengeDetail != null) {
       showDialog(
@@ -155,21 +157,20 @@ class ReportView extends StatelessWidget {
             (_) => ChallengeDetailPopup(
               challenge: challengeDetail,
               onCancel: () => Navigator.pop(context),
-              onJoin: (selectedDuration) {
+              onJoin: (selectedDuration) async {
                 Navigator.pop(context);
+                await viewModel.joinChallenge(
+                  challengeDetail.id,
+                  selectedDuration,
+                );
+
                 Future.delayed(Duration.zero, () {
                   showDialog(
                     context: context,
                     builder:
                         (_) =>
-                            report.status == "COMPLETED"
-                                ? ChallengeStartPopup(
-                                  challenge: challengeDetail,
-                                  selectedDuration: selectedDuration,
-                                  onChecked: () => Navigator.pop(context),
-                                  goVerification: () => Navigator.pop(context),
-                                )
-                                : ChallengeRestartPopup(
+                            report.status == "WAITING"
+                                ? ChallengeRestartPopup(
                                   challenge: challengeDetail,
                                   selectedDuration: selectedDuration,
                                   onChecked: () {
@@ -179,6 +180,12 @@ class ReportView extends StatelessWidget {
                                       arguments: {'initialTab': 2},
                                     );
                                   },
+                                )
+                                : ChallengeStartPopup(
+                                  challenge: challengeDetail,
+                                  selectedDuration: selectedDuration,
+                                  onChecked: () => Navigator.pop(context),
+                                  goVerification: () => Navigator.pop(context),
                                 ),
                   );
                 });

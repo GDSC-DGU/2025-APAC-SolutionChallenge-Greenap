@@ -6,11 +6,15 @@ import 'package:greenap/views_model/challenge/challenge_view_model.dart';
 
 class MyChallengeViewModel extends GetxController {
   final RxList<MyChallengeModel> _myChallenges = <MyChallengeModel>[].obs;
+  final RxList<MyChallengeModel> _notCertificatedToday =
+      <MyChallengeModel>[].obs;
+
   final Rx<ChallengeFilterStatus> _status = ChallengeFilterStatus.all.obs;
   final RxBool _isLoading = false.obs;
 
   List<MyChallengeModel> get myChallenges => _myChallenges;
   ChallengeFilterStatus get status => _status.value;
+  List<MyChallengeModel> get notCertificatedToday => _notCertificatedToday;
   bool get isLoading => _isLoading.value;
 
   late final MyChallengeProvider _provider;
@@ -43,7 +47,7 @@ class MyChallengeViewModel extends GetxController {
       final response = await _provider.getMyChallenges();
       if (response.data != null) {
         final allChallenges = _challengeViewModel.challengeList.toList();
-        _myChallenges.value =
+        final challenges =
             response.data!.map((dto) {
               String? imageUrl;
               for (final category in allChallenges) {
@@ -56,6 +60,14 @@ class MyChallengeViewModel extends GetxController {
               }
               return dto.toModel(mainImageUrl: imageUrl);
             }).toList();
+        _myChallenges.value = challenges;
+
+        _notCertificatedToday.value =
+            challenges.where((c) {
+              return c.status == ChallengeStatus.running &&
+                  c.isCerficatedInToday == ChallengeCertificated.FAILED;
+            }).toList();
+        _myChallenges.value = challenges;
       } else {
         print('[ERROR] 마이 챌린지 가져오기 실패: ${response.message}');
       }

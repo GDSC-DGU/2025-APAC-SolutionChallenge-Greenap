@@ -16,27 +16,36 @@ class MyChallengeDetailScreen extends BaseScreen<MyChallengeDetailViewModel> {
 
   @override
   PreferredSizeWidget buildAppBar(BuildContext context) {
-    return BackAppBar(title: viewModel.challenge.title);
+    return BackAppBar(title: viewModel.challenge.value!.title);
   }
 
   @override
   Widget buildBody(BuildContext context) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          VerificationDayListView(
-            totalDays: challenge.totalDays,
-            certificationDataList: challenge.certificationDataList,
-          ),
-          const SizedBox(height: 24),
-          challenge.status == ChallengeStatus.completed ||
-                  challenge.status == ChallengeStatus.waiting
-              ? ReportView()
-              : FeedView(),
-        ],
-      ),
+      child: Obx(() {
+        final detail = viewModel.challengeDetail.value;
+
+        if (detail == null) {
+          return Center(child: CircularProgressIndicator());
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            VerificationDayListView(
+              totalDays: challenge.totalDays,
+              certificationDataList: challenge.certificationDataList,
+            ),
+            const SizedBox(height: 24),
+            challenge.status == ChallengeStatus.completed ||
+                    challenge.status == ChallengeStatus.waiting ||
+                    challenge.status == ChallengeStatus.pending
+                ? ReportView()
+                : FeedView(),
+          ],
+        );
+      }),
     );
   }
 }

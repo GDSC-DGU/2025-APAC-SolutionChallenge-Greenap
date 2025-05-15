@@ -3,6 +3,7 @@ import 'package:greenap/config/color_system.dart';
 import 'package:greenap/config/font_system.dart';
 import 'package:greenap/domain/models/all_ranking.dart';
 import 'package:greenap/domain/enums/ranking.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class UserRankingCard extends StatelessWidget {
   final ParticipantModel rankingUser;
@@ -25,8 +26,15 @@ class UserRankingCard extends StatelessWidget {
             '최장 연속 일수 ${rankingUser.user.longestConsecutiveParticipationCount}일';
         break;
       case RankType.challenge:
-        subtitleText = '총 ${rankingUser.user.totalParticipationCount}회 참여';
+        subtitleText =
+            rankingUser.user.totalParticipationCount != null
+                ? '총 ${rankingUser.user.totalParticipationCount}회 참여'
+                : '';
         break;
+    }
+    String? medalAsset;
+    if (rankingUser.rank != null && rankingUser.rank! <= 3) {
+      medalAsset = 'assets/icons/medal_${rankingUser.rank}.svg';
     }
 
     return Container(
@@ -46,7 +54,16 @@ class UserRankingCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // SvgPicture.asset('assets/icons/medal_1.svg', width: 32, height: 32),
+          if (medalAsset != null)
+            SvgPicture.asset(medalAsset, width: 32, height: 32)
+          else
+            Padding(
+              padding: const EdgeInsets.only(left: 12, right: 8),
+              child: Text(
+                '${rankingUser.rank ?? '-'}',
+                style: FontSystem.Head3.copyWith(color: ColorSystem.gray[700]),
+              ),
+            ),
           const SizedBox(width: 12),
           Expanded(
             child: ListTile(

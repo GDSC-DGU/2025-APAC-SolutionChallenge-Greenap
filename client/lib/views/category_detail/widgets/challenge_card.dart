@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'challenge_start_popup.dart';
 import 'package:greenap/widgets/common/base_popup_dialog.dart';
 import 'package:greenap/widgets/common/popup_action_button.dart';
+import 'package:greenap/views_model/challenge/my_challenge_view_model.dart';
 
 class ChallengeCard extends StatelessWidget {
   final ChallengeItemModel challenge;
@@ -15,7 +16,7 @@ class ChallengeCard extends StatelessWidget {
 
   void _showDetailPopup(BuildContext context) async {
     final viewModel = Get.find<CategoryDetailViewModel>();
-
+    final myChallengeViewModel = Get.find<MyChallengeViewModel>();
     await viewModel.fetchChallengeDetail(challenge.id);
 
     final detail = viewModel.challengeDetail.value;
@@ -56,7 +57,14 @@ class ChallengeCard extends StatelessWidget {
                   );
                 });
               } else {
-                final userChallengeId = response;
+                await myChallengeViewModel.loadMyChallenges();
+
+                // ✨ id로 해당 챌린지 찾아서 넘겨주기
+                final myChallenge = myChallengeViewModel.myChallenges
+                    .firstWhere(
+                      (c) => c.challengeId == challenge.id,
+                      orElse: () => throw Exception('마이 챌린지에서 해당 챌린지를 찾을 수 없음'),
+                    );
 
                 // 다음 프레임에서 실행되도록 함
                 Future.delayed(Duration.zero, () {
@@ -75,7 +83,8 @@ class ChallengeCard extends StatelessWidget {
                               '/verification-upload',
                               arguments: {
                                 'challengeId': challenge.id,
-                                'userChallengeId': userChallengeId,
+                                'userChallengeId': myChallenge.id,
+                                'myChallengeModel': myChallenge,
                               },
                             );
                           },

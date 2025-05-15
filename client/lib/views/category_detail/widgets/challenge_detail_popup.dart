@@ -56,7 +56,12 @@ class _ChallengeDetailPopupState extends State<ChallengeDetailPopup> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildImage(),
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: _buildCompletionRate(),
+              ),
+              const SizedBox(height: 20),
               _buildDescription(),
               const SizedBox(height: 20),
               _buildCertMethod(),
@@ -72,9 +77,9 @@ class _ChallengeDetailPopupState extends State<ChallengeDetailPopup> {
   Widget _buildImage() {
     return Center(
       child: Image.network(
-        widget.challenge.mainImageUrl,
-        width: 120,
-        height: 120,
+        widget.challenge.certificationExampleImageUrl,
+        width: 280,
+        height: 280,
       ),
     );
   }
@@ -83,6 +88,28 @@ class _ChallengeDetailPopupState extends State<ChallengeDetailPopup> {
     return Text(
       widget.challenge.description,
       style: FontSystem.Body2.copyWith(color: ColorSystem.gray[700]),
+    );
+  }
+
+  Widget _buildCompletionRate() {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+      decoration: BoxDecoration(
+        color: ColorSystem.white,
+        borderRadius: BorderRadius.circular(4),
+        boxShadow: [
+          BoxShadow(
+            color: ColorSystem.black.withOpacity(0.08),
+            spreadRadius: 2,
+            blurRadius: 4,
+            offset: Offset(0, 0),
+          ),
+        ],
+      ),
+      child: Text(
+        '참여자의 ${widget.challenge.percentOfCompletedUser * 100}%가 챌린지를 완수했어요!',
+        style: FontSystem.Body2.copyWith(color: ColorSystem.gray[700]),
+      ),
     );
   }
 

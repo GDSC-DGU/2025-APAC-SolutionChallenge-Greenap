@@ -21,12 +21,11 @@ class MyChallengeView extends BaseScreen<MyChallengeViewModel> {
         const SizedBox(height: 24),
         Expanded(
           child: Obx(() {
-            final filterStatus = viewModel.status;
+            final filterSet = viewModel.status.toChallengeStatus();
             final filtered =
                 viewModel.myChallenges.where((challenge) {
-                  final statusToCompare = filterStatus.toChallengeStatus();
-                  if (statusToCompare == null) return true;
-                  return challenge.status == statusToCompare;
+                  if (filterSet == null) return true;
+                  return filterSet.contains(challenge.status);
                 }).toList();
 
             return _buildChallengeList(filtered);

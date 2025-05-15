@@ -48,11 +48,6 @@ class RankingContentView extends StatelessWidget {
             const SizedBox(height: 16),
 
             ...top100.map((rankedUser) {
-              // final medalAsset =
-              //     rankedUser.rank <= 3
-              //         ? 'assets/icons/medal_${rankedUser.rank}.svg'
-              //         : null;
-
               return UserRankingCard(
                 rankingUser: rankedUser,
                 rankType: RankType.all,
@@ -70,7 +65,7 @@ class RankingContentView extends StatelessWidget {
         }
 
         final top100 = ranking.top100Participants;
-
+        print("디버깅깅 ${userRank?.user.totalParticipationCount}");
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -133,11 +128,6 @@ class RankingContentView extends StatelessWidget {
             const SizedBox(height: 24),
 
             ...top100.map((rankedUser) {
-              // final medalAsset =
-              //     rankedUser.rank <= 3
-              //         ? 'assets/icons/medal_${rankedUser.rank}.svg'
-              //         : null;
-
               return UserRankingCard(
                 rankingUser: rankedUser,
                 rankType: RankType.challenge,

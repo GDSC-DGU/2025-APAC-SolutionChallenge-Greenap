@@ -11,7 +11,7 @@ import 'package:greenap/widgets/common/bottom_action_button.dart';
 import './widgets/verification_fail_popup.dart';
 import './widgets/verification_success_popup.dart';
 import './widgets/loading_popup.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:greenap/views_model/challenge/my_challenge_view_model.dart';
 
 class VerificationUploadScreen extends BaseScreen<VerificationUploadViewModel> {
   const VerificationUploadScreen({super.key});
@@ -76,13 +76,13 @@ class VerificationUploadScreen extends BaseScreen<VerificationUploadViewModel> {
     await Future.delayed(const Duration(milliseconds: 100));
 
     final isSuccess = resultMessage == "Success";
-
     await showDialog(
       context: Get.context!,
       builder:
           (_) =>
               isSuccess
                   ? VerificationSuccessPopup(
+                    isFinished: viewModel.isFinished.value,
                     onViewFeed: () {
                       Navigator.pop(Get.context!);
                       Get.offAllNamed('/root', arguments: {'initialTab': 1});
@@ -96,6 +96,16 @@ class VerificationUploadScreen extends BaseScreen<VerificationUploadViewModel> {
                           'userChallengeId': viewModel.userChallengeId,
                         },
                       );
+                    },
+                    onViewReport: () {
+                      Navigator.pop(Get.context!);
+                      Get.toNamed(
+                        '/my-challenge-detail',
+                        arguments: viewModel.myChallengeModel,
+                      )?.then((_) {
+                        Get.find<MyChallengeViewModel>()
+                            .loadMyChallenges(); // 되돌아왔을 때 다시 호출
+                      });
                     },
                   )
                   : VerificationFailPopup(
