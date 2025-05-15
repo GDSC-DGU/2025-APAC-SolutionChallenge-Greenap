@@ -31,7 +31,7 @@ class LoginViewModel extends GetxController {
 
   Future<void> signInWithGoogle() async {
     isLoading.value = true;
-    await _googleSignIn.signOut();
+    // await _googleSignIn.signOut();
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       if (googleUser == null) {
