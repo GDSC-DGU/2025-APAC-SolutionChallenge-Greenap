@@ -32,12 +32,12 @@
 - [Contributing](#contributing)
 - [License](#license)
 
-## 🌍 Overview
+## Overview
 
 Greenap is a mobile application designed to help users reduce their digital carbon footprint by participating in eco-friendly challenges. The application enables users to join sustainability initiatives, track their progress, and get certified for their eco-friendly actions.
 
 https://deepwiki.com/GDSC-DGU/2025-APAC-SolutionChallenge-Greenap/1-overview
-## ✨ Features
+## Features
 
 - Participate in eco-friendly challenges
 - Track challenge progress
@@ -46,7 +46,7 @@ https://deepwiki.com/GDSC-DGU/2025-APAC-SolutionChallenge-Greenap/1-overview
 - Points and rewards system
 - User rankings
 
-## 🏗️ Architecture
+## Architecture
 
 Greenap follows a client-server architecture with:
 - Flutter mobile application frontend
@@ -54,7 +54,7 @@ Greenap follows a client-server architecture with:
 - MySQL for persistent storage
 - Redis for caching and ranking functionality
 
-## 🛠️ Technologies
+## Technologies
 
 | Component | Technology | Purpose |
 |-----------|------------|---------|
@@ -66,13 +66,13 @@ Greenap follows a client-server architecture with:
 | Authentication | OAuth2 with JWT | User authentication |
 | API Documentation | Swagger/OpenAPI | API documentation |
 
-## 📊 Domain Model
+## Domain Model
 
 The core domain model consists of several key entities that work together to provide the challenge participation and certification functionality:
 
 ![erdTable.png](resources/erdTable.png)
 
-## 🌱 Challenge Categories
+## Challenge Categories
 
 Greenap organizes challenges into four main categories that target different aspects of environmental sustainability:
 
@@ -81,7 +81,7 @@ Greenap organizes challenges into four main categories that target different asp
 3. **Green Transportation**
 4. **Digital Minimalism**
 
-## 🔄 User Flow
+## User Flow
 
 Users participate in challenges through a defined flow that tracks their progress from joining a challenge to completing it:
 
@@ -93,7 +93,7 @@ Users participate in challenges through a defined flow that tracks their progres
 6. Earn points and rewards
 7. Track progress on leaderboards
 
-## ✅ Certification Process
+## Certification Process
 
 ![certificationProcess.png](resources/certificationProcess.png)
 
@@ -104,7 +104,7 @@ A key component of Greenap is the challenge certification process, which verifie
 - Points are awarded upon successful verification
 - Completed challenges contribute to user rankings
 
-## 📱 Client Architecture
+## Client Architecture
 
 The mobile client is built with Flutter using the GetX framework for state management and navigation.
 
@@ -123,7 +123,7 @@ Key screens include:
 - Social feed
 - Rankings
 
-## 🖥️ Server Architecture
+## Server Architecture
 
 The server is built with Spring Boot and Kotlin, following a layered architecture with ports and adapters pattern:
 
@@ -149,7 +149,7 @@ The server implements several key service components:
   ![ranking.png](resources/ranking.png)
 - Event-driven notifications
 
-## ☁️ Deployment
+## Deployment
 ![greenap_architecture.png](greenap_architecture.drawio%20%281%29.png)
 The application is designed for cloud deployment, with Docker containerization for the server component:
 
@@ -158,7 +158,7 @@ The application is designed for cloud deployment, with Docker containerization f
 - Cloud storage for media files
 - CI/CD pipelines for continuous deployment
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - Flutter SDK
@@ -187,11 +187,11 @@ flutter pub get
 flutter run
 ```
 
-## 👥 Contributing
+## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-## 📄 License
+## License
 
 This project is licensed under the [MIT License](LICENSE).
 
