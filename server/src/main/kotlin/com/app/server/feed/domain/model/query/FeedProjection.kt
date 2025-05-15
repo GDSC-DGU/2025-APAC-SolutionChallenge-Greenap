@@ -3,12 +3,16 @@ package com.app.server.feed.domain.model.query
 import com.app.server.common.model.BaseEntity
 import com.app.server.feed.domain.model.command.Feed
 import jakarta.persistence.*
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Entity
-// TODO : Index 적용 고려
-@Table(name = "feed_projections")
+@Table(name = "feed_projections", indexes = [
+    Index(
+        name = "idx_feed_projections_feed_id",
+        columnList = "feed_id",
+        unique = true
+    )
+])
 class FeedProjection (
 
     @Id

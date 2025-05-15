@@ -16,7 +16,6 @@ import java.time.LocalDate
 @Entity
 @Table(name = "user_challenges")
 @DynamicUpdate
-// TODO : Index 적용 고려
 class UserChallenge(
 
     @Id
@@ -180,7 +179,7 @@ class UserChallenge(
     }
 
     fun calculateElapsedDays(todayDate: LocalDate): Long {
-        return todayDate.toEpochDay() - userChallengeHistories.first().date.toEpochDay()
+        return todayDate.plusDays(1).toEpochDay() - userChallengeHistories.first().date.toEpochDay()
     }
 
     fun calculateProgressFromElapsedDays(todayDate: LocalDate): Int {
@@ -194,7 +193,8 @@ class UserChallenge(
     }
 
     fun isCertificatedToday(todayDate: LocalDate): EUserChallengeCertificationStatus {
-        return userChallengeHistories.find { it.date.isEqual(todayDate) }!!.status
+        val history = userChallengeHistories.find { it.date.isEqual(todayDate) }
+        return history?.status ?: EUserChallengeCertificationStatus.FAILED
     }
 
     fun getUserChallengeHistoriesBeforeToday(todayDate: LocalDate): List<UserChallengeHistory> {
