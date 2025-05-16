@@ -3,7 +3,7 @@
 
 <div align="center">
 
-![Greenap <ain Page](resources/mainImage.png)
+![img.png](resources/main.png)
 ![describeImage.png](resources/describeImage.png)
 
 [![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev/)
