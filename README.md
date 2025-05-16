@@ -4,7 +4,7 @@
 <div align="center">
 
 ![img.png](resources/main.png)
-![describeImage.png](resources/describeImage.png)
+![img.png](resources/describe.png)
 
 [![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev/)
 [![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)](https://spring.io/projects/spring-boot)
