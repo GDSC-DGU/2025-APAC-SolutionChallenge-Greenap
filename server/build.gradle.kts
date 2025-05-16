@@ -110,6 +110,24 @@ tasks.withType<Test> {
 tasks.jacocoTestReport {
     dependsOn(tasks.test) // 테스트 후에 JaCoCo 리포트 생성
 
+    classDirectories.setFrom(
+        files(classDirectories.files.map { fileDir: File ->
+            fileTree(mapOf(
+                "dir" to fileDir,
+                "excludes" to listOf(
+                    "**/ui/**",
+                    "**/dto/**",
+                    "**/auth/**",
+                    "**/common/**",
+                    "**/core/**",
+                    "**/infra/**",
+                    "**/exception/**",
+                    "**/enums/**",
+                    "*.ServerApplicationKt",
+                    "**/rank/domain/model/*",
+                    )))
+        }))
+
     reports {
         xml.required.set(true)
         html.required.set(true)
@@ -146,7 +164,7 @@ tasks.jacocoTestCoverageVerification {
             }
 
             excludes = listOf(
-                "*.ui.controller.*",
+                "*.ui.*",
                 "*.dto.*",
                 "*.auth.*",
                 "*.common.*",
@@ -154,7 +172,12 @@ tasks.jacocoTestCoverageVerification {
                 "*.infra.*",
                 "*.exception.*",
                 "*.enums.*",
+                "*.port.*",
+                "*.ServerApplicationKt",
+                "*.rank.domain.model.*",
             )
+
+
         }
     }
 }

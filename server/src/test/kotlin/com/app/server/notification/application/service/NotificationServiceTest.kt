@@ -126,7 +126,7 @@ class NotificationServiceTest : IntegrationTestContainer() {
         Assertions.assertThat(response.message).isNotBlank
         Assertions.assertThat(response.userChallengeId).isEqualTo(userChallenge.userChallengeId)
         Assertions.assertThat(response.challengeTitle).isEqualTo(userChallenge.challengeTitle)
-        Assertions.assertThat(response.progress).isEqualTo(userChallenge.progressFromElapsed)
+        Assertions.assertThat(response.progress).isEqualTo(userChallenge.progressFromTotal)
 
         userChallengeService.deleteAll()
 
