@@ -15,12 +15,12 @@ class RankingContentView extends StatelessWidget {
     final viewModel = Get.find<RankingViewModel>();
 
     return Obx(() {
-      if (viewModel.isLoading.value) {
-        return const Center(child: CircularProgressIndicator());
-      }
-
       if (isLeftSelected) {
         // 전체 랭킹
+        if (viewModel.isLoadingAllRanking.value) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
         final ranking = viewModel.allRanking.value;
         final userRank = viewModel.myRanking.value;
 
@@ -57,6 +57,9 @@ class RankingContentView extends StatelessWidget {
         );
       } else {
         // 누적 랭킹
+        if (viewModel.isLoadingChallengeRanking.value) {
+          return const Center(child: CircularProgressIndicator());
+        }
         final ranking = viewModel.challengeRanking.value;
         final userRank = viewModel.myChallengeRanking.value;
 

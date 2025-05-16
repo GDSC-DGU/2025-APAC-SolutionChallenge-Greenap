@@ -8,7 +8,8 @@ import 'package:greenap/domain/models/challenge_item.dart';
 
 class RankingViewModel extends GetxController {
   final isLeftSelected = true.obs;
-  final isLoading = false.obs;
+  final isLoadingAllRanking = false.obs;
+  final isLoadingChallengeRanking = false.obs;
   late final RankProvider _provider;
   final Rxn<RankingModel> allRanking = Rxn<RankingModel>();
   final Rxn<ParticipantModel> myChallengeRanking = Rxn<ParticipantModel>();
@@ -75,7 +76,7 @@ class RankingViewModel extends GetxController {
   }
 
   Future<void> getAllRanking() async {
-    isLoading.value = true;
+    isLoadingAllRanking.value = true;
     final response = await _provider.getAllRanking();
 
     if (response.data != null) {
@@ -84,10 +85,11 @@ class RankingViewModel extends GetxController {
       allRanking.value = null;
       print('[ERROR] 랭킹 정보 로딩 실패: ${response.message}');
     }
-    isLoading.value = false;
+    isLoadingAllRanking.value = false;
   }
 
   Future<void> fetchCumulativeRanking(int challengeId) async {
+    isLoadingChallengeRanking.value = true;
     final allChallengeResponse = await _provider.getChallengeRanking(
       challengeId,
     );
@@ -122,5 +124,6 @@ class RankingViewModel extends GetxController {
       myChallengeRanking.value = null;
       print('아직 챌린지를 참여하지 않았습니다.');
     }
+    isLoadingChallengeRanking.value = false;
   }
 }

@@ -14,16 +14,24 @@ class RankProvider extends BaseConnect {
     print('[DEBUG] 전체 응답 statusCode: ${response.statusCode}');
     if (response.statusCode == 200) {
       final body = response.body;
-      final data = AllRankingDto.fromJson(body['data']).toModel();
-      return ResponseWrapper(
-        code: body['code'],
-        message: body['message'],
-        data: data,
-      );
+      if (body != null) {
+        final data = AllRankingDto.fromJson(body['data']).toModel();
+        return ResponseWrapper(
+          code: body['code'],
+          message: body['message'],
+          data: data,
+        );
+      } else {
+        return ResponseWrapper(
+          code: 'NO_DATA',
+          message: 'No ranking data found.',
+          data: null,
+        );
+      }
     }
 
     return ResponseWrapper(
-      code: response.body['code'] ?? 'ERROR',
+      code: 'ERROR',
       message: response.body['message'] ?? 'Unknown error',
       data: null,
     );
@@ -37,29 +45,27 @@ class RankProvider extends BaseConnect {
 
     if (response.statusCode == 200) {
       final body = response.body;
-      final data = body['data']['user_rank_info'];
-
-      final myRank = ParticipantModel(
-        rank: data['rank'] ?? 0,
-        user: ParticipantUserModel(
-          nickname: data['user']['nickname'] ?? '',
-          profileImageUrl: data['user']['profile_image_url'] ?? '',
-          longestConsecutiveParticipationCount:
-              data['user']['longest_consecutive_participation_count'] ?? 0,
-        ),
-      );
-
-      return ResponseWrapper<ParticipantModel>(
-        code: body['code'],
-        data: myRank,
-        message: body['message'],
-      );
+      if (body != null) {
+        final dto = MyRankDto.fromJson(body['data']['user_rank_info']);
+        final myRank = dto.toModel();
+        return ResponseWrapper<ParticipantModel>(
+          code: body['code'],
+          data: myRank,
+          message: body['message'],
+        );
+      } else {
+        return ResponseWrapper(
+          code: 'NO_DATA',
+          message: 'No ranking data found.',
+          data: null,
+        );
+      }
     }
 
     return ResponseWrapper(
-      code: response.body['code'] ?? '500',
+      code: "ERROR",
       data: null,
-      message: response.body['error']?['message'],
+      message: response.body['message'] ?? 'Unknown error',
     );
   }
 
