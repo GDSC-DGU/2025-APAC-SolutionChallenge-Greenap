@@ -70,7 +70,7 @@ Greenap follows a client-server architecture with:
 
 The core domain model consists of several key entities that work together to provide the challenge participation and certification functionality:
 
-![erdTable.png](resources/erdTable.png)
+![img.png](resources/erd.png)
 
 ## Challenge Categories
 
