@@ -137,20 +137,14 @@ The server is built with Spring Boot and Kotlin, following a layered architectur
 
 The server implements several key service components:
 - User management
-  ![authProcess.png](resources/authProcess.png)
 - Challenge management
 - Certification processing
-
-  ![certificationStateProcessing.png](resources/certificationStateProcessing.png)
-
-
 - Points calculation
 - Rankings generation
-  ![ranking.png](resources/ranking.png)
 - Event-driven notifications
 
 ## Deployment
-![greenap_architecture.png](greenap_architecture.drawio%20%281%29.png)
+![greenap_architecture.png](resources/greenap_architecture.png)
 The application is designed for cloud deployment, with Docker containerization for the server component:
 
 - Containerized server application
