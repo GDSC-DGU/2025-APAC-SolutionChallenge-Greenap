@@ -19,15 +19,15 @@ class LoginViewModel extends GetxController {
     // _checkLoginStatus();
   }
 
-  Future<void> _checkLoginStatus() async {
-    final accessToken = await _secureStorage.read(key: 'accessToken');
-    final refreshToken = await _secureStorage.read(key: 'refreshToken');
+  // Future<void> _checkLoginStatus() async {
+  //   final accessToken = await _secureStorage.read(key: 'accessToken');
+  //   final refreshToken = await _secureStorage.read(key: 'refreshToken');
 
-    if (accessToken != null && refreshToken != null) {
-      print('이미 로그인된 사용자입니다.');
-      Get.offAllNamed('/root', arguments: {'initialTab': 2});
-    }
-  }
+  //   if (accessToken != null && refreshToken != null) {
+  //     print('이미 로그인된 사용자입니다.');
+  //     Get.offAllNamed('/root', arguments: {'initialTab': 2});
+  //   }
+  // }
 
   Future<void> signInWithGoogle() async {
     isLoading.value = true;

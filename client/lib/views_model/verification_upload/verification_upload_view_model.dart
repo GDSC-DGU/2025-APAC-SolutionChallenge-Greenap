@@ -8,12 +8,12 @@ import 'package:greenap/domain/models/my_challenge.dart';
 class VerificationUploadViewModel extends GetxController {
   final int challengeId;
   final int userChallengeId;
-  final MyChallengeModel? myChallengeModel;
+  final MyChallengeModel myChallengeModel;
 
   VerificationUploadViewModel({
     required this.challengeId,
     required this.userChallengeId,
-    this.myChallengeModel,
+    required this.myChallengeModel,
   });
 
   final RxBool isChecked = false.obs;

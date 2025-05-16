@@ -132,6 +132,7 @@ class ChallengeVerificationCard extends StatelessWidget {
                               arguments: {
                                 'challengeId': challenge.challengeId,
                                 'userChallengeId': challenge.id,
+                                'myChallengeModel': challenge,
                               },
                             );
                           },

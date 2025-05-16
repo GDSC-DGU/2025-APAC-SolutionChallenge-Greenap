@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:greenap/widgets/common/base_popup_dialog.dart';
 import 'package:greenap/widgets/common/popup_action_button.dart';
-import 'package:greenap/views_model/verification_upload/verification_upload_view_model.dart';
-import 'package:get/get.dart';
 
 class VerificationSuccessPopup extends StatelessWidget {
   final bool? isFinished;
@@ -43,8 +41,6 @@ class VerificationSuccessPopup extends StatelessWidget {
   }
 
   Widget finishedPopup() {
-    final viewModel = Get.find<VerificationUploadViewModel>();
-
     return BasePopupDialog(
       title: '챌린지 인증을 완료했어요!',
       subtitle: '해당 챌린지가 오늘부로 종료되었어요. \n지금 바로 리포트를 확인할 수 있습니다!',

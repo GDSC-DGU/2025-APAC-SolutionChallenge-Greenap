@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:greenap/domain/models/challenge_item.dart';
 import 'package:greenap/domain/models/my_challenge.dart';
