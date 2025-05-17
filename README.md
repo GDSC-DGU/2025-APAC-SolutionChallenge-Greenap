@@ -166,10 +166,10 @@ The application is designed for cloud deployment, with Docker containerization f
     <td>Design</td>
   </tr>
   <tr align="center">
-    <td><img src="https://github.com/leejs0823.png" width="150"></td>
-    <td><img src="https://github.com/5hseok.png" width="150"></td>
-    <td><img src="https://github.com/bk123477.png" width="150"></td>
-    <td><img src="https://github.com/Newooon.png" width="150"></td>
+    <td><img src="https://github.com/leejs0823.png" width="160"></td>
+    <td><img src="https://github.com/5hseok.png" width="160"></td>
+    <td><img src="https://github.com/bk123477.png" width="160"></td>
+    <td><img src="https://github.com/Newooon.png" width="160"></td>
   </tr>
   <tr align="center">
     <td><a href="https://github.com/leejs0823">JUNGSUN LEE</a></td>
@@ -178,6 +178,7 @@ The application is designed for cloud deployment, with Docker containerization f
     <td><a href="https://github.com/Newooon">MINGI HONG</a></td>
   </tr>
 </table>
+<br/>
 
 ## Getting Started
 
