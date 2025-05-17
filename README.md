@@ -174,8 +174,8 @@ The application is designed for cloud deployment, with Docker containerization f
   <tr align="center">
     <td><a href="https://github.com/leejs0823">JUNGSUN LEE</a></td>
     <td><a href="https://github.com/5hseok">HYUNSEOK OH</a></td>
-    <td><a href="https://github.com/bk123477">HYEJEONG YOON</a></td>
-    <td><a href="https://github.com/Newooon">MINGI HONG</a></td>
+    <td><a href="https://github.com/bk123477">MINGI HONG</a></td>
+    <td><a href="https://github.com/Newooon">HYEJEONG YOON</a></td>
   </tr>
 </table>
 <br/>
