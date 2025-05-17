@@ -153,19 +153,31 @@ The application is designed for cloud deployment, with Docker containerization f
 - CI/CD pipelines for continuous deployment
 
 ## Demo Video Link
-|<a href="https://www.youtube.com/watch?v=i1gcg9usD6Y" target="_blank">
-  <img src="https://img.youtube.com/vi/i1gcg9usD6Y/0.jpg" alt="Demo Video" style="width:100%; height:auto;"/>
-</a>|
+<a href="https://www.youtube.com/watch?v=i1gcg9usD6Y" target="_blank">
+  <img src="https://img.youtube.com/vi/i1gcg9usD6Y/0.jpg" alt="Demo Video" style="width:80%; height:auto;"/>
+</a>
 
 ## Greener member
-
-| Name                                        |Role        | Email                |
-| -------------------------------------------- | -------------- | -------------------- |
-| [JUNGSUN LEE](https://github.com/leejs0823)  | Lead, Frontend | dlwjdtjs01110@gmail.com |
-| [HYUNSEOK OH](https://github.com/5hseok) | Backend, Server    | ohhs1010@gmail.com |
-| [HYEJEONG YOON](https://github.com/Newooon)| Design| ggww001@naver.com|
-| [MINGI HONG](https://github.com/bk123477) |AI|jackyh1@dgu.ac.kr|
-
+<table align="center">
+  <tr align="center">
+    <td>Client</td>
+    <td>Server</td>
+    <td>AI</td>
+    <td>Design</td>
+  </tr>
+  <tr align="center">
+    <td><img src="https://github.com/leejs0823.png" width="150"></td>
+    <td><img src="https://github.com/5hseok.png" width="150"></td>
+    <td><img src="https://github.com/bk123477.png" width="150"></td>
+    <td><img src="https://github.com/Newooon.png" width="150"></td>
+  </tr>
+  <tr align="center">
+    <td><a href="https://github.com/leejs0823">JUNGSUN LEE</a></td>
+    <td><a href="https://github.com/5hseok">HYUNSEOK OH</a></td>
+    <td><a href="https://github.com/bk123477">HYEJEONG YOON</a></td>
+    <td><a href="https://github.com/Newooon">MINGI HONG</a></td>
+  </tr>
+</table>
 
 ## Getting Started
 
