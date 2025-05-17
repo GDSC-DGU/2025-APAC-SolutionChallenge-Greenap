@@ -17,6 +17,7 @@
 </div>
 
 ## 📋 Table of Contents
+- [Greener Member](#greener-member)
 - [Overview](#overview)
 - [Features](#features)
 - [Architecture](#architecture)
@@ -31,6 +32,33 @@
 - [Getting Started](#getting-started)
 - [Contributing](#contributing)
 - [License](#license)
+
+## Greener Member
+
+We’d like to introduce the **Greener** from the 2025 APAC Solution Challenge.
+Our team combines expertise in Frontend, Backend, AI, and design to build an app that makes sustainable habits easy and fun.
+<br/>
+<table align="center">
+  <tr align="center">
+    <td>Client</td>
+    <td>Server</td>
+    <td>AI</td>
+    <td>Design</td>
+  </tr>
+  <tr align="center">
+    <td><img src="https://github.com/leejs0823.png" width="160"></td>
+    <td><img src="https://github.com/5hseok.png" width="160"></td>
+    <td><img src="https://github.com/bk123477.png" width="160"></td>
+    <td><img src="https://github.com/Newooon.png" width="160"></td>
+  </tr>
+  <tr align="center">
+    <td><a href="https://github.com/leejs0823">JUNGSUN LEE</a></td>
+    <td><a href="https://github.com/5hseok">HYUNSEOK OH</a></td>
+    <td><a href="https://github.com/bk123477">MINGI HONG</a></td>
+    <td><a href="https://github.com/Newooon">HYEJEONG YOON</a></td>
+  </tr>
+</table>
+<br/>
 
 ## Overview
 
@@ -156,29 +184,6 @@ The application is designed for cloud deployment, with Docker containerization f
 <a href="https://www.youtube.com/watch?v=i1gcg9usD6Y" target="_blank">
   <img src="https://img.youtube.com/vi/i1gcg9usD6Y/0.jpg" alt="Demo Video" style="width:80%; height:auto;"/>
 </a>
-
-## Greener member
-<table align="center">
-  <tr align="center">
-    <td>Client</td>
-    <td>Server</td>
-    <td>AI</td>
-    <td>Design</td>
-  </tr>
-  <tr align="center">
-    <td><img src="https://github.com/leejs0823.png" width="160"></td>
-    <td><img src="https://github.com/5hseok.png" width="160"></td>
-    <td><img src="https://github.com/bk123477.png" width="160"></td>
-    <td><img src="https://github.com/Newooon.png" width="160"></td>
-  </tr>
-  <tr align="center">
-    <td><a href="https://github.com/leejs0823">JUNGSUN LEE</a></td>
-    <td><a href="https://github.com/5hseok">HYUNSEOK OH</a></td>
-    <td><a href="https://github.com/bk123477">MINGI HONG</a></td>
-    <td><a href="https://github.com/Newooon">HYEJEONG YOON</a></td>
-  </tr>
-</table>
-<br/>
 
 ## Getting Started
 
