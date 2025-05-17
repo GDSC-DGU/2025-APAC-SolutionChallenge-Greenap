@@ -162,7 +162,7 @@ The application is designed for cloud deployment, with Docker containerization f
 | -------------------------------------------- | -------------- | -------------------- |
 | [JUNGSUN LEE](https://github.com/leejs0823)  | Lead, Frontend | dlwjdtjs01110@gmail.com |
 | [HYUNSEOK OH](https://github.com/5hseok) | Backend, Server    | ohhs1010@gmail.com |
-| [HYEJEONG YOON](https://github.com/choijian)| Design| ggww001@naver.com|
+| [HYEJEONG YOON]| Design| ggww001@naver.com|
 | [MINGI HONG](https://github.com/bk123477) |AI|jackyh1@dgu.ac.kr|
 
 
