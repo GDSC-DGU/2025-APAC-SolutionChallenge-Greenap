@@ -152,6 +152,20 @@ The application is designed for cloud deployment, with Docker containerization f
 - Cloud storage for media files
 - CI/CD pipelines for continuous deployment
 
+## Demo Video Link
+[![Watch the demo](https://img.youtube.com/vi/i1gcg9usD6Y/0.jpg)](https://www.youtube.com/watch?v=i1gcg9usD6Y)
+👉 [Watch on YouTube](https://www.youtube.com/watch?v=i1gcg9usD6Y)
+
+## Greener member
+
+| Name                                        |Role        | Email                |
+| -------------------------------------------- | -------------- | -------------------- |
+| [JUNGSUN LEE](https://github.com/leejs0823)  | Lead, Frontend | dlwjdtjs01110@gmail.com |
+| [HYUNSEOK OH](https://github.com/5hseok) | Backend, Server    | ohhs1010@gmail.com |
+| [HYEJEONG YOON](https://github.com/choijian)| Design| ggww001@naver.com|
+| [MINGI HONG](https://github.com/bk123477) |AI|jackyh1@dgu.ac.kr|
+
+
 ## Getting Started
 
 ### Prerequisites
