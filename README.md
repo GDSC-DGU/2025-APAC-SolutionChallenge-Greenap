@@ -153,8 +153,9 @@ The application is designed for cloud deployment, with Docker containerization f
 - CI/CD pipelines for continuous deployment
 
 ## Demo Video Link
-[![Watch the demo](https://img.youtube.com/vi/i1gcg9usD6Y/0.jpg)](https://www.youtube.com/watch?v=i1gcg9usD6Y)
-👉 [Watch on YouTube](https://www.youtube.com/watch?v=i1gcg9usD6Y)
+|<a href="https://www.youtube.com/watch?v=i1gcg9usD6Y" target="_blank">
+  <img src="https://img.youtube.com/vi/i1gcg9usD6Y/0.jpg" alt="Demo Video" style="width:100%; height:auto;"/>
+</a>|
 
 ## Greener member
 
