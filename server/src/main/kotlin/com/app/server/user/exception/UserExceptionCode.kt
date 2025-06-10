@@ -16,5 +16,7 @@ enum class UserExceptionCode(
     NO_SUCH_EMAIL("USR005", "No such email"),
     DELETED_USER("USR006", "Deleted user"),
     DELETE_FAILED("USR007", "Failed to delete user"),
+    PROFILE_IMAGE_SIZE_LIMIT_EXCEEDED("USR008", "프로필 사진은 10MB 이하로 업로드해야 합니다."),
+    NICKNAME_EXCEED_LENGTH_LIMIT("USR009", "사용자 명은 최대 20자까지 입력할 수 있습니다.")
     ;
 }
