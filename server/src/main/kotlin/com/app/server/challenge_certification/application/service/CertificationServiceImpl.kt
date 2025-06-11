@@ -58,7 +58,7 @@ class CertificationServiceImpl(
         }
 
         val imageUrl =
-            cloudStorageUtil.uploadImageToCloudStorage(
+            cloudStorageUtil.uploadChallengeCertificationImageToCloudStorage(
                 image = image,
                 userChallengeId = userChallenge.id!!
             )

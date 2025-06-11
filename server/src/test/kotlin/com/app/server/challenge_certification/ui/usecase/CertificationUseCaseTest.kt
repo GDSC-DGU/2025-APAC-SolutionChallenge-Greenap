@@ -137,7 +137,7 @@ class CertificationUseCaseTest : IntegrationTestContainer() {
             mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
         )
         given(
-            cloudStorageUtil.uploadImageToCloudStorage(
+            cloudStorageUtil.uploadChallengeCertificationImageToCloudStorage(
                 any(), any()
             )
         )

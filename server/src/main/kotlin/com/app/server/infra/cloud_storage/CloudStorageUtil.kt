@@ -19,7 +19,7 @@ class CloudStorageUtil (
     private val bucketName: String,
 ){
 
-    fun uploadImageToCloudStorage(image: MultipartFile, userChallengeId: Long): String {
+    fun uploadChallengeCertificationImageToCloudStorage(image: MultipartFile, userChallengeId: Long): String {
 
         val ext = image.originalFilename
             ?.substringAfterLast('.', missingDelimiterValue = "")
@@ -40,6 +40,36 @@ class CloudStorageUtil (
 
         val prefixBucket = "https://storage.googleapis.com/$bucketName"
         val imagePath = "user/certification/$userChallengeId/$uuid.$ext"
+
+        val blobInfo = BlobInfo.newBuilder(bucketName, imagePath)
+            .setContentType(contentType).build()
+
+        storage.create(blobInfo, image.bytes)
+
+        return "$prefixBucket/$imagePath"
+    }
+
+    fun uploadProfileImageToCloudStorage(image: MultipartFile, userId: Long): String {
+
+        val ext = image.originalFilename
+            ?.substringAfterLast('.', missingDelimiterValue = "")
+            ?.lowercase()
+            ?: ""
+        val keyFile: InputStream = ResourceUtils.getURL(keyFileName).openStream()
+        val uuid: String = UUID.randomUUID().toString()
+        val storage: Storage = StorageOptions.newBuilder()
+            .setCredentials(GoogleCredentials.fromStream(keyFile))
+            .build()
+            .service
+
+        val contentType = when (ext.lowercase()) {
+            "jpg", "jpeg" -> "image/jpeg"
+            "png" -> "image/png"
+            else -> "application/octet-stream"
+        }
+
+        val prefixBucket = "https://storage.googleapis.com/$bucketName"
+        val imagePath = "user/profile/$userId/$uuid.$ext"
 
         val blobInfo = BlobInfo.newBuilder(bucketName, imagePath)
             .setContentType(contentType).build()

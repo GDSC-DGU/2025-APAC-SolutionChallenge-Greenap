@@ -178,7 +178,7 @@ class CertificateServiceTest : IntegrationTestContainer() {
     fun failChallengeCertificate() {
         // given
         val errorMessage = "testMessage"
-        given(cloudStorageUtil.uploadImageToCloudStorage(any(), any()))
+        given(cloudStorageUtil.uploadChallengeCertificationImageToCloudStorage(any(), any()))
             .willReturn(imageUrl)
         given(certificationPort.verifyCertificate(any())).willReturn(
             mapOf(EUserCertificatedResultCode.CERTIFICATED_FAILED to errorMessage)
@@ -201,7 +201,7 @@ class CertificateServiceTest : IntegrationTestContainer() {
     @Test
     @DisplayName("챌린지 인증에 성공했다면, 인증 성공 이벤트를 게시한다.")
     fun publishChallengeImage() {
-        given(cloudStorageUtil.uploadImageToCloudStorage(any(), any()))
+        given(cloudStorageUtil.uploadChallengeCertificationImageToCloudStorage(any(), any()))
             .willReturn(imageUrl)
         given(certificationPort.verifyCertificate(any()))
             .willReturn(

@@ -86,7 +86,7 @@ class GetTotalUserChallengeUseCaseTest : IntegrationTestContainer() {
         given(certificationPort.verifyCertificate(any())).willReturn(
             mapOf(EUserCertificatedResultCode.SUCCESS_CERTIFICATED to "Test")
         )
-        given(cloudStorageUtil.uploadImageToCloudStorage(any(), any()))
+        given(cloudStorageUtil.uploadChallengeCertificationImageToCloudStorage(any(), any()))
             .willReturn(imageUrl)
 
         doReturn(imageUrl).`when`(certificationService).encodeImageToBase64(
