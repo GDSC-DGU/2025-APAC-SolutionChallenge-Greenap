@@ -29,4 +29,8 @@ class UserService(
 
     fun save(user: User): User =
         userRepository.save(user)
+
+    fun findByNickname(newNickname: String): Boolean {
+        return userRepository.findByNickname(newNickname)
+    }
 }

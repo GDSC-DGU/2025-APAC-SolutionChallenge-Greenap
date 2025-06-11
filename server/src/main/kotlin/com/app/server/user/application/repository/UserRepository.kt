@@ -35,4 +35,10 @@ interface UserRepository : JpaRepository<User, Long> {
             "WHERE u.id = :userId " +
             "AND u.deletedAt IS NULL")
     fun updateNowMaxConsecutiveParticipationDayCountById(userId: Long, maxConsecutiveParticipationDayCount: Long): Int?
+
+    @Query("SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END " +
+            "FROM User u " +
+            "WHERE u.nickname = :nickname " +
+            "AND u.deletedAt IS NULL")
+    fun findByNickname(nickname: String): Boolean
 }

@@ -2,16 +2,23 @@ package com.app.server.user.application.service
 
 import com.app.server.IntegrationTestContainer
 import com.app.server.common.exception.BadRequestException
+import com.app.server.infra.cloud_storage.CloudStorageUtil
 import com.app.server.user.domain.model.User
 import com.app.server.user.exception.UserExceptionCode
 import jakarta.transaction.Transactional
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
+import org.mockito.ArgumentMatchers.anyLong
+import org.mockito.kotlin.any
+import org.mockito.kotlin.doReturn
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.test.annotation.Rollback
+import org.springframework.test.context.bean.override.mockito.MockitoBean
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean
 import kotlin.test.Test
 
 @SpringBootTest
@@ -19,8 +26,15 @@ import kotlin.test.Test
 @Rollback
 class UserCommandServiceTest : IntegrationTestContainer() {
 
-    @Autowired
+    @MockitoSpyBean
     private lateinit var userCommandService: UserCommandService
+
+    @BeforeEach
+    fun setUp() {
+        doReturn(imageUrl).`when`(userCommandService).saveImageAndConvertUrl(
+            any(), anyLong()
+        )
+    }
 
     @Test
     @DisplayName("사용자가 원하는 사용자명으로 변경할 수 있다.")
@@ -42,7 +56,7 @@ class UserCommandServiceTest : IntegrationTestContainer() {
         val imageContent = ByteArray(1024) { 0x1 } // 1KB dummy 이미지
         val mockImage = MockMultipartFile(
             "new_profile_image_file",
-            "test-image.jpg",
+            "test-image.jpeg",
             "image/jpeg",
             imageContent
         )
@@ -52,7 +66,6 @@ class UserCommandServiceTest : IntegrationTestContainer() {
 
         // then
         assertThat(updatedUser.profileImageUrl).isNotEmpty()
-        assertThat(updatedUser.profileImageUrl).matches("https://.*\\.${mockImage.contentType?.substringAfterLast('/')}")
     }
 
     @Test
@@ -87,6 +100,21 @@ class UserCommandServiceTest : IntegrationTestContainer() {
 
         // then
         assertThat(exception.message).contains(UserExceptionCode.DUPLICATED_NICKNAME.message)
+    }
+
+    @Test
+    @DisplayName("사용자 명은 빈 문자열로 변경할 수 없다.")
+    fun updateNicknameBlank() {
+        // given
+        val blankNickname = ""
+
+        // when
+        val exception = assertThrows(BadRequestException::class.java) {
+            userCommandService.changeNickname(userId, blankNickname)
+        }
+
+        // then
+        assertThat(exception.message).contains(UserExceptionCode.NICKNAME_BLANK.message)
     }
 
     @Test
@@ -134,7 +162,7 @@ class UserCommandServiceTest : IntegrationTestContainer() {
             val exception = assertThrows(BadRequestException::class.java) {
                 userCommandService.changeProfileImage(userId, invalidImage)
             }
-            assertThat(exception.message).contains("Unsupported image format: $format")
+            assertThat(exception.message).isEqualTo(UserExceptionCode.INVALID_PROFILE_IMAGE_TYPE.message)
         }
 
         for (format in validImageFormats) {
@@ -146,7 +174,6 @@ class UserCommandServiceTest : IntegrationTestContainer() {
             )
             val updatedUser: User = userCommandService.changeProfileImage(userId, validImage)
             assertThat(updatedUser.profileImageUrl).isNotEmpty()
-            assertThat(updatedUser.profileImageUrl).matches("https://.*\\.$format")
         }
     }
 
